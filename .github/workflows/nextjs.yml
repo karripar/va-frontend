@@ -1,11 +1,11 @@
 name: Next.js CI
 
+# this comment is for testing purposes
 on:
   push:
     branches: [main]
     paths-ignore:
       - 'docs/**'
-      - '.github/**'
       - '*.md'
   pull_request:
     branches: [main]
