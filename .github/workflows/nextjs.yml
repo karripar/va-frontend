@@ -6,9 +6,9 @@ on:
     paths-ignore:
       - 'docs/**'
       - '.github/**'
-      - '*.md 
-    pull_request:
-      branches: [main]
+      - '*.md'
+  pull_request:
+    branches: [main]
 
 jobs: 
   build:
