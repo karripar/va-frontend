@@ -25,7 +25,7 @@ const useDestinationData = () => {
         setError(null);
 
         const data = await fetchData<DestinationResponse>(
-          `${apiUrl}/data/metropolia/destinations`,
+          `${apiUrl}/data/metropolia/destinations?`,
           { signal: controller.signal }
         );
 
