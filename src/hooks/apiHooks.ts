@@ -3,7 +3,7 @@ import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
 import {DestinationResponse} from 'va-hybrid-types/contentTypes'
 
-const useDestinationData = () => {
+const useDestinationData = (field: "tech" | "health" | "culture" | "business" = "tech") => {
   const [destinationArray, setDestinationArray] = useState<DestinationResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,11 +24,8 @@ const useDestinationData = () => {
         setLoading(true);
         setError(null);
 
-        const data = await fetchData<DestinationResponse>(
-          `${apiUrl}/data/metropolia/destinations?`,
-          { signal: controller.signal }
-        );
-
+        const url = `${apiUrl}/data/metropolia/destinations?field=${field}`;
+        const data = await fetchData<DestinationResponse>(url, { signal: controller.signal });
         setDestinationArray(data);
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {
@@ -45,7 +42,7 @@ const useDestinationData = () => {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [field]); // refetch will happen if field changes
 
   return { destinationArray, loading, error };
 };
