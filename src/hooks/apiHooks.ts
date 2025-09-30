@@ -1,3 +1,4 @@
+"use client";
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
 import {DestinationResponse} from 'va-hybrid-types/contentTypes'
@@ -8,9 +9,10 @@ const useDestinationData = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const apiUrl = process.env.CONTENT_API;
+    const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
+    console.log("API URL:", apiUrl);
     if (!apiUrl) {
-      console.error("CONTENT_API is not defined in environment variables");
+      console.error("NEXT_PUBLIC_CONTENT_API is not defined in environment variables");
       setError("API URL not configured");
       return;
     }
@@ -23,7 +25,7 @@ const useDestinationData = () => {
         setError(null);
 
         const data = await fetchData<DestinationResponse>(
-          `${apiUrl}data/metropolia/destinations`,
+          `${apiUrl}/data/metropolia/destinations?`,
           { signal: controller.signal }
         );
 
