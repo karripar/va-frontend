@@ -3,9 +3,10 @@ import { useDestinationData } from "@/hooks/apiHooks";
 import React, { useState } from "react";
 
 const DestinationsPage = () => {
-  
+  const useMockData = process.env.NODE_ENV !== 'production';
+
   const [selectedField, setSelectedField] = useState<"tech" | "health" | "culture" | "business">("tech");
-  const { destinationArray, loading, error } = useDestinationData(selectedField, true); // Set to true to use mock data
+  const { destinationArray, loading, error } = useDestinationData(selectedField, useMockData); 
   const [openCountries, setOpenCountries] = useState<Record<string, boolean>>({});
 
   const toggleCountry = (countryKey: string) => {
