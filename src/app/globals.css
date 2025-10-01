@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Metropolian fontit */
 
@@ -99,4 +99,12 @@ body {
 .underline-center:hover::after,
 .underline-center.active::after {
   width: 100%;
+}
+
+/* Small utility for focus rings across custom components */
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--va-orange) 30%, white);
 }
