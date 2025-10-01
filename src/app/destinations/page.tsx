@@ -6,7 +6,7 @@ import DestinationList from "@/components/DestinationList";
 const DestinationMap = React.lazy(() => import('@/components/DestinationMap'));
 
 const DestinationsPage = () => {
-  const useMockData = process.env.NODE_ENV !== 'production';
+  const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
   const [selectedField, setSelectedField] = useState<"tech" | "health" | "culture" | "business">("tech");
   const { destinationArray, loading, error } = useDestinationData(selectedField, useMockData); 

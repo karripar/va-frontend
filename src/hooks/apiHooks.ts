@@ -24,7 +24,7 @@ const useDestinationData = (field: "tech" | "health" | "culture" | "business" = 
         setLoading(true);
         setError(null);
 
-        const url = useMock ? "/testDestinations.json" : `${apiUrl}data/metropolia/destinations?field=${field}`;
+        const url = useMock ? "/testDestinations.json" : `${apiUrl}/data/metropolia/destinations?field=${field}`;
         const data = await fetchData<DestinationWithCoordinatesResponse>(url, { signal: controller.signal });
         setDestinationArray(data);
       } catch (err: unknown) {
