@@ -3,7 +3,7 @@ import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
 import {DestinationResponse} from 'va-hybrid-types/contentTypes'
 
-const useDestinationData = (field: "tech" | "health" | "culture" | "business" = "tech") => {
+const useDestinationData = (field: "tech" | "health" | "culture" | "business" = "tech", useMock: boolean) => {
   const [destinationArray, setDestinationArray] = useState<DestinationResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,7 @@ const useDestinationData = (field: "tech" | "health" | "culture" | "business" = 
         setLoading(true);
         setError(null);
 
-        const url = `${apiUrl}/data/metropolia/destinations?field=${field}`;
+        const url = useMock ? "/testDestinations.json" : `${apiUrl}data/metropolia/destinations?field=${field}`;
         const data = await fetchData<DestinationResponse>(url, { signal: controller.signal });
         setDestinationArray(data);
       } catch (err: unknown) {
