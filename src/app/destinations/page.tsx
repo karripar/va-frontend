@@ -3,6 +3,8 @@ import { useDestinationData } from "@/hooks/apiHooks";
 import React, { useState } from "react";
 import DestinationList from "@/components/DestinationList";
 
+const DestinationMap = React.lazy(() => import('@/components/DestinationMap'));
+
 const DestinationsPage = () => {
   const useMockData = process.env.NODE_ENV !== 'production';
 
@@ -44,6 +46,8 @@ const DestinationsPage = () => {
           </button>
         ))}
       </div>
+      {/** Map */}
+      {destinationArray && <DestinationMap data={destinationArray} /> }
 
       {/* Programs & Countries */}
       {destinationArray && <DestinationList data={destinationArray} /> }

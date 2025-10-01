@@ -1,10 +1,10 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
-import {DestinationResponse} from 'va-hybrid-types/contentTypes'
+import { DestinationWithCoordinatesResponse} from 'va-hybrid-types/contentTypes'
 
 const useDestinationData = (field: "tech" | "health" | "culture" | "business" = "tech", useMock: boolean) => {
-  const [destinationArray, setDestinationArray] = useState<DestinationResponse | null>(null);
+  const [destinationArray, setDestinationArray] = useState<DestinationWithCoordinatesResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +25,7 @@ const useDestinationData = (field: "tech" | "health" | "culture" | "business" = 
         setError(null);
 
         const url = useMock ? "/testDestinations.json" : `${apiUrl}data/metropolia/destinations?field=${field}`;
-        const data = await fetchData<DestinationResponse>(url, { signal: controller.signal });
+        const data = await fetchData<DestinationWithCoordinatesResponse>(url, { signal: controller.signal });
         setDestinationArray(data);
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {
