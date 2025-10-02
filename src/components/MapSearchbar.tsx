@@ -8,7 +8,7 @@ interface MapSearchbarProps {
 const MapSearchbar: React.FC<MapSearchbarProps> = ({ onSearch }) => {
   const [query, setQuery] = useState("");
 
-  // 🔎 Debounce effect: waits until typing pauses
+  // Debounce effect: waits until typing pauses
   useEffect(() => {
     const timeout = setTimeout(() => {
       onSearch(query);
