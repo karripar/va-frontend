@@ -11,6 +11,15 @@
           }
         },
         {
+          "title": "Technische Universität Berlin",
+          "country": "GERMANY",
+          "link": "https://www.tu.berlin/en/",
+          "coordinates": {
+            "lat": 52.512,
+            "lng": 13.326
+          }
+        },
+        {
           "title": "KTH Royal Institute of Technology",
           "country": "SWEDEN",
           "link": "https://www.kth.se/en",
