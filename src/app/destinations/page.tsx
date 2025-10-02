@@ -25,7 +25,7 @@ const DestinationsPage = () => {
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">Destinations</h1>
+      <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">Kansainväliset yhteistyökorkeakoulut</h1>
 
       {/** field switcher */}
       <div className="flex justify-center mb-6 space-x-4">
