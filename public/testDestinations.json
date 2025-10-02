@@ -4,53 +4,89 @@
         {
           "title": "FH Aachen - University of Applied Sciences",
           "country": "GERMANY",
-          "link": "https://www.fh-aachen.de/"
+          "link": "https://www.fh-aachen.de/",
+          "coordinates": {
+            "lat": 50.775346,
+            "lng": 6.083887
+          }
         },
         {
           "title": "KTH Royal Institute of Technology",
           "country": "SWEDEN",
-          "link": "https://www.kth.se/en"
+          "link": "https://www.kth.se/en",
+          "coordinates": {
+            "lat": 59.347,
+            "lng": 18.073
+          }
         },
         {
           "title": "Politecnico di Milano",
           "country": "ITALY",
-          "link": "https://www.polimi.it/en"
+          "link": "https://www.polimi.it/en",
+          "coordinates": {
+            "lat": 45.478,
+            "lng": 9.227
+          }
         }
       ],
       "Nordplus": [
         {
           "title": "OsloMet – Oslo Metropolitan University",
           "country": "NORWAY",
-          "link": "https://www.oslomet.no/en"
+          "link": "https://www.oslomet.no/en",
+          "coordinates": {
+            "lat": 59.941,
+            "lng": 10.720
+          }
         },
         {
           "title": "Tallinn University of Technology (TalTech)",
           "country": "ESTONIA",
-          "link": "https://taltech.ee/en"
+          "link": "https://taltech.ee/en",
+          "coordinates": {
+            "lat": 59.395,
+            "lng": 24.665
+          }
         }
       ],
       "Bilateral Agreements": [
         {
           "title": "Kansai University",
           "country": "JAPAN",
-          "link": "https://www.kansai-u.ac.jp/English/"
+          "link": "https://www.kansai-u.ac.jp/English/",
+          "coordinates": {
+            "lat": 34.816,
+            "lng": 135.522
+          }
         },
         {
           "title": "Seoul National University of Science and Technology",
           "country": "SOUTH KOREA",
-          "link": "https://en.seoultech.ac.kr/"
+          "link": "https://en.seoultech.ac.kr/",
+          "coordinates": {
+            "lat": 37.606,
+            "lng": 127.073
+          }
         }
       ],
       "Other exchange destinations": [
         {
           "title": "University of California, Berkeley",
           "country": "USA",
-          "link": "https://www.berkeley.edu/"
+          "link": "https://www.berkeley.edu/",
+          "coordinates": {
+            "lat": 37.8715,
+            "lng": -122.273
+          }
         },
         {
           "title": "University of Sydney",
           "country": "AUSTRALIA",
-          "link": "https://www.sydney.edu.au/"
+          "link": "https://www.sydney.edu.au/",
+          "coordinates": {
+            "lat": -33.888,
+            "lng": 151.187
+          }
         }
       ]
     }
