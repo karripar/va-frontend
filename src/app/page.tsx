@@ -11,8 +11,8 @@ export default function Home() {
     <div className="min-h-screen bg-[var(--background)]">
       {/* Main content */}
       <main className="mx-auto max-w-4xl px-6 lg:px-10 py-6">
-        <div className="mt-6 mb-12">
-          <h1 className="text-xl sm:text-2xl tracking-wide" style={{ fontFamily: "var(--font-machina-bold)" }}>
+        <div className="md:mt-8 mt-6 md:mb-14 mb-10 flex justify-center flex-col items-center text-center">
+          <h1 className="text-xl md:text-2xl tracking-wide" style={{ fontFamily: "var(--font-machina-bold)" }}>
             Tervetuloa Metropolian vaihto­sovellukseen!
           </h1>
           <p className="mt-3 max-w-2xl text-md" style={{
@@ -50,8 +50,9 @@ export default function Home() {
 
       {/* Vertical chat tab */}
       <a
-        href="#"
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-30 origin-right rotate-90 bg-[var(--va-orange)] text-[var(--background)] px-3 py-2 rounded-t-md shadow hover:brightness-95"
+        href="/ai-chat"
+        className="fixed -right-6 top-1/2 -translate-y-1/2 z-40 origin-center -rotate-90 bg-[var(--va-orange)] text-[var(--background)] px-4 py-3 rounded-t-md shadow hover:brightness-95 text-sm tracking-wider"
+        style={{ fontFamily: "var(--font-machina-bold)" }}
       >
         CHAT
       </a>
