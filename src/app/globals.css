@@ -1,25 +1,80 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @import 'leaflet/dist/leaflet.css';
+
+/* Metropolian fontit */
+
+/* jos et tiedä mitä fonttia tulisi käyttää, voi lukea täältä lisää Metropolian brändi ilmeestä: https://www.metropolia.fi/fi/metropolian-brandi-ja-visuaalinen-ilme/metropolian-visuaalisen-ilmeen-ohjeisto/brandifontit-ja-tekstityylit */
+
+/* PP Neue Machina Bold */
+/* Tätä fonttiä käytetään otsikoissa, ala-otsikoissa ja CTA painikkeissa */
+/* Huom! Pääotsikoissa ja CTA painikkeissa käytetään VERSAALIKIRJAIMIA */
+
+@font-face {
+  font-family: "PP Neue Machina Bold";
+  src: url("/fonts/PPNeueMachina-PlainUltrabold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* PP Neue Machina Regular */
+/* Tätä fonttia käytetään väliotsikoissa */
+
+@font-face {
+  font-family: "PP Neue Machina";
+  src: url("/fonts/PPNeueMachina-PlainRegular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* PP Neue Montreal Mono Medium */
+/* Tätä fonttia käytetään kuvateksteissä ja ylä- ja alatunnisteissa */
+@font-face {
+  font-family: "PP Neue Montreal Mono Medium";
+  src: url("/fonts/PPNeueMontrealMono-Medium.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* PP Neue Montreal Mono */
+/* Tätä fonttia käytetään leipätekstissä */
+@font-face {
+  font-family: "PP Neue Montreal Mono";
+  src: url("/fonts/PPNeueMontrealMono-Book.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --background: #ffffff;
-  --foreground: #111111;
   /* Brand colors */
-  --va-orange: #ff4b00; /* top bar, accents */
-  --va-mint: #cfeedd; /* active menu highlight */
-  --va-mint-80: color-mix(in oklab, var(--va-mint) 80%, transparent);
-  --va-mint-60: color-mix(in oklab, var(--va-mint) 60%, transparent);
-  --va-mint-40: color-mix(in oklab, var(--va-mint) 40%, transparent);
-  --va-border: #e5e7eb; /* gray-200 */
-  --va-muted: #6b7280; /* gray-500 */
+  --va-orange: #ff5000; /* top bar, accents */
+  --va-orange-50: #ff510087;
+  --va-mint: #8ceba5; /* active menu highlight */
+  --va-mint-50: #8ceba587;
   --va-card: #ffffff; /* cards */
+  --dark-grey: #363e3c;
+  --va-grey: #babbbd;
+  --va-grey-50: #babbbd87;
+  --va-border: #babbbd; /* border color */
+  --typography: #363e3c;
+
+  /* Custom Font Variables */
+  --font-machina-bold: "PP Neue Machina Bold", Arial, Helvetica, sans-serif;
+  --font-machina-regular: "PP Neue Machina", Arial, Helvetica, sans-serif;
+  --font-montreal-mono-medium: "PP Neue Montreal Mono Medium", "Courier New",
+    monospace;
+  --font-montreal-mono: "PP Neue Montreal Mono", "Courier New", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #f5f5f5;
-    --foreground: #111111;
-  }
+@theme {
+  --font-family-machina-bold: var(--font-machina-bold);
+  --font-family-machina-regular: var(--font-machina-regular);
+  --font-family-montreal-mono-medium: var(--font-montreal-mono-medium);
+  --font-family-montreal-mono: var(--font-montreal-mono);
 }
 
 .leaflet-container {
@@ -32,9 +87,32 @@
 
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--typography);
+  font-family: var(--font-montreal-mono);
+}
+
+/* animated undeline */
+
+.underline-center {
+  position: relative;
+  text-decoration: none;
+}
+
+.underline-center::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0.3rem;
+  bottom: 0.7rem;
+  left: 50%;
+  background-color: var(--va-orange);
+  transition: all 0.3s ease-in-out;
+  transform: translateX(-50%);
+}
+
+.underline-center:hover::after,
+.underline-center.active::after {
+  width: 100%;
 }
 
 /* Small utility for focus rings across custom components */
@@ -42,5 +120,5 @@ body {
   outline: none;
 }
 .focus-ring:focus-visible {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--va-orange) 30%, white);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--va-orange) 30%, background);
 }
