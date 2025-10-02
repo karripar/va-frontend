@@ -1,0 +1,58 @@
+{
+    "destinations": {
+      "Erasmus": [
+        {
+          "title": "FH Aachen - University of Applied Sciences",
+          "country": "GERMANY",
+          "link": "https://www.fh-aachen.de/"
+        },
+        {
+          "title": "KTH Royal Institute of Technology",
+          "country": "SWEDEN",
+          "link": "https://www.kth.se/en"
+        },
+        {
+          "title": "Politecnico di Milano",
+          "country": "ITALY",
+          "link": "https://www.polimi.it/en"
+        }
+      ],
+      "Nordplus": [
+        {
+          "title": "OsloMet – Oslo Metropolitan University",
+          "country": "NORWAY",
+          "link": "https://www.oslomet.no/en"
+        },
+        {
+          "title": "Tallinn University of Technology (TalTech)",
+          "country": "ESTONIA",
+          "link": "https://taltech.ee/en"
+        }
+      ],
+      "Bilateral Agreements": [
+        {
+          "title": "Kansai University",
+          "country": "JAPAN",
+          "link": "https://www.kansai-u.ac.jp/English/"
+        },
+        {
+          "title": "Seoul National University of Science and Technology",
+          "country": "SOUTH KOREA",
+          "link": "https://en.seoultech.ac.kr/"
+        }
+      ],
+      "Other exchange destinations": [
+        {
+          "title": "University of California, Berkeley",
+          "country": "USA",
+          "link": "https://www.berkeley.edu/"
+        },
+        {
+          "title": "University of Sydney",
+          "country": "AUSTRALIA",
+          "link": "https://www.sydney.edu.au/"
+        }
+      ]
+    }
+  }
+  

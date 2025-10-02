@@ -7,10 +7,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="fi">
       <body className={` antialiased`}>
         <Navbar />
-        <main className="mx-auto py-20 max-w-6xl">{children}</main>
+        <main className="mx-auto max-w-6xl my-2">{children}</main>
       </body>
     </html>
   );

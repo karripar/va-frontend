@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* Metropolian fontit */
 
@@ -48,14 +48,17 @@
 }
 
 :root {
-  --white: #ffffff;
-  --dark-grey: #53565a;
-  --metropolia-orange: #ff5000;
-  --metropolia-orange-50: #ff510087;
-  --mint-green: #8ceba5;
-  --mint-green-50: #8ceba587;
-  --betoni: #babbbd;
-  --betoni-50: #babbbd87;
+  --background: #ffffff;
+  /* Brand colors */
+  --va-orange: #ff5000; /* top bar, accents */
+  --va-orange-50: #ff510087;
+  --va-mint: #8ceba5; /* active menu highlight */
+  --va-mint-50: #8ceba587;
+  --va-card: #ffffff; /* cards */
+  --dark-grey: #363e3c;
+  --va-grey: #babbbd;
+  --va-grey-50: #babbbd87;
+  --va-border: #babbbd; /* border color */
   --typography: #363e3c;
 
   /* Custom Font Variables */
@@ -75,6 +78,7 @@
 
 body {
   color: var(--typography);
+  font-family: var(--font-montreal-mono);
 }
 
 /* animated undeline */
@@ -91,7 +95,7 @@ body {
   height: 0.3rem;
   bottom: 0.7rem;
   left: 50%;
-  background-color: var(--metropolia-orange);
+  background-color: var(--va-orange);
   transition: all 0.3s ease-in-out;
   transform: translateX(-50%);
 }
@@ -106,5 +110,5 @@ body {
   outline: none;
 }
 .focus-ring:focus-visible {
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--va-orange) 30%, white);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--va-orange) 30%, background);
 }
