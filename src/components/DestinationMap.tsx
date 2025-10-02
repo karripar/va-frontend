@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import { DefaultIcon } from "../../leafletConfig";
@@ -19,11 +19,18 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
     link: string;
   } | null>(null);
 
+  const defaultCenter: [number, number] = [60.1699, 24.9384]; // Helsinki fallback
+
+  // use effect for searching as user types
+  useEffect(() => {
+    if (searchTerm) {
+      setProgramFilter(null); // Clear program filter when searching
+    }
+  }, [searchTerm]);
+
   if (!data || !data.destinations) {
     return <div>No destination data available.</div>;
   }
-
-  const defaultCenter: [number, number] = [60.1699, 24.9384]; // Helsinki fallback
 
   // 🔑 Apply filter
   const filteredDestinations = programFilter
@@ -57,8 +64,10 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
           className="w-full h-full"
         >
           <TileLayer
-            attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
+            subdomains={["a", "b", "c", "d"]}
+            maxZoom={20}
           />
 
           {/* 🔑 Markers */}
@@ -113,7 +122,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
               ✕
             </button>
 
-            <h2 className="text-2xl font-bold text-indigo-700 mb-6 text-center">
+            <h2 className="text-2xl font-bold mb-6 text-center">
               {selectedUni.title}
             </h2>
             <p className="text-gray-600 mb-4">
@@ -123,7 +132,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
               href={selectedUni.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700"
+              className="px-4 py-2 bg-[#FF5000] text-white rounded-lg shadow hover:bg-[#e04e00]"
             >
               Vieraile verkkosivulla
             </a>
