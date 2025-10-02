@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="fi">
       <body className={` antialiased`}>
         <Navbar />
-        <main className="mx-auto max-w-6xl my-2">{children}</main>
+        <main className="mx-auto max-w-6xl">{children}</main>
       </body>
     </html>
   );

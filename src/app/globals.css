@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import 'leaflet/dist/leaflet.css';
+@import "leaflet/dist/leaflet.css";
 
 /* Metropolian fontit */
 
@@ -56,7 +56,7 @@
   --va-mint: #8ceba5; /* active menu highlight */
   --va-mint-50: #8ceba587;
   --va-card: #ffffff; /* cards */
-  --dark-grey: #363e3c;
+  --va-dark-grey: #53565a;
   --va-grey: #babbbd;
   --va-grey-50: #babbbd87;
   --va-border: #babbbd; /* border color */

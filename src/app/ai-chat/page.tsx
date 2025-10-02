@@ -74,11 +74,11 @@ export default function AIChatPage() {
 
         {/* Chat card */}
         <div
-          className="rounded-lg border border-[var(--va-border)] shadow-sm p-4 sm:p-6 flex flex-col min-h-[45vh] sm:min-h-[55vh] lg:min-h-[65vh] xl:min-h-[70vh]"
+          className="rounded-lg border border-[var(--va-border)] shadow-md pb-4 px-4 flex flex-col min-h-[45vh] sm:min-h-[55vh] lg:min-h-[65vh] xl:min-h-[70vh]"
           style={{ backgroundColor: "var(--va-card)" }}
         >
           {/* Messages */}
-          <div ref={listRef} className="flex-1 overflow-y-auto pr-1">
+          <div ref={listRef} className="flex-1 overflow-y-auto pr-1 md:text-md text-sm">
             {messages.map((m, i) => {
               const prev = messages[i - 1];
               const groupStart = !prev || prev.role !== m.role;
@@ -105,8 +105,8 @@ export default function AIChatPage() {
             <input
               value={msg}
               onChange={(e) => setMsg(e.target.value)}
+              className="flex-1 bg-transparent outline-none text-sm text-[var(--typography)]"
               placeholder="Kysy kysymys..."
-              className="flex-1 bg-transparent outline-none text-sm"
               aria-label="Kirjoita viesti"
             />
             <button
@@ -146,7 +146,6 @@ function FAQItem({ title }: { title: string }) {
     <button
       className="w-full text-left rounded-lg px-4 py-3 shadow-sm hover:shadow transition flex items-center justify-between"
       style={{
-        borderColor: "var(--va-grey)",
         backgroundColor: "var(--va-orange-50)",
         color: "var(--typography)",
       }}
@@ -159,16 +158,15 @@ function FAQItem({ title }: { title: string }) {
 
 function MessageBubble({ role, text }: { role: Role; text: string }) {
   const base =
-    "w-fit max-w-[96%] sm:max-w-[88%] lg:max-w-[72ch] px-3 py-2 rounded-lg shadow-sm whitespace-pre-wrap break-words leading-snug";
+    "w-fit max-w-[96%] sm:max-w-[88%] lg:max-w-[72ch] px-3 py-2 rounded-lg whitespace-pre-wrap break-words leading-snug";
   if (role === "user") {
     return (
       <div className="ml-auto flex justify-end">
         <div
-          className={`${base} border`}
+          className={`${base}`}
           style={{
             backgroundColor: "var(--va-grey-50)",
             color: "var(--typography)",
-            borderColor: "var(--va-grey)",
           }}
         >
           {text}
@@ -180,7 +178,7 @@ function MessageBubble({ role, text }: { role: Role; text: string }) {
     <div
       className={`${base}`}
       style={{
-        backgroundColor: "var(--dark-grey)",
+        backgroundColor: "var(--va-dark-grey)",
         color: "var(--background)",
       }}
     >
@@ -196,7 +194,7 @@ function TypingBubble() {
       style={{
         backgroundColor: "var(--va-grey-50)",
         color: "var(--typography)",
-        borderColor: "var(--va-grey)",
+        borderColor: "var(--va-grey-50)",
       }}
     >
       <span className="inline-flex items-center gap-1 align-middle">
@@ -213,7 +211,7 @@ function Dot({ className = "" }: { className?: string }) {
   return (
     <span
       className={`inline-block h-1.5 w-1.5 rounded-full animate-bounce ${className}`}
-      style={{ backgroundColor: "var(--typography)" }}
+      style={{ backgroundColor: "var(--va-dark-grey)" }}
       aria-hidden
     />
   );
