@@ -25,9 +25,14 @@ const DestinationsPage = () => {
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">Kansainväliset yhteistyökorkeakoulut</h1>
+      <h1 className="text-2xl font-bold mb-18 text-[#FF5000] text-center">Kansainväliset yhteistyökorkeakoulut</h1>
 
       {/** field switcher */}
+      <div className="text-center overflow-hidden shadow-md rounded-lg mb-6 p-4">
+        {/** Header for the switch */} 
+        <h3 className="text-lg mb-4">Valitse koulutusala rajataksesi tuloksia</h3>
+        {/** Buttons for the switch */} 
+        
       <div className="flex justify-center mb-6 space-x-4">
         {["tech", "health", "culture", "business"].map((field) => (
           <button
@@ -45,6 +50,7 @@ const DestinationsPage = () => {
             )}
           </button>
         ))}
+      </div>
       </div>
       {/** Map */}
       {destinationArray && <DestinationMap data={destinationArray} /> }
