@@ -33,7 +33,8 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
   }
 
   // 🔑 Apply filter
-  const filteredDestinations = programFilter
+  const filteredDestinations = 
+  programFilter && programFilter !== "all"
     ? { [programFilter]: data.destinations[programFilter] || [] }
     : data.destinations;
 
@@ -46,7 +47,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
           onChange={(e) => setProgramFilter(e.target.value || null)}
           className="p-2 border rounded"
         >
-          <option value="">Kaikki kohteet</option>
+          <option value="all">Kaikki kohteet</option>
           {Object.keys(data.destinations).map((program) => (
             <option key={program} value={program}>
               {program}

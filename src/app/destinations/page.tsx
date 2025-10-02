@@ -30,7 +30,7 @@ const DestinationsPage = () => {
       {/** field switcher */}
       <div className="text-center overflow-hidden shadow-md rounded-lg mb-6 p-4">
         {/** Header for the switch */} 
-        <h3 className="text-lg mb-4">Valitse koulutusala rajataksesi tuloksia</h3>
+        <h2 className="text-lg mb-4">Valitse koulutusala rajataksesi tuloksia</h2>
         {/** Buttons for the switch */} 
         
       <div className="flex justify-center mb-6 space-x-4">
