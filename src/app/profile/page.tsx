@@ -1,61 +1,38 @@
 "use client";
+import { useEffect, useState } from "react";
 import React from  'react'
-import{useProfileData} from "@/hooks/apiHooks"
+import { ProfileResponse } from "va-hybrid-types/contentTypes";
 
 
 export default function ProfilePage() {
-    const { profileData, loading, error } = useProfileData();
-    const user = profileData?.user;
-    if (loading) {
-        return <div className="flex justify-center items-center h-screen text-gray-500">
-                    Ladataan profiilitietoja...
-                </div>;
-    }
-    if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">
-      <p>Virhe: {error}</p>
-        </div>;
-    }
-    if (!user) {
-    return <div className="flex justify-center items-center h-screen text-gray-500">
-      <p>Profiilia ei löytynyt.</p>
-    </div>;
-  }
-    const userName = user?.name || "Käyttäjä";
-    return (
-    <div className="p-6 max-w-md mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-[#FF5000] text-center">Hei {userName}!</h1>
-      <p className="text-gray-600 text-center">
-        Tervetuloa profiiliisi – täältä löydät tallentamasi vaihtokohteet ja dokumentit.
+    const [profile, setProfile] = useState<ProfileResponse | null>(null);
+
+  useEffect(() => {
+    // Testissä haetaan käyttäjä id:
+    fetch("/api/profile/1")
+      .then((res) => res.json())
+      .then((data) => setProfile(data));
+  }, []);
+
+  if (!profile) return <p>Ladataan profiilia...</p>;
+
+  return (
+    <div className="flex flex-col items-center p-4">
+      <h1 className="text-xl font-bold">Hei {profile.userName}!</h1>
+      <p className="mt-2 text-gray-600 text-center">
+        Welcome to your profile, here you can browse your saved exchange destinations and documents.
       </p>
 
-      {/* Suosikit */}
-      <section>
-        <h2 className="text-lg font-semibold mb-2"> Suosikkikohteet</h2>
-        {user.favorites && user.favorites.length > 0 ? (
-          <ul className="list-disc list-inside">
-            {user.favorites.map((fav: string, i: number) => (
-              <li key={i}>{fav}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">Ei suosikkeja vielä.</p>
-        )}
-      </section>
-
-      {/* Dokumentit */}
-      <section>
-        <h2 className="text-lg font-semibold mb-2"> Dokumentit</h2>
-        {user.documents && user.documents.length > 0 ? (
-          <ul className="list-disc list-inside">
-            {user.documents.map((doc: string, i: number) => (
-              <li key={i}>{doc}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">Ei dokumentteja tallennettuna.</p>
-        )}
-      </section>
+      <div className="mt-6 space-y-4 w-full max-w-xs">
+        <button className="w-full p-4 rounded-lg bg-orange-300 flex justify-between items-center">
+          <span> Favorite destinations</span>
+          <span>›</span>
+        </button>
+        <button className="w-full p-4 rounded-lg bg-orange-300 flex justify-between items-center">
+          <span> Documents</span>
+          <span>›</span>
+        </button>
+      </div>
     </div>
   );
 }

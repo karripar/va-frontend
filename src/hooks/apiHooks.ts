@@ -1,11 +1,11 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
-//import {ProfileResponse} from "va-hybrid-types/contentTypes";
+import {ProfileResponse} from "va-hybrid-types/contentTypes";
 import {DestinationResponse} from 'va-hybrid-types/contentTypes';
 
 // I decided to define ProfileResponse type locally here for now ----> to be fixed!
-type ProfileResponse = {
+/*type ProfileResponse = {
   user: {
     id: string;
     name: string;
@@ -18,7 +18,7 @@ type ProfileResponse = {
   documents: string[];
 
 };
-
+*/
 const useDestinationData = () => {
   const [destinationArray, setDestinationArray] = useState<DestinationResponse | null>(null);
   const [loading, setLoading] = useState(false);
