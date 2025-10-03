@@ -1,10 +1,6 @@
-'use client';
-import Link from 'next/link';
-import {
-  FiMessageSquare,
-  FiGlobe,
-  FiFileText,
-} from 'react-icons/fi';
+"use client";
+import Link from "next/link";
+import { FiMessageSquare, FiGlobe, FiFileText } from "react-icons/fi";
 
 export default function Home() {
   return (
@@ -12,28 +8,38 @@ export default function Home() {
       {/* Main content */}
       <main className="mx-auto max-w-4xl px-6 lg:px-10 py-6">
         <div className="md:mt-8 mt-6 md:mb-14 mb-10 flex justify-center flex-col items-center text-center">
-          <h1 className="text-xl md:text-2xl tracking-wide" style={{ fontFamily: "var(--font-machina-bold)" }}>
+          <h1
+            className="text-xl md:text-2xl tracking-wide"
+            style={{ fontFamily: "var(--font-machina-bold)" }}
+          >
             Tervetuloa Metropolian vaihto­sovellukseen!
           </h1>
-          <p className="mt-3 max-w-2xl text-md" style={{
-                fontFamily: "var(--font-montreal-mono-medium)"}}>
+          <p
+            className="mt-3 max-w-2xl text-md"
+            style={{
+              fontFamily: "var(--font-montreal-mono-medium)",
+            }}
+          >
             Löydä kohdemaat, apurahat ja vinkit yhdestä paikasta.
           </p>
         </div>
 
         {/* Action cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 uppercase" style={{ fontFamily: "var(--font-machina-bold)" }}>
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 uppercase"
+          style={{ fontFamily: "var(--font-machina-bold)" }}
+        >
           <Card
-            icon={
-              <FiFileText className="text-[var(--va-orange)]" size={26} />
-            }
+            icon={<FiFileText className="text-[var(--va-orange)]" size={26} />}
             title="VAIHTOON HAKEMINEN"
           />
           <Card icon={<CoinIcon />} title="APURAHAT" />
-          <Card
-            icon={<FiGlobe className="text-[var(--va-orange)]" size={26} />}
-            title="KOHDEMAAT"
-          />
+          <Link href="/destinations" className="block">
+            <Card
+              icon={<FiGlobe className="text-[var(--va-orange)]" size={26} />}
+              title="KOHDEMAAT"
+            />
+          </Link>
           <Link href="/ai-chat" className="block">
             <Card
               icon={

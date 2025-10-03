@@ -13,7 +13,7 @@ const navigationCategories = [
     title: "Opiskelijavaihto",
     links: [
       { href: "/hakuprosessi", label: "Hakuprosessi ja ohjeet" },
-      { href: "/vaihtokohteet", label: "Vaihtokohteet" },
+      { href: "/destinations", label: "Vaihtokohteet" },
       { href: "/apurahat", label: "Apurahat ja kustannukset" },
     ],
   },
