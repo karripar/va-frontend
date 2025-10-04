@@ -7,7 +7,9 @@ interface DestinationListProps {
 }
 
 const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
-  const [openCountries, setOpenCountries] = useState<Record<string, boolean>>({});
+  const [openCountries, setOpenCountries] = useState<Record<string, boolean>>(
+    {}
+  );
   const [openPrograms, setOpenPrograms] = useState<Record<string, boolean>>({});
 
   const toggleCountry = (countryKey: string) => {
@@ -32,7 +34,10 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
           const isProgramOpen = openPrograms[program];
 
           return (
-            <div key={program} className="my-6 border rounded-lg shadow-md overflow-hidden">
+            <div
+              key={program}
+              className="my-6 border rounded-lg shadow-md overflow-hidden"
+            >
               {/* Program Header */}
               <button
                 onClick={() => toggleProgram(program)}
@@ -67,8 +72,18 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
                         onClick={() => toggleCountry(countryKey)}
                       >
                         <span>
-                          {country} ({unis.length})
+                          {country} (
+                          {
+                            unis.filter(
+                              (u) =>
+                                u.title &&
+                                u.title.trim() !== "," &&
+                                u.title.trim() !== ""
+                            ).length
+                          }
+                          )
                         </span>
+
                         <span
                           className={`transition-transform duration-300 ${
                             isCountryOpen ? "rotate-180" : "rotate-0"
@@ -83,12 +98,14 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
                           isCountryOpen ? "max-h-[1000px]" : "max-h-0"
                         }`}
                       >
-                        {unis.map((uni) => (
+                        {unis.map((uni, index) => (
                           <li
-                            key={uni.title}
+                            key={`${uni.title}-${uni.country}-${index}`}
                             className="p-3 border-b last:border-b-0 hover:bg-white hover:shadow transition"
                           >
-                            <h3 className="text-gray-800 font-medium">{uni.title}</h3>
+                            <h3 className="text-gray-800 font-medium">
+                              {uni.title}
+                            </h3>
                             {uni.link && (
                               <a
                                 href={uni.link}
@@ -96,7 +113,7 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
                                 rel="noopener noreferrer"
                                 className="text-[#FF5000] text-sm hover:underline"
                               >
-                                Visit Website
+                                Vieraile verkkosivuilla
                               </a>
                             )}
                           </li>
