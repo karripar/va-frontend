@@ -84,10 +84,10 @@ const DestinationsPage = () => {
                   >
                     {unis.map((uni) => (
                       <li
-                        key={uni.name}
+                        key={uni.title}
                         className="p-3 border-b last:border-b-0 rounded hover:shadow transition-shadow"
                       >
-                        <h3 className="text-gray-800 font-medium">{uni.name}</h3>
+                        <h3 className="text-gray-800 font-medium">{uni.title}</h3>
                         {uni.link && (
                           <a
                             href={uni.link}
