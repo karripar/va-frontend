@@ -1,5 +1,5 @@
 "use client";
-import { useProfileData } from "@/hooks/apiHooks"; // Adjust import path to match your project structure
+import { useProfileData } from "@/hooks/apiHooks"; 
 import React from "react";
 export default function ProfilePage() {
  
