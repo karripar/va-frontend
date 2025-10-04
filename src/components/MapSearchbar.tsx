@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface MapSearchbarProps {
   onSearch: (query: string) => void;
@@ -8,9 +8,17 @@ interface MapSearchbarProps {
 const MapSearchbar: React.FC<MapSearchbarProps> = ({ onSearch }) => {
   const [query, setQuery] = useState("");
 
+  // Debounce effect: waits until typing pauses
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onSearch(query);
+    }, 300); // adjust delay as needed
+    return () => clearTimeout(timeout);
+  }, [query, onSearch]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(query);
+    onSearch(query); // still allows manual submit with button
   };
 
   return (
@@ -22,7 +30,7 @@ const MapSearchbar: React.FC<MapSearchbarProps> = ({ onSearch }) => {
         type="text"
         placeholder="Hae kohteita..."
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)} 
         className="flex-grow px-3 py-2 rounded-l-lg outline-none"
       />
       <button

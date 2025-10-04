@@ -74,7 +74,7 @@ export default function AIChatPage() {
 
         {/* Chat card */}
         <div
-          className="rounded-lg border border-[var(--va-border)] shadow-md pb-4 px-4 flex flex-col min-h-[45vh] sm:min-h-[55vh] lg:min-h-[65vh] xl:min-h-[70vh]"
+          className="rounded-lg border border-[var(--va-grey)] shadow-md pb-4 px-4 flex flex-col min-h-[45vh] sm:min-h-[55vh] lg:min-h-[65vh] xl:min-h-[70vh]"
           style={{ backgroundColor: "var(--va-card)" }}
         >
           {/* Messages */}
@@ -96,7 +96,7 @@ export default function AIChatPage() {
           </div>
           {/* Input row */}
           <form
-            className="mt-4 flex items-center gap-2 rounded-full border border-[var(--va-border)] px-3 py-2"
+            className="mt-4 flex items-center gap-2 rounded-full border border-[var(--va-grey)] px-3 py-2"
             onSubmit={(e) => {
               e.preventDefault();
               sendMessage();
@@ -194,7 +194,7 @@ function TypingBubble() {
       style={{
         backgroundColor: "var(--va-grey-50)",
         color: "var(--typography)",
-        borderColor: "var(--va-grey-50)",
+        borderColor: "var(--va-grey)",
       }}
     >
       <span className="inline-flex items-center gap-1 align-middle">

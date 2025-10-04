@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import ToggleSwitch from "./LanguageToggle";
 
 // navigaation kategoriat
@@ -36,16 +36,26 @@ const navigationCategories = [
   },
 ];
 
-// flatten all links for mobile menu
-const allNavLinks = navigationCategories.flatMap((category) =>
-  category.links ? category.links : []
-);
+const hamburgerLinks = [
+  { href: "/", label: "Etusivu" },
+  { href: "/hakuprosessi", label: "Hakuprosessi ja ohjeet" },
+  { href: "/destinations", label: "Vaihtokohteet" },
+  { href: "/apurahat", label: "Apurahat ja kustannukset" },
+  { href: "/kokemukset", label: "Kokemukset ja vinkit" },
+  { href: "/ai-chat", label: "AI Chat ja FAQ" },
+  { href: "/ota-yhteytta", label: "Ota yhteyttä" },
+];
 
 // navigation
 const Navbar = () => {
   const pathname = usePathname();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isEn, setIsEn] = useState(false); // Shared language state
+
+  const handleLanguageToggle = () => {
+    setIsEn((prevState) => !prevState);
+  };
 
   const getCurrentPageInfo = () => {
     for (const category of navigationCategories) {
@@ -71,11 +81,11 @@ const Navbar = () => {
     <>
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
-        <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl">
+        <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl px-2 shadow-lg">
           <div className="mx-auto px-4 h-20 flex items-center justify-between">
             <button
               aria-label={mobileMenuOpen ? "Sulje valikko" : "Avaa valikko"}
-              className="p-2 -ml-2 z-60"
+              className="cursor-pointer p-2 -ml-2 z-60"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? "" : <FiMenu size={26} />}
@@ -86,7 +96,9 @@ const Navbar = () => {
             >
               {currentPageInfo.page}
             </div>
-            <div className="w-6" />
+            <Link href={'/profiili'}>
+              <FiUser className="hover:scale-110 transition-transform duration-300" size={26} />
+            </Link>
           </div>
         </header>
       </div>
@@ -101,7 +113,7 @@ const Navbar = () => {
             fontFamily: "var(--font-machina-bold)",
           }}
         >
-          <ToggleSwitch />
+          <ToggleSwitch isEn={isEn} onToggle={handleLanguageToggle} />
           {currentPageInfo.page}
         </div>
 
@@ -122,31 +134,42 @@ const Navbar = () => {
                 {/* category header */}
                 <button
                   onClick={() => toggleCategory(category.id)}
-                  className={`h-full py-5 font-bold text-md duration-200 tracking-wide underline-center ${
-                    activeCategory === category.id ? "active" : ""
-                  }`}
+                  className="h-full py-5 text-md flex flex-row gap-4"
                   style={{
                     fontFamily: "var(--font-montreal-mono-medium)",
                   }}
                 >
-                  {category.title}
+                  <span
+                    className={`duration-200 tracking-wide underline-center ${
+                      activeCategory === category.id ? "active" : ""
+                    }`}
+                  >
+                    {category.title}
+                  </span>
+                  <span
+                    className={`text-[var(--va-orange)] pl-1 transition-transform duration-300 ${
+                      activeCategory === category.id ? "rotate-180" : "rotate-0"
+                    }`}
+                  >
+                    ▼
+                  </span>
                 </button>
 
                 {/* category content */}
                 {activeCategory === category.id && (
-                  <div className="absolute shadow-lg left-1/2 transform -translate-x-1/2 top-full w-60 bg-[var(--background)] border border-[var(--va-grey-50)] rounded-b-lg">
+                  <div className="absolute shadow-lg left-1/2 transform -translate-x-1/2 top-full w-60 lg:w-80 bg-[var(--background)] border border-[var(--va-border)] rounded-b-lg">
                     {category.links && (
                       <div>
                         {category.links.map((link) => (
                           <Link
                             key={link.href}
                             href={link.href}
-                            className="block px-6 py-3 text-md duration-200 tracking-wide"
+                            className="block px-6 py-3 m-1 text-md duration-200 tracking-wide "
                             style={{
                               fontFamily: "var(--font-montreal-mono)",
                               textDecoration:
                                 pathname === link.href
-                                  ? "underline wavy var(--va-orange-50) .1rem"
+                                  ? "underline wavy var(--va-orange) .1rem"
                                   : "none",
                               textUnderlineOffset: ".2rem",
                             }}
@@ -194,34 +217,38 @@ const Navbar = () => {
         aria-label="Sivunavigaatio"
       >
         <div
-          className="h-20 flex items-center justify-between px-4 font-semibold tracking-wide"
+          className="h-20 flex items-center justify-between px-4 tracking-wide"
           style={{
             backgroundColor: "var(--va-orange)",
             color: "var(--background)",
             fontFamily: "var(--font-machina-bold)",
           }}
         >
-          <ToggleSwitch isMobileMenu={true} />
+          <ToggleSwitch
+            isMobileMenu={true}
+            isEn={isEn}
+            onToggle={handleLanguageToggle}
+          />
           <button
             aria-label="Sulje valikko"
             onClick={closeMobileMenu}
             className="p-2"
           >
-            <FiX size={26} />
+            <FiX className="cursor-pointer" size={26} />
           </button>
         </div>
         <nav className="px-4 py-3 space-y-2 overflow-y-auto h-[calc(100%-5rem)]">
-          {allNavLinks.map((link) => (
+          {hamburgerLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={closeMobileMenu}
-              className={`block px-3 py-2 text-sm tracking-wide`}
+              className={`block px-3 py-3 text-md tracking-wide border-b border-b-[var(--va-border)]`}
               style={{
                 fontFamily: "var(--font-montreal-mono-medium)",
                 textDecoration:
                   pathname === link.href
-                    ? "underline wavy var(--va-orange-50) .1rem"
+                    ? "underline wavy var(--va-orange) .1rem"
                     : "none",
                 textUnderlineOffset: ".2rem",
               }}

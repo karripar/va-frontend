@@ -52,14 +52,14 @@
   --background: #ffffff;
   /* Brand colors */
   --va-orange: #ff5000; /* top bar, accents */
-  --va-orange-50: #ff510087;
+  --va-orange-50: #fca884;
   --va-mint: #8ceba5; /* active menu highlight */
   --va-mint-50: #8ceba587;
   --va-card: #ffffff; /* cards */
   --va-dark-grey: #53565a;
   --va-grey: #babbbd;
-  --va-grey-50: #babbbd87;
-  --va-border: #babbbd; /* border color */
+  --va-grey-50: #f1f1f1;
+  --va-border: #d8d8d8; /* border color */
   --typography: #363e3c;
 
   /* Custom Font Variables */
@@ -77,6 +77,15 @@
   --font-family-montreal-mono: var(--font-montreal-mono);
 }
 
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+.leaflet-pane {
+  z-index: 0 !important;
+}
+
+
 body {
   color: var(--typography);
   font-family: var(--font-montreal-mono);
@@ -85,13 +94,12 @@ body {
 /* animated undeline */
 
 .underline-center {
-  position: relative;
   text-decoration: none;
 }
 
 .underline-center::after {
-  content: "";
   position: absolute;
+  content: "";
   width: 0;
   height: 0.3rem;
   bottom: 0.7rem;

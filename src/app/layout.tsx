@@ -1,17 +1,6 @@
 import "./globals.css";
-import Navbar from "./components/NavBar";
-import { Geist, Geist_Mono } from "next/font/google";
+import Navbar from "../components/NavBar";
 import type { Metadata } from "next";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Vaihtoaktivaattori", // TODO: change title when it's finalized
@@ -27,7 +16,7 @@ export default function RootLayout({
     <html lang="fi">
       <body className={` antialiased`}>
         <Navbar />
-        <main className="mx-auto max-w-6xl">{children}</main>
+        <main className="mx-auto max-w-full mb-10">{children}</main>
       </body>
     </html>
   );
