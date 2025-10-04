@@ -12,7 +12,7 @@ const MapSearchbar: React.FC<MapSearchbarProps> = ({ onSearch }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       onSearch(query);
-    }, 300); // adjust delay as needed
+    }, 300); // 300ms debounce
     return () => clearTimeout(timeout);
   }, [query, onSearch]);
 

@@ -81,7 +81,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
           onChange={(e) => setProgramFilter(e.target.value || null)}
           className="p-2 border rounded"
         >
-          <option value="all">Kaikki kohteet</option>
+          <option value="all">Kaikki yhteistyösopimukset</option>
           {Object.keys(data.destinations).map((program) => (
             <option key={program} value={program}>
               {program}
@@ -126,7 +126,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
         </div>
 
         {selectedCountry && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-6">
+        <div className="fixed top-1/3 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-6">
           <button
             onClick={() => setSelectedCountry(null)}
             className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-600"
@@ -142,7 +142,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
             {selectedCountry.universities.map((uni, index) => (
               <li key={index} className="border-b pb-4">
                 <h3 className="font-semibold">{uni.title}</h3>
-                <p className="text-gray-600">{uni.program}</p>
+                <p className="">{uni.program}</p>
                 {uni.link && (
                   <a
                     href={uni.link}
@@ -150,7 +150,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
                     rel="noopener noreferrer"
                     className="inline-block mt-2 px-4 py-2 bg-[#FF5000] text-white rounded-lg shadow hover:bg-[#e04e00]"
                   >
-                    Vieraile
+                    Vieraile verkkosivulla
                   </a>
                 )}
               </li>

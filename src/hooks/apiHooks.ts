@@ -1,20 +1,34 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
-import { DestinationWithCoordinatesResponse} from 'va-hybrid-types/contentTypes'
+import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes";
 
-const useDestinationData = (field: "tech" | "health" | "culture" | "business" = "tech", useMock: boolean) => {
-  const [destinationArray, setDestinationArray] = useState<DestinationWithCoordinatesResponse | null>(null);
+// simple cache that survives re-renders but not page reloads
+const destinationCache: Record<string, DestinationWithCoordinatesResponse> = {};
+
+const useDestinationData = (
+  field: "tech" | "health" | "culture" | "business" = "tech",
+  useMock: boolean
+) => {
+  const [destinationArray, setDestinationArray] =
+    useState<DestinationWithCoordinatesResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
-    console.log("API URL:", apiUrl);
     if (!apiUrl) {
-      console.error("NEXT_PUBLIC_CONTENT_API is not defined in environment variables");
+      console.error(
+        "NEXT_PUBLIC_CONTENT_API is not defined in environment variables"
+      );
       setError("API URL not configured");
       return;
+    }
+
+    // check if data is cached
+    if (destinationCache[field]) {
+      setDestinationArray(destinationCache[field]);
+      return; // don’t fetch again
     }
 
     const controller = new AbortController();
@@ -24,8 +38,16 @@ const useDestinationData = (field: "tech" | "health" | "culture" | "business" = 
         setLoading(true);
         setError(null);
 
-        const url = useMock ? "/testDestinations.json" : `${apiUrl}/data/metropolia/destinations?field=${field}`;
-        const data = await fetchData<DestinationWithCoordinatesResponse>(url, { signal: controller.signal });
+        const url = useMock
+          ? "/testDestinations.json"
+          : `${apiUrl}/data/metropolia/destinations?field=${field}`;
+
+        const data = await fetchData<DestinationWithCoordinatesResponse>(url, {
+          signal: controller.signal,
+        });
+
+        // 2️⃣ store in cache
+        destinationCache[field] = data;
         setDestinationArray(data);
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {
@@ -42,7 +64,7 @@ const useDestinationData = (field: "tech" | "health" | "culture" | "business" = 
     return () => {
       controller.abort();
     };
-  }, [field]); // refetch will happen if field changes
+  }, [field, useMock]);
 
   return { destinationArray, loading, error };
 };

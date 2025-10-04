@@ -2,6 +2,7 @@
 import { useDestinationData } from "@/hooks/apiHooks";
 import React, { useState } from "react";
 import DestinationList from "@/components/DestinationList";
+import Image from "next/image";
 
 const DestinationMap = React.lazy(() => import("@/components/DestinationMap"));
 
@@ -37,12 +38,19 @@ const DestinationsPage = () => {
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-18 text-[#FF5000] text-center">
+      <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">
         Kansainväliset yhteistyökorkeakoulut
       </h1>
+      <Image
+        src="/liito-orava-liput.png"
+        alt="Liito orava"
+        width={940} // intrinsic width
+        height={814} // intrinsic height
+        className="max-w-[300] h-auto mx-auto"
+      />
 
       {/** field switcher */}
-      <div className="text-center overflow-hidden rounded-lg my-18 p-4">
+      <div className="text-center overflow-hidden rounded-lg my-6 p-4">
         {/** Header for the switch */}
         <h2 className="text-lg mb-4">
           Valitse koulutusala rajataksesi tuloksia
@@ -56,10 +64,10 @@ const DestinationsPage = () => {
               e.target.value as "tech" | "health" | "culture" | "business"
             )
           }
-          className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000] text-gray-700"
+          className="px-6 py-2 rounded-full bg-[#8ceba5] font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
         >
           {Object.entries(fieldLabels).map(([field, label]) => (
-            <option key={field} value={field}>
+            <option key={field} value={field} className="text-gray-800">
               {label}
             </option>
           ))}
