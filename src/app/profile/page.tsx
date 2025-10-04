@@ -67,11 +67,11 @@ export default function ProfilePage() {
 
       <div className="mt-6 space-y-4 w-full max-w-xs">
         <button className={buttonClassName}>
-          <span> Favorite destinations ({profile.favorites.length})</span>
+          <span> Favorite destinations ({profile.favorites?.length || 0})</span>
           <span>›</span>
         </button>
         <button className={buttonClassName}>
-          <span> Documents ({profile.documents.length})</span>
+          <span> Documents ({profile.documents?.length || 0})</span>
           <span>›</span>
         </button>
         

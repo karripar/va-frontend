@@ -81,11 +81,10 @@ const useProfileData = (userId?: string) => {
         setLoading(true);
         setError(null);
 
-        // For development, use local Next.js API route
-        // In production, this would use the external API
+        // Use the actual backend API
         const endpoint = userId 
-          ? `/api/profile/${userId}` 
-          : `/api/profile`;
+          ? `${apiUrl}/profile/${userId}` 
+          : `${apiUrl}/profile`;
 
         console.log("Fetching profile from:", endpoint);
 
