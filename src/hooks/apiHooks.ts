@@ -40,11 +40,12 @@ const useDestinationData = (
 
         const url = useMock
           ? "/testDestinations.json"
-          : `${apiUrl}/data/metropolia/destinations?field=${field}`;
+          : `${apiUrl}/data/metropolia/destinations?field=${field}&lang=fi`;
 
         const data = await fetchData<DestinationWithCoordinatesResponse>(url, {
           signal: controller.signal,
         });
+        console.log("Fetched destinations:", data);
 
         // 2️⃣ store in cache
         destinationCache[field] = data;
