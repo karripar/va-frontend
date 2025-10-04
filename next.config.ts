@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: false
   },
+  trailingSlash: false,
   async rewrites() {
     return [
       {

@@ -13,7 +13,6 @@ const fieldLabels: Record<string, string> = {
   business: "Liiketalous",
 };
 
-
 const DestinationsPage = () => {
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
