@@ -2,9 +2,7 @@
 import { useProfileData } from "@/hooks/apiHooks"; // Adjust import path to match your project structure
 import React from "react";
 export default function ProfilePage() {
-  // Use the custom hook - it handles loading, error, and data fetching
-  // If you need a specific user ID, pass it: useProfileData("1")
-  // For current authenticated user, use: useProfileData()
+ 
   const { profileData: profile, loading, error } = useProfileData();
   
   const buttonClassName = "w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] flex justify-between items-center text-gray-800 transition-colors";
