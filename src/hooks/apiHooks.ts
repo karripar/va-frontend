@@ -1,24 +1,12 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
-import {ProfileResponse} from "va-hybrid-types/contentTypes";
-import {DestinationResponse} from 'va-hybrid-types/contentTypes';
+import { ProfileResponse } from "va-hybrid-types/contentTypes";
+import { DestinationResponse } from 'va-hybrid-types/contentTypes';
 
-// I decided to define ProfileResponse type locally here for now ----> to be fixed!
-/*type ProfileResponse = {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    registeredAt: string;
-    favorites: string[];
-    documents: string[];
-  };
-  favorites: string[];
-  documents: string[];
-
-};
-*/
+/**
+ * Hook to fetch destination data from the content API
+ */
 const useDestinationData = () => {
   const [destinationArray, setDestinationArray] = useState<DestinationResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -40,8 +28,9 @@ const useDestinationData = () => {
         setLoading(true);
         setError(null);
 
+        // apiUrl already includes /api/v1
         const data = await fetchData<DestinationResponse>(
-          `${apiUrl}/data/metropolia/destinations?`,
+          `${apiUrl}/destinations`,
           { signal: controller.signal }
         );
 
@@ -65,18 +54,26 @@ const useDestinationData = () => {
 
   return { destinationArray, loading, error };
 };
-const useProfileData = () => {
+
+/**
+ * Hook to fetch profile data from the user API
+ * @param userId - Optional user ID. If not provided, fetches current authenticated user
+ */
+const useProfileData = (userId?: string) => {
   const [profileData, setProfileData] = useState<ProfileResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_USER_API;
+    
     if (!apiUrl) {
       console.error("NEXT_PUBLIC_USER_API is not defined in environment variables");
       setError("API URL not configured");
+      setLoading(false);
       return;
     }
+
     const controller = new AbortController();
 
     const fetchProfile = async () => {
@@ -84,8 +81,16 @@ const useProfileData = () => {
         setLoading(true);
         setError(null);
 
+        // For development, use local Next.js API route
+        // In production, this would use the external API
+        const endpoint = userId 
+          ? `/api/profile/${userId}` 
+          : `/api/profile`;
+
+        console.log("Fetching profile from:", endpoint);
+
         const data = await fetchData<ProfileResponse>(
-          `${apiUrl}/data/metropolia/profile`,
+          endpoint,
           { signal: controller.signal }
         );
 
@@ -105,7 +110,7 @@ const useProfileData = () => {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [userId]);
 
   return { profileData, loading, error };
 };
