@@ -23,7 +23,7 @@ const navigationCategories = [
     links: [
       { href: "/kokemukset", label: "Kokemukset ja vinkit" },
       { href: "/ai-chat", label: "AI Chat ja FAQ" },
-      { href: "/ota-yhteytta", label: "Ota yhteyttä" },
+      { href: "/contact", label: "Ota yhteyttä" },
     ],
   },
   {
@@ -43,7 +43,7 @@ const hamburgerLinks = [
   { href: "/apurahat", label: "Apurahat ja kustannukset" },
   { href: "/kokemukset", label: "Kokemukset ja vinkit" },
   { href: "/ai-chat", label: "AI Chat ja FAQ" },
-  { href: "/ota-yhteytta", label: "Ota yhteyttä" },
+  { href: "/contact", label: "Ota yhteyttä" },
 ];
 
 // navigation
