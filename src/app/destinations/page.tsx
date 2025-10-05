@@ -46,7 +46,8 @@ const DestinationsPage = () => {
         alt="Liito orava"
         width={940} // intrinsic width
         height={814} // intrinsic height
-        className="max-w-[300] h-auto mx-auto"
+        // hover effect with tailwind
+        className="max-w-[200] h-auto mx-auto mb-6 hover:rotate-360 transition-transform duration-300"
       />
 
       {/** field switcher */}
