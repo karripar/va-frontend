@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vaihtoaktivaattori – Frontend
 
-## Getting Started
+Frontend repository for the **Vaihtoaktivaattori** project (Mediapalveluprojekti course).
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+User interface for exploring and managing international exchange opportunities.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js
+- Tailwind CSS
+- React
+- Leaflet
+- Vitest + React Testing Library
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+- Frontend implementation of the project includes a live ai-chat implementation for users to get help from a trained AI assistant.
+- Contact page for contacting the page admins for pressing topics, technical issues, guidance.
+- Destinations page for viewing current Metropolia Exchange partner schools and destinations with an interactive Leaflet map.
+- Mobile first design with responsive user interface and simplistic but eye catching design.
+- Users can sign in with their Google account, making signing in easy and efficient. 
+- Users can save their favorite documents and destinations.
+- Get up-to-date information about the current exchange application process and information about important dates.
+- Information about financial support and help before and during the exchange - such as student housing, living costs, student allowance and financial aid.
+- Tips for students heading towards their international student exchange.
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
