@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
-import { DefaultIcon } from "../../leafletConfig";
+import { DefaultIcon } from "../../../leafletConfig";
 import MapSearchbar from "./MapSearchbar";
 
 interface DestinationMapProps {
