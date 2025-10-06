@@ -1,8 +1,9 @@
 "use client";
-import { useProfileData } from "@/hooks/apiHooks"; 
-import React from "react";
+import { useProfileData } from "@/hooks/apiHooks";
+import Link from "next/link";
+import { FaEdit } from "react-icons/fa";
+
 export default function ProfilePage() {
- 
   const { profileData: profile, loading, error } = useProfileData();
   
   const buttonClassName = "w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] flex justify-between items-center text-gray-800 transition-colors";
@@ -42,56 +43,70 @@ export default function ProfilePage() {
 
   // Render profile data
   return (
-    <div className="flex flex-col items-center p-4">
-      <h1 className="text-xl font-bold">Hey {profile.userName}, welcome to your profile!</h1>
-      
-      {/* Optional: Display user's avatar if available */}
-      {profile.avatarUrl && (
-        <img 
-          src={profile.avatarUrl} 
-          alt={`${profile.userName}'s avatar`}
-          className="w-20 h-20 rounded-full mt-4"
-        />
-      )}
-      
-      {/* Optional: Display exchange badge if user has it */}
-      {profile.exchangeBadge && (
-        <span className="mt-2 px-3 py-1 bg-[#5B9FED] text-white rounded-full text-sm">
-           Exchange Student
-        </span>
-      )}
-      
-      <p className="mt-2 text-gray-600 text-center">
-        Welcome to your profile, here you can browse your saved exchange destinations and documents.
-      </p>
-
-      <div className="mt-6 space-y-4 w-full max-w-xs">
-        <button className={buttonClassName}>
-          <span> Favorite destinations ({profile.favorites?.length || 0})</span>
-          <span>›</span>
-        </button>
-        <button className={buttonClassName}>
-          <span> Documents ({profile.documents?.length || 0})</span>
-          <span>›</span>
-        </button>
-        
-        {/* Optional: LinkedIn link if available */}
-        {profile.linkedinUrl && (
-          <a 
-            href={profile.linkedinUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] flex justify-between items-center text-gray-800 transition-colors"
-          >
-            <span> LinkedIn Profile</span>
-            <span>↗</span>
-          </a>
-        )}
+    <div className="min-h-screen bg-gray-50">
+      {/* Orange Header with Title (Centered) and Edit Icon */}
+      <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
+        <h1 className="text-2xl font-bold">Profiili</h1>
+        <Link
+          href="/profile/edit"
+          className="absolute right-4 text-white hover:text-gray-200 transition-colors"
+        >
+          <FaEdit size={24} />
+        </Link>
       </div>
 
-      {/* Optional: Display additional info */}
-      <div className="mt-8 text-sm text-gray-500">
-        <p>Member since: {new Date(profile.registeredAt).toLocaleDateString('fi-FI')}</p>
+      {/* Profile Content */}
+      <div className="flex flex-col items-center p-6">
+        {/* Avatar */}
+        {profile.avatarUrl && (
+          <img 
+            src={profile.avatarUrl} 
+            alt={`${profile.userName}'s avatar`}
+            className="w-24 h-24 rounded-full mb-4"
+          />
+        )}
+
+        {/* Exchange badge ---> Oikea käyttäjän nimi tulee myöhemmin autentikoinnin logikkojen tekemisen jälkeen */}
+        {profile.exchangeBadge && (
+          <span className="mb-4 px-4 py-2 bg-[#5B9FED] text-white rounded-full text-sm font-medium">
+            Exchange Student
+          </span>
+        )}
+        
+        {/* Welcome text */}
+        <p className="text-gray-700 text-center text-sm mb-8 max-w-md leading-relaxed">
+          Tervetuloa profiiliisi, täällä voit selata tallentamiasi vaihtokohteitä sekä dokumentteja.
+        </p>
+
+        {/* Buttons */}
+        <div className="w-full max-w-md space-y-3">
+          <Link href="/profile/favorites" className={buttonClassName}>
+            <span>Suosikki kohteet ({profile.favorites?.length || 0})</span>
+            <span>›</span>
+          </Link>
+          <Link href="/profile/documents" className={buttonClassName}>
+            <span>Dokumentit ({profile.documents?.length || 0})</span>
+            <span>›</span>
+          </Link>
+          
+          {/* LinkedIn link */}
+          {profile.linkedinUrl && (
+            <a 
+              href={profile.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonClassName}
+            >
+              <span>LinkedIn Profile</span>
+              <span>↗</span>
+            </a>
+          )}
+        </div>
+
+        {/* Member since */}
+        <div className="mt-8 text-sm text-gray-500">
+          <p>Member since: {new Date(profile.registeredAt).toLocaleDateString('fi-FI')}</p>
+        </div>
       </div>
     </div>
   );
