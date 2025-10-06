@@ -69,18 +69,26 @@ const useDestinationData = (
 
   return { destinationArray, loading, error };
 };
-const useProfileData = () => {
+
+/**
+ * Hook to fetch profile data from the user API
+ * @param userId - Optional user ID. If not provided, fetches current authenticated user
+ */
+const useProfileData = (userId?: string) => {
   const [profileData, setProfileData] = useState<ProfileResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_USER_API;
+    const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+    
     if (!apiUrl) {
-      console.error("NEXT_PUBLIC_USER_API is not defined in environment variables");
+      console.error("NEXT_PUBLIC_AUTH_API is not defined in environment variables");
       setError("API URL not configured");
+      setLoading(false);
       return;
     }
+
     const controller = new AbortController();
 
     const fetchProfile = async () => {
@@ -88,8 +96,15 @@ const useProfileData = () => {
         setLoading(true);
         setError(null);
 
+        // Use the actual backend API
+        const endpoint = userId 
+          ? `${apiUrl}/profile/${userId}` 
+          : `${apiUrl}/profile`;
+
+        console.log("Fetching profile from:", endpoint);
+
         const data = await fetchData<ProfileResponse>(
-          `${apiUrl}/data/metropolia/profile`,
+          endpoint,
           { signal: controller.signal }
         );
 
@@ -109,7 +124,7 @@ const useProfileData = () => {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [userId]);
 
   return { profileData, loading, error };
 };

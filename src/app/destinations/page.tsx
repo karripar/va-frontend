@@ -1,10 +1,10 @@
 "use client";
 import { useDestinationData } from "@/hooks/apiHooks";
 import React, { useState } from "react";
-import DestinationList from "@/components/DestinationList";
+import DestinationList from "@/components/exchange-destinations/DestinationList";
 import Image from "next/image";
 
-const DestinationMap = React.lazy(() => import("@/components/DestinationMap"));
+const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
 
 const fieldLabels: Record<string, string> = {
   tech: "Tekniikka",
@@ -37,7 +37,7 @@ const DestinationsPage = () => {
   }
 
   return (
-    <div className="p-4 max-w-md mx-auto">
+    <div className="p-4 mt-4 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">
         Kansainväliset yhteistyökorkeakoulut
       </h1>
@@ -46,12 +46,11 @@ const DestinationsPage = () => {
         alt="Liito orava"
         width={940} // intrinsic width
         height={814} // intrinsic height
-        className="max-w-[300] h-auto mx-auto"
+        className="max-w-[200] h-auto mx-auto mb-6 hover:rotate-360 transition-transform duration-300"
       />
 
       {/** field switcher */}
-      <div className="text-center overflow-hidden rounded-lg my-6 p-4">
-        {/** Header for the switch */}
+      <div className="text-center overflow-hidden rounded-lg my-6 p-4 ">
         <h2 className="text-lg mb-4">
           Valitse koulutusala rajataksesi tuloksia
         </h2>
@@ -64,10 +63,10 @@ const DestinationsPage = () => {
               e.target.value as "tech" | "health" | "culture" | "business"
             )
           }
-          className="px-6 py-2 rounded-full bg-[#8ceba5] font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
+          className="px-6 py-2 bg-[var(--va-mint-50)] rounded-full font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]" 
         >
           {Object.entries(fieldLabels).map(([field, label]) => (
-            <option key={field} value={field} className="text-gray-800">
+            <option key={field} value={field} className="text-[var(--typography)] bg-[var(--background)]">
               {label}
             </option>
           ))}

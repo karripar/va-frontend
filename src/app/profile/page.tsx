@@ -1,61 +1,106 @@
 "use client";
-import React from  'react'
-import{useProfileData} from "@/hooks/apiHooks"
-
+import { useProfileData } from "@/hooks/apiHooks";
+import React from "react";
+import Image from "next/image";
 
 export default function ProfilePage() {
-    const { profileData, loading, error } = useProfileData();
-    const user = profileData?.user;
-    if (loading) {
-        return <div className="flex justify-center items-center h-screen text-gray-500">
-                    Ladataan profiilitietoja...
-                </div>;
-    }
-    if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">
-      <p>Virhe: {error}</p>
-        </div>;
-    }
-    if (!user) {
-    return <div className="flex justify-center items-center h-screen text-gray-500">
-      <p>Profiilia ei löytynyt.</p>
-    </div>;
-  }
-    const userName = user?.name || "Käyttäjä";
+  const { profileData: profile, loading, error } = useProfileData();
+
+  const buttonClassName =
+    "w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange)] flex justify-between items-center text-[var(--typography)] transition-colors";
+
+  // Handle loading state
+  if (loading) {
     return (
-    <div className="p-6 max-w-md mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-[#FF5000] text-center">Hei {userName}!</h1>
-      <p className="text-gray-600 text-center">
-        Tervetuloa profiiliisi – täältä löydät tallentamasi vaihtokohteet ja dokumentit.
+      <div className="flex flex-col items-center p-4 mt-8">
+        <p>Ladataan profiilia...</p>
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (error) {
+    return (
+      <div className="flex flex-col items-center p-4 mt-8">
+        <p className="text-red-500">Virhe: {error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-8 px-4 py-2 bg-[var(--va-mint-50)] text-[var(--typography)] rounded-md hover:bg-[var(--va-mint)] hover:scale-105 cursor-pointer"
+        >
+          Yritä uudelleen
+        </button>
+      </div>
+    );
+  }
+
+  // Handle no data state
+  if (!profile) {
+    return (
+      <div className="flex flex-col items-center p-4 mt-8">
+        <p>Profiilia ei löytynyt</p>
+      </div>
+    );
+  }
+
+  // Render profile data
+  return (
+    <div className="flex flex-col items-center p-4 mt-8">
+      <h1 className="text-xl font-bold">
+        Hey {profile.userName}, welcome to your profile!
+      </h1>
+      
+      {profile.avatarUrl && (
+        <Image
+          src={profile.avatarUrl}
+          alt={`${profile.userName}'s avatar`}
+          width={80}
+          height={80}
+          className="w-20 h-20 rounded-full mt-4"
+        />
+      )}
+      {/* Optional: Display exchange badge if user has it */}
+      {profile.exchangeBadge && (
+        <span className="mt-2 px-3 py-1 bg-[var(--va-orange-50)] text-white rounded-full text-sm">
+          Exchange Student
+        </span>
+      )}
+
+      <p className="mt-2 text-[var(--typography)] text-center">
+        Welcome to your profile, here you can browse your saved exchange
+        destinations and documents.
       </p>
 
-      {/* Suosikit */}
-      <section>
-        <h2 className="text-lg font-semibold mb-2"> Suosikkikohteet</h2>
-        {user.favorites && user.favorites.length > 0 ? (
-          <ul className="list-disc list-inside">
-            {user.favorites.map((fav: string, i: number) => (
-              <li key={i}>{fav}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">Ei suosikkeja vielä.</p>
-        )}
-      </section>
+      <div className="mt-6 space-y-4 w-full max-w-xs">
+        <button className={buttonClassName}>
+          <span> Favorite destinations ({profile.favorites?.length || 0})</span>
+          <span>›</span>
+        </button>
+        <button className={buttonClassName}>
+          <span> Documents ({profile.documents?.length || 0})</span>
+          <span>›</span>
+        </button>
 
-      {/* Dokumentit */}
-      <section>
-        <h2 className="text-lg font-semibold mb-2"> Dokumentit</h2>
-        {user.documents && user.documents.length > 0 ? (
-          <ul className="list-disc list-inside">
-            {user.documents.map((doc: string, i: number) => (
-              <li key={i}>{doc}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">Ei dokumentteja tallennettuna.</p>
+        {/* Optional: LinkedIn link if available */}
+        {profile.linkedinUrl && (
+          <a
+            href={profile.linkedinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange] flex justify-between items-center text-[var(--typography)] transition-colors"
+          >
+            <span> LinkedIn Profile</span>
+            <span>↗</span>
+          </a>
         )}
-      </section>
+      </div>
+
+      {/* Optional: Display additional info */}
+      <div className="mt-8 text-sm text-[var(--typography)]">
+        <p>
+          Member since:{" "}
+          {new Date(profile.registeredAt).toLocaleDateString("fi-FI")}
+        </p>
+      </div>
     </div>
   );
 }

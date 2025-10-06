@@ -16,21 +16,21 @@ export default function Home() {
             alt=""
             width={140}
             height={140}
-            className="absolute md:top-2 lg:right-10 top-1 right-0 w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 "
+            className="absolute md:top-2 lg:right-10 top-1 right-0 w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 hover:animate-spin"
           />
           <Image
             src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-07.png"
             alt=""
             width={140}
             height={140}
-            className="absolute lg:left-30 -bottom-2 left-16 w-28 h-28 lg:w-36 lg:h-36 md:w-32 md:h-32"
+            className="absolute lg:left-30 -bottom-2 left-16 w-28 h-28 lg:w-36 lg:h-36 md:w-32 md:h-32 hover:animate-spin"
           />
           <Image
             src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png"
             alt=""
             width={100}
             height={100}
-            className="absolute md:bottom-6 lg:left-10 left-0 bottom-4 w-24 h-24 md:w-24 md:h-24 lg:w-30 lg:h-30"
+            className="absolute md:bottom-6 lg:left-10 left-0 bottom-4 w-24 h-24 md:w-24 md:h-24 lg:w-30 lg:h-30 hover:animate-bounce"
           />
         </div>
 
@@ -47,7 +47,7 @@ export default function Home() {
               fontFamily: "var(--font-montreal-mono-medium)",
             }}
           >
-            Löydä kohdemaat, apurahat ja vinkit yhdestä paikasta.
+            Löydä hakuohjeet, kohdemaat, apurahat ja vinkit yhdestä paikasta.
           </p>
         </div>
       </section>
@@ -65,7 +65,7 @@ export default function Home() {
               }
               title="VAIHTOON HAKEMINEN"
               description="Tutustu hakuprosessiin ja ohjeisiin askel askeleelta"
-              href="/hakuprosessi"
+              href="/instructions"
             />
             <Card
               icon={
@@ -76,7 +76,7 @@ export default function Home() {
               }
               title="APURAHAT"
               description="Katso apurahat ja mahdolliset kustannukset"
-              href="/apurahat"
+              href="/grants"
             />
             <Card
               icon={<FiGlobe className="text-[var(--va-orange)]" size={38} />}
