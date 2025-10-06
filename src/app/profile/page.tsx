@@ -9,7 +9,7 @@ export default function ProfilePage() {
   const buttonClassName =
     "w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange)] flex justify-between items-center text-[var(--typography)] transition-colors";
 
-  // Handle loading state
+  // Handling loading state
   if (loading) {
     return (
       <div className="flex flex-col items-center p-4 mt-8">
@@ -18,7 +18,7 @@ export default function ProfilePage() {
     );
   }
 
-  // Handle error state
+  // Handling error state
   if (error) {
     return (
       <div className="flex flex-col items-center p-4 mt-8">
@@ -33,7 +33,7 @@ export default function ProfilePage() {
     );
   }
 
-  // Handle no data state
+  // Handling no data state
   if (!profile) {
     return (
       <div className="flex flex-col items-center p-4 mt-8">
@@ -42,7 +42,7 @@ export default function ProfilePage() {
     );
   }
 
-  // Render profile data
+  // Rendering profile data
   return (
     <div className="flex flex-col items-center p-4 mt-8">
       <h1 className="text-xl font-bold">
@@ -58,7 +58,7 @@ export default function ProfilePage() {
           className="w-20 h-20 rounded-full mt-4"
         />
       )}
-      {/* Optional: Display exchange badge if user has it */}
+      {/* Displaying exchange badge if user has it */}
       {profile.exchangeBadge && (
         <span className="mt-2 px-3 py-1 bg-[var(--va-orange-50)] text-white rounded-full text-sm">
           Exchange Student
@@ -80,7 +80,7 @@ export default function ProfilePage() {
           <span>›</span>
         </button>
 
-        {/* Optional: LinkedIn link if available */}
+        {/* LinkedIn link if available */}
         {profile.linkedinUrl && (
           <a
             href={profile.linkedinUrl}
@@ -92,9 +92,8 @@ export default function ProfilePage() {
             <span>↗</span>
           </a>
         )}
-      </div>
 
-      {/* Optional: Display additional info */}
+      {/* Displaying additional info */}
       <div className="mt-8 text-sm text-[var(--typography)]">
         <p>
           Member since:{" "}
