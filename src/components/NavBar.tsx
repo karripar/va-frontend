@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import ToggleSwitch from "./LanguageToggle";
+import Image from "next/image";
 
 // navigaation kategoriat
 const navigationCategories = [
@@ -90,7 +91,7 @@ const Navbar = () => {
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
         <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl sm:text-md px-2 shadow-lg">
-          <div className="mx-auto px-4 h-25 flex items-center justify-between">
+          <div className="mx-auto px-4 h-20 flex items-center justify-between">
             <button
               aria-label={mobileMenuOpen ? "Sulje valikko" : "Avaa valikko"}
               className="cursor-pointer p-2 -ml-2 z-60"
@@ -117,23 +118,31 @@ const Navbar = () => {
       {/* Desktop header and navigation*/}
       <div className="hidden md:block sticky top-0 z-50 bg-[var(--background)]">
         <div
-          className="px-6 py-6 text-center sm:text-2xl text-md shadow-lg tracking-wider relative"
-          style={{
-            color: "var(--background)",
-            backgroundColor: "var(--va-orange)",
-            fontFamily: "var(--font-machina-bold)",
-          }}
-        >
-          <ToggleSwitch isEn={isEn} onToggle={handleLanguageToggle} />
-          {currentPageInfo.page}
-        </div>
-
-        <div
           className="navbar shadow-md bg-[var(--background)]"
           style={{
             color: "var(--typography)",
           }}
         >
+          <div
+            className="px-6 py-6 text-center sm:text-2xl text-md shadow-lg tracking-wider relative items-center flex justify-center"
+            style={{
+              color: "var(--background)",
+              backgroundColor: "var(--va-orange)",
+              fontFamily: "var(--font-machina-bold)",
+            }}
+          >
+            <Link href={"/"}>
+              <Image
+              className="absolute left-0 ml-4 top-0 mt-2"
+                alt="Logo"
+                src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-05.png"
+                width={70}
+                height={70}
+              />
+            </Link>
+            {currentPageInfo.page}
+            <ToggleSwitch isEn={isEn} onToggle={handleLanguageToggle} />
+          </div>
           <div className="flex flex-row m-auto z-10 gap-16 justify-center px-4">
             {navigationCategories.map((category) => (
               <div
@@ -240,7 +249,7 @@ const Navbar = () => {
         aria-label="Sivunavigaatio"
       >
         <div
-          className="h-25 flex items-center justify-between px-4 tracking-wide"
+          className="h-20 flex items-center justify-between px-4 tracking-wide"
           style={{
             backgroundColor: "var(--va-orange)",
             color: "var(--background)",

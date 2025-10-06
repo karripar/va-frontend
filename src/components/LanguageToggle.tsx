@@ -10,7 +10,7 @@ function ToggleSwitch({
   onToggle: () => void;
 }) {
   return (
-    <div className={isMobileMenu ? "" : "absolute left-0 top-5 md:ml-6 ml-4"}>
+    <div className={isMobileMenu ? "" : "absolute right-0 top-5 md:mr-6 mr-4"}>
       <button
         onClick={onToggle}
         className="relative inline-flex h-8 w-20 items-center transition-colors duration-200 px-1 rounded-lg bg-[var(--background)] cursor-pointer"
