@@ -5,13 +5,14 @@ import { FaEdit } from "react-icons/fa";
 
 export default function ProfilePage() {
   const { profileData: profile, loading, error } = useProfileData();
-  
-  const buttonClassName = "w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] flex justify-between items-center text-gray-800 transition-colors";
+
+  const buttonClassName =
+    "w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange)] flex justify-between items-center text-[var(--typography)] transition-colors";
 
   // Handle loading state
   if (loading) {
     return (
-      <div className="flex flex-col items-center p-4">
+      <div className="flex flex-col items-center p-4 mt-8">
         <p>Ladataan profiilia...</p>
       </div>
     );
@@ -20,11 +21,11 @@ export default function ProfilePage() {
   // Handle error state
   if (error) {
     return (
-      <div className="flex flex-col items-center p-4">
+      <div className="flex flex-col items-center p-4 mt-8">
         <p className="text-red-500">Virhe: {error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-8 px-4 py-2 bg-[var(--va-mint-50)] text-[var(--typography)] rounded-md hover:bg-[var(--va-mint)] hover:scale-105 cursor-pointer"
         >
           Yritä uudelleen
         </button>
@@ -35,7 +36,7 @@ export default function ProfilePage() {
   // Handle no data state
   if (!profile) {
     return (
-      <div className="flex flex-col items-center p-4">
+      <div className="flex flex-col items-center p-4 mt-8">
         <p>Profiilia ei löytynyt</p>
       </div>
     );

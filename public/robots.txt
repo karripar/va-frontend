@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /testDestinations.json
+Disallow: /admin/
+Disallow: /drafts/
+Disallow: /private/
+Allow: /
+Sitemap: https://www.yourdomain.com/sitemap.xml
