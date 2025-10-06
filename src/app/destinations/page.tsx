@@ -46,12 +46,11 @@ const DestinationsPage = () => {
         alt="Liito orava"
         width={940} // intrinsic width
         height={814} // intrinsic height
-        className="max-w-[300] h-auto mx-auto"
+        className="max-w-[200] h-auto mx-auto mb-6 hover:rotate-360 transition-transform duration-300"
       />
 
       {/** field switcher */}
       <div className="text-center overflow-hidden rounded-lg my-6 p-4">
-        {/** Header for the switch */}
         <h2 className="text-lg mb-4">
           Valitse koulutusala rajataksesi tuloksia
         </h2>

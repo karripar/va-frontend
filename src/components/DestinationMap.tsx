@@ -126,7 +126,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
         </div>
 
         {selectedCountry && (
-        <div className="fixed top-1/3 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-6">
+        <div className="fixed top-1/6 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-6">
           <button
             onClick={() => setSelectedCountry(null)}
             className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-600"

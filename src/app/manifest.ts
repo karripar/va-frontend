@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { ProfileResponse, DestinationResponse } from "va-hybrid-types/contentTypes";
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
@@ -11,7 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
         theme_color: '#FF5000',
         icons: [
             {
-                src: '/app-icon-192x192.png', // TODO: Add icons to public folder and update paths
+                src: '/app-icon-192x192.png', // TODO: Add icons to public folder and update paths. Currently using placeholders.
                 sizes: '192x192',
                 type: 'image/png',
             },
