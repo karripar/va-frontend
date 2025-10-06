@@ -1,10 +1,10 @@
 "use client";
 import { useDestinationData } from "@/hooks/apiHooks";
 import React, { useState } from "react";
-import DestinationList from "@/components/DestinationList";
+import DestinationList from "@/components/exchange-destinations/DestinationList";
 import Image from "next/image";
 
-const DestinationMap = React.lazy(() => import("@/components/DestinationMap"));
+const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
 
 const fieldLabels: Record<string, string> = {
   tech: "Tekniikka",
