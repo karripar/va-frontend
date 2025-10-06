@@ -1,136 +1,220 @@
-'use client';
-import { useState } from 'react';
-import Link from 'next/link';
-import {
-  FiMenu,
-  FiX,
-  FiMessageSquare,
-  FiGlobe,
-  FiFileText,
-} from 'react-icons/fi';
-
-const navItems = [
-  { label: 'ETUSIVU', active: true },
-  { label: 'HAKUPROSESSI JA OHJEET' },
-  { label: 'VAIHTOKOHTEET' },
-  { label: 'APURAHAT JA KUSTANNUKSET' },
-  { label: 'KOKEMUKSET JA VINKIT' },
-  { label: 'AI-CHAT JA FAQ' },
-  { label: 'PROFIILI' },
-  { label: 'OTA YHTEYTTÄ' },
-];
+"use client";
+import Link from "next/link";
+import Image from "next/image";
+import { FiMessageSquare, FiGlobe, FiFileText } from "react-icons/fi";
+import { RiMoneyEuroCircleLine } from "react-icons/ri";
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-      {/* Top bar */}
-      <header className="sticky top-0 z-30 bg-[var(--va-orange)] text-white">
-        <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
-          <button
-            aria-label={open ? 'Sulje valikko' : 'Avaa valikko'}
-            className="p-2 -ml-2 rounded-md hover:bg-white/10 focus-ring"
-            onClick={() => setOpen((v) => !v)}
+    <div className="min-h-screen bg-[var(--background)]">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-[var(--va-orange-50)] pt-16 pb-10 md:mb-16 mb-12 shadow-lg">
+        {/* Liito-orava images */}
+        <div className="absolute inset-0 max-w-400">
+          <Image
+            src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-03.png"
+            alt=""
+            width={140}
+            height={140}
+            className="absolute md:top-2 lg:right-10 top-1 right-0 w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 hover:animate-spin"
+          />
+          <Image
+            src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-07.png"
+            alt=""
+            width={140}
+            height={140}
+            className="absolute lg:left-30 -bottom-2 left-16 w-28 h-28 lg:w-36 lg:h-36 md:w-32 md:h-32 hover:animate-spin"
+          />
+          <Image
+            src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png"
+            alt=""
+            width={100}
+            height={100}
+            className="absolute md:bottom-6 lg:left-10 left-0 bottom-4 w-24 h-24 md:w-24 md:h-24 lg:w-30 lg:h-30 hover:animate-bounce"
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-4xl px-6 lg:px-10 text-center py-12 mt-6 mb-6">
+          <h1
+            className="text-2xl md:text-3xl lg:text-4xl tracking-wider text-[var(--typography)] mb-6 uppercase text-shadow-sm"
+            style={{ fontFamily: "var(--font-machina-bold)" }}
           >
-            {open ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
-          <div className="font-semibold tracking-wide uppercase">Etusivu</div>
-          <div className="w-6" />
-        </div>
-      </header>
-
-      {/* Drawer overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          onClick={() => setOpen(false)}
-          aria-hidden
-        />
-      )}
-
-      {/* Sidebar drawer */}
-      <aside
-        className={`fixed z-40 top-0 left-0 h-full w-[280px] bg-white border-r border-[var(--va-border)] shadow-lg transform transition-transform duration-200 ease-out ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}
-        aria-label="Sivunavigaatio"
-      >
-        <div className="h-14 bg-[var(--va-mint-80)] flex items-center px-4 font-semibold tracking-wide">
-          ETUSIVU
-        </div>
-        <nav className="px-4 py-3 space-y-2 overflow-y-auto h-[calc(100%-6rem)]">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href="#"
-              className={`block rounded-md px-3 py-2 text-sm font-semibold tracking-wide hover:bg-[var(--va-mint-60)] ${
-                item.active ? 'bg-[var(--va-mint-80)]' : ''
-              }`}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        <div className="absolute bottom-0 inset-x-0 p-4 border-t border-[var(--va-border)]">
-          <button className="w-full rounded-full bg-white border border-[var(--va-border)] px-4 py-2 text-xs font-bold tracking-wide text-[var(--va-orange)] hover:bg-[var(--va-mint-40)] focus-ring">
-            KIRJAUDU ULOS
-          </button>
-          <button
-            aria-label="Sulje valikko"
-            onClick={() => setOpen(false)}
-            className="absolute -right-6 bottom-4 bg-white rounded-full p-2 border border-[var(--va-border)] shadow"
+            Tervetuloa Metropolian vaihto­sovellukseen!
+          </h1>
+          <p
+            className="text-lg md:text-xl text-[var(--typography)] opacity-90 max-w-3xl mx-auto mb-8 animate-fade-in-up animation-delay-200"
+            style={{
+              fontFamily: "var(--font-montreal-mono-medium)",
+            }}
           >
-            <FiX />
-          </button>
+            Löydä hakuohjeet, kohdemaat, apurahat ja vinkit yhdestä paikasta.
+          </p>
         </div>
-      </aside>
-
+      </section>
       {/* Main content */}
-      <main className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-[280px_1fr]">
-        <div className="hidden lg:block" />
-        <section className="px-4 sm:px-6 lg:px-10 py-6">
-          <div className="mt-4 mb-6">
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-wide">
-              Tervetuloa Metropolian vaihto­sovellukseen!
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm text-[var(--va-muted)]">
-              Löydä kohdemaat, apurahat ja vinkit yhdestä paikasta.
-            </p>
-          </div>
-
-          {/* Action cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <main className="lg:mx-auto lg:px-10 py-6 rounded-md">
+        {/* Action cards */}
+        <div className="bg-[var(--va-grey-50)]  lg:max-w-6xl lg:mx-auto mx-4 p-8 mb-16 rounded-md">
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-6 uppercase"
+            style={{ fontFamily: "var(--font-machina-bold)" }}
+          >
             <Card
               icon={
-                <FiFileText className="text-[var(--va-orange)]" size={26} />
+                <FiFileText className="text-[var(--va-orange)]" size={38} />
               }
               title="VAIHTOON HAKEMINEN"
+              description="Tutustu hakuprosessiin ja ohjeisiin askel askeleelta"
+              href="/instructions"
             />
-            <Card icon={<CoinIcon />} title="APURAHAT" />
             <Card
-              icon={<FiGlobe className="text-[var(--va-orange)]" size={26} />}
-              title="KOHDEMAAT"
+              icon={
+                <RiMoneyEuroCircleLine
+                  className="text-[var(--va-orange)]"
+                  size={38}
+                />
+              }
+              title="APURAHAT"
+              description="Katso apurahat ja mahdolliset kustannukset"
+              href="/grants"
             />
-            <Link href="/ai-chat" className="block">
-              <Card
-                icon={
-                  <FiMessageSquare
-                    className="text-[var(--va-orange)]"
-                    size={26}
+            <Card
+              icon={<FiGlobe className="text-[var(--va-orange)]" size={38} />}
+              title="KOHDEMAAT"
+              description="Selaa partnerikouluja ja vaihtokohteita"
+              href="/destinations"
+            />
+            <Card
+              icon={
+                <FiMessageSquare
+                  className="text-[var(--va-orange)]"
+                  size={38}
+                />
+              }
+              title="AI–CHAT JA FAQ"
+              description="Kysy kysymyksiä AI:lta tai selaa usein kysyttyjä"
+              href="/ai-chat"
+            />
+          </div>
+        </div>
+
+        <section className="pt-16 pb-20 bg-[var(--va-grey-50)] lg:max-w-6xl lg:mx-auto mx-4 rounded-md">
+          <div className="px-6 lg:px-10">
+            <div className="text-center mb-8">
+              <h2
+                className="text-2xl md:text-3xl mb-4 tracking-wider"
+                style={{ fontFamily: "var(--font-machina-bold)" }}
+              >
+                MIKSI LÄHTEÄ VAIHTOON?
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center p-4">
+                <div className="mx-auto mb-4 flex items-center justify-center">
+                  <Image
+                    src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png"
+                    alt=""
+                    width={80}
+                    height={80}
+                    className="h-30 w-30"
                   />
-                }
-                title="AI–CHAT JA FAQ"
-              />
-            </Link>
+                </div>
+                <h3
+                  className="text-lg mb-4 tracking-wide"
+                  style={{ fontFamily: "var(--font-machina-bold)" }}
+                >
+                  KANSAINVÄLINEN KOKEMUS
+                </h3>
+                <p
+                  className="text-md"
+                  style={{ fontFamily: "var(--font-montreal-mono)" }}
+                >
+                  Kehitä kulttuurista ymmärrystä ja kansainvälistä näkökulmaa
+                </p>
+              </div>
+
+              <div className="text-center p-4">
+                <div className=" mx-auto mb-4 flex items-center justify-center">
+                  <Image
+                    src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-03.png"
+                    alt=""
+                    width={140}
+                    height={140}
+                    className="h-30 w-30"
+                  />
+                </div>
+                <h3
+                  className="text-lg mb-4 tracking-wide"
+                  style={{ fontFamily: "var(--font-machina-bold)" }}
+                >
+                  AKATEEMINEN KASVU
+                </h3>
+                <p
+                  className="text-md"
+                  style={{ fontFamily: "var(--font-montreal-mono)" }}
+                >
+                  Opi uusia menetelmiä ja laajenna osaamistasi eri näkökulmista
+                </p>
+              </div>
+
+              <div className="text-center p-4">
+                <div className=" mx-auto mb-4 flex items-center justify-center">
+                  <Image
+                    src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-09.png"
+                    alt=""
+                    width={80}
+                    height={80}
+                    className="h-30 w-30"
+                  />
+                </div>
+                <h3
+                  className="text-lg lg:mb-11 mb-2 tracking-wide"
+                  style={{ fontFamily: "var(--font-machina-bold)" }}
+                >
+                  URAETU
+                </h3>
+                <p
+                  className="text-md"
+                  style={{ fontFamily: "var(--font-montreal-mono)" }}
+                >
+                  Erottaudu työmarkkinoilla ja verkostoidu kansainvälisesti
+                </p>
+              </div>
+
+              <div className="text-center p-4">
+                <div className=" mx-auto mb-4 flex items-center justify-center">
+                  <Image
+                    src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-13.png"
+                    alt=""
+                    width={140}
+                    height={140}
+                    className="h-30 w-30"
+                  />
+                </div>
+                <h3
+                  className="text-lg mb-4 tracking-wide"
+                  style={{ fontFamily: "var(--font-machina-bold)" }}
+                >
+                  HENKILÖKOHTAINEN KASVU
+                </h3>
+                <p
+                  className="text-md"
+                  style={{ fontFamily: "var(--font-montreal-mono)" }}
+                >
+                  Vahvista itseluottamusta ja sopeutumiskykyä uusissa
+                  tilanteissa
+                </p>
+              </div>
+            </div>
           </div>
         </section>
       </main>
 
       {/* Vertical chat tab */}
       <a
-        href="#"
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-30 origin-right rotate-90 bg-[var(--va-orange)] text-white px-3 py-2 rounded-t-md shadow hover:brightness-95"
+        href="/ai-chat"
+        className="fixed -right-6 top-3/4 -translate-y-1/2 z-40 origin-center -rotate-90 bg-[var(--va-orange)] text-[var(--background)] px-4 py-3 rounded-t-md shadow hover:brightness-95 text-sm tracking-wider"
+        style={{ fontFamily: "var(--font-machina-bold)" }}
       >
         CHAT
       </a>
@@ -138,33 +222,52 @@ export default function Home() {
   );
 }
 
-function Card({ icon, title }: { icon: React.ReactNode; title: string }) {
-  return (
-    <div className="flex items-center gap-4 rounded-xl border border-[var(--va-border)] bg-[var(--va-card)] p-5 shadow-sm transition hover:shadow-md">
-      <div className="grid h-12 w-12 place-items-center rounded-md border-2 border-[var(--va-orange)] text-[var(--va-orange)]">
-        {icon}
+function Card({
+  icon,
+  title,
+  description,
+  href,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description?: string;
+  href?: string;
+}) {
+  const CardContent = () => (
+    <div className="bg-[var(--background)] group h-full flex flex-col gap-4 rounded-2xl border border-[var(--va-border)] p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-[var(--va-orange)] cursor-pointer hover:-translate-y-1">
+      <div className="flex items-start gap-4 flex-1">
+        <div className="grid place-items-center rounded-xl text-[var(--va-orange)] transition-all duration-300 flex-shrink-0">
+          {icon}
+        </div>
+        <div className="flex-1 flex flex-col">
+          <div className="font-extrabold text-lg tracking-wide text-[var(--typography)] group-hover:text-[var(--va-orange)] transition-colors duration-300 mb-2">
+            {title}
+          </div>
+          {description && (
+            <p
+              className="text-md text-[var(--typgraphy)] normal-case leading-relaxed flex-1"
+              style={{ fontFamily: "var(--font-montreal-mono-medium)" }}
+            >
+              {description}
+            </p>
+          )}
+        </div>
       </div>
-      <div className="font-extrabold text-sm tracking-wide">{title}</div>
+      <div className="flex justify-end mt-auto">
+        <span className="text-[var(--va-orange)] group-hover:translate-x-1 transition-transform duration-300 text-xl">
+          →
+        </span>
+      </div>
     </div>
   );
-}
 
-function CoinIcon() {
-  return (
-    <div className="text-[var(--va-orange)]" aria-hidden>
-      <svg
-        width="26"
-        height="26"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="9"></circle>
-        <path d="M12 6v12M8.5 9.5h5a2.5 2.5 0 1 1 0 5h-5" />
-      </svg>
-    </div>
-  );
+  if (href) {
+    return (
+      <Link href={href} className="block">
+        <CardContent />
+      </Link>
+    );
+  }
+
+  return <CardContent />;
 }

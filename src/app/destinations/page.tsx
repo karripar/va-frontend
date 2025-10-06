@@ -1,112 +1,82 @@
 "use client";
 import { useDestinationData } from "@/hooks/apiHooks";
 import React, { useState } from "react";
+import DestinationList from "@/components/exchange-destinations/DestinationList";
+import Image from "next/image";
+
+const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
+
+const fieldLabels: Record<string, string> = {
+  tech: "Tekniikka",
+  health: "Sosiaali- ja terveysala",
+  culture: "Kulttuuri",
+  business: "Liiketalous",
+};
 
 const DestinationsPage = () => {
-  const { destinationArray, loading, error } = useDestinationData();
-  const [openCountries, setOpenCountries] = useState<Record<string, boolean>>({});
+  const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
+
+  const [selectedField, setSelectedField] = useState<
+    "tech" | "health" | "culture" | "business"
+  >("tech");
+  const { destinationArray, loading, error } = useDestinationData(
+    selectedField,
+    useMockData
+  );
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen text-gray-500">
-        Loading...
-      </div>
-    );
+    return <div className="p-4 text-center">Loading destinations...</div>;
   }
 
   if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen text-red-500">
-        <p>Error: {error}</p>
-      </div>
-    );
+    return <div className="p-4 text-center text-red-500">Error: {error}</div>;
   }
 
   if (!destinationArray) {
-    return (
-      <div className="flex justify-center items-center h-screen text-gray-500">
-        <p>No destinations available.</p>
-      </div>
-    );
+    return <div className="p-4 text-center">No destinations available.</div>;
   }
 
-  const toggleCountry = (countryKey: string) => {
-    setOpenCountries((prev) => ({ ...prev, [countryKey]: !prev[countryKey] }));
-  };
-
   return (
-    <div className="p-4 max-w-md mx-auto">
+    <div className="p-4 mt-4 max-w-md mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">
-        Destinations
+        Kansainväliset yhteistyökorkeakoulut
       </h1>
-      <div className="mb-6 text-center text-gray-700">
-        Confirm current destination schools and programs offered by Metropolia from{" "}
-        <a
-          href="https://www.metropolia.fi/en/international-relations/partner-institutions/technology"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[#FF5000] hover:underline"
+      <Image
+        src="/liito-orava-liput.png"
+        alt="Liito orava"
+        width={940} // intrinsic width
+        height={814} // intrinsic height
+        className="max-w-[200] h-auto mx-auto mb-6 hover:rotate-360 transition-transform duration-300"
+      />
+
+      {/** field switcher */}
+      <div className="text-center overflow-hidden rounded-lg my-6 p-4 ">
+        <h2 className="text-lg mb-4">
+          Valitse koulutusala rajataksesi tuloksia
+        </h2>
+        {/** Buttons for the switch */}
+
+        <select
+          value={selectedField}
+          onChange={(e) =>
+            setSelectedField(
+              e.target.value as "tech" | "health" | "culture" | "business"
+            )
+          }
+          className="px-6 py-2 bg-[var(--va-mint-50)] rounded-full font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]" 
         >
-          here
-        </a>.
+          {Object.entries(fieldLabels).map(([field, label]) => (
+            <option key={field} value={field} className="text-[var(--typography)] bg-[var(--background)]">
+              {label}
+            </option>
+          ))}
+        </select>
       </div>
+      {/** Map */}
+      {destinationArray && <DestinationMap data={destinationArray} />}
 
-      {Object.entries(destinationArray.destinations).map(([program, universities]) => {
-        const countries: Record<string, typeof universities> = {};
-        universities.forEach((uni) => {
-          if (!countries[uni.country]) countries[uni.country] = [];
-          countries[uni.country].push(uni);
-        });
-
-        return (
-          <div key={program} className="mb-6">
-            <h2 className="text-xl font-semibold mb-3 text-[#FF5000]">{program}</h2>
-
-            {Object.entries(countries).map(([country, unis]) => {
-              const countryKey = `${program}-${country}`;
-              const isOpen = openCountries[countryKey];
-
-              return (
-                <div key={countryKey} className="mb-3 border rounded-lg shadow-sm overflow-hidden">
-                  <button
-                    className="w-full text-left p-3 bg-[#FF5000] text-white font-semibold flex justify-between items-center"
-                    onClick={() => toggleCountry(countryKey)}
-                  >
-                    <span>{country} ({unis.length})</span>
-                    <span className={`transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"}`}>▼</span>
-                  </button>
-
-                  {/* Smooth dropdown */}
-                  <ul
-                    className={`overflow-hidden transition-[max-height] duration-300 ease-in-out bg-gray-200 ${
-                      isOpen ? "max-h-[1000px]" : "max-h-0"
-                    }`}
-                  >
-                    {unis.map((uni) => (
-                      <li
-                        key={uni.name}
-                        className="p-3 border-b last:border-b-0 rounded hover:shadow transition-shadow"
-                      >
-                        <h3 className="text-gray-800 font-medium">{uni.name}</h3>
-                        {uni.link && (
-                          <a
-                            href={uni.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#FF5000] text-sm hover:underline"
-                          >
-                            Visit Website
-                          </a>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
+      {/* Programs & Countries */}
+      {destinationArray && <DestinationList data={destinationArray} />}
     </div>
   );
 };
