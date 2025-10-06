@@ -64,7 +64,7 @@ const DestinationsPage = () => {
               e.target.value as "tech" | "health" | "culture" | "business"
             )
           }
-          className="px-6 py-2 rounded-full bg-[#8ceba5] font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
+          className="px-6 py-2 rounded-full bg-[var(--va-mint-50)] font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
         >
           {Object.entries(fieldLabels).map(([field, label]) => (
             <option key={field} value={field} className="text-gray-800">
