@@ -33,7 +33,7 @@ const ContactPage: React.FC = () => {
       </h1>
       <p className="text-center mb-8 text-gray-600">
         Onko sinulla kysyttävää vaihto-opiskelusta tai sivuston käytöstä? 
-        Täytä lomake alla, niin palaamme sinulle mahdollisimman pian.
+        Täytä lomake alla, niin palaamme asiaan mahdollisimman pian.
       </p>
 
       {!submitted ? (
