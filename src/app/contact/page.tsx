@@ -27,11 +27,11 @@ const ContactPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto text-gray-800">
-      <h1 className="text-3xl font-bold mb-6 text-[#FF5000] text-center">
+    <div className="p-6 max-w-2xl mx-auto mt-4 text-[var(--typography)]">
+      <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">
         Ota yhteyttä
       </h1>
-      <p className="text-center mb-8 text-gray-600">
+      <p className="text-center text-lg mb-8 text-[var(--typography)]">
         Onko sinulla kysyttävää vaihto-opiskelusta tai sivuston käytöstä? 
         Täytä lomake alla, niin palaamme sinulle mahdollisimman pian.
       </p>
@@ -39,7 +39,7 @@ const ContactPage: React.FC = () => {
       {!submitted ? (
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-xl shadow-md p-6 space-y-4 border border-gray-100"
+          className="bg-white rounded-xl shadow-md p-6 space-y-4 border border-[var(--va-border)]"
         >
           <div>
             <label htmlFor="name" className="block font-semibold mb-1">
@@ -52,7 +52,7 @@ const ContactPage: React.FC = () => {
               required
               value={formData.name}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
+              className="w-full p-3 border border-[var(--va-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
             />
           </div>
 
@@ -67,7 +67,7 @@ const ContactPage: React.FC = () => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
+              className="w-full p-3 border border-[var(--va-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
             />
           </div>
 
@@ -82,7 +82,7 @@ const ContactPage: React.FC = () => {
               required
               value={formData.topic}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
+              className="w-full p-3 border border-[var(--va-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
             />
           </div>
 
@@ -97,7 +97,7 @@ const ContactPage: React.FC = () => {
               rows={5}
               value={formData.message}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
+              className="w-full p-3 border border-[var(--va-border)] rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
             />
           </div>
 
@@ -109,7 +109,7 @@ const ContactPage: React.FC = () => {
           </button>
         </form>
       ) : (
-        <div className="text-center bg-white p-6 rounded-xl shadow-md border border-gray-100">
+        <div className="text-center bg-white p-6 rounded-xl shadow-md border border-[var(--va-border)]">
           <h2 className="text-xl font-semibold mb-2 text-[#FF5000]">
             Kiitos yhteydenotostasi!
           </h2>
@@ -121,7 +121,7 @@ const ContactPage: React.FC = () => {
             height={814}
             className="mx-auto mt-4 max-h-30 w-auto"
           />
-          <span className="text-sm text-gray-500 mt-4 block">
+          <span className="text-sm text-[var(--typography)] mt-4 block">
             Vastauksen saaminen ei ole taattua, mutta pyrimme vastaamaan
             kaikkiin viesteihin. Jos et saa vastausta, voit kokeilla ottaa
             yhteyttää puhelimitse tai sähköpostitse.

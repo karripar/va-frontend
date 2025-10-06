@@ -12,16 +12,16 @@ const navigationCategories = [
     id: "exchange",
     title: "Opiskelijavaihto",
     links: [
-      { href: "/hakuprosessi", label: "Hakuprosessi ja ohjeet" },
+      { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
       { href: "/destinations", label: "Vaihtokohteet" },
-      { href: "/apurahat", label: "Apurahat ja kustannukset" },
+      { href: "/grants", label: "Apurahat ja kustannukset" },
     ],
   },
   {
     id: "community",
     title: "Yhteisö ja tuki",
     links: [
-      { href: "/kokemukset", label: "Kokemukset ja vinkit" },
+      { href: "/tips", label: "Kokemukset ja vinkit" },
       { href: "/ai-chat", label: "AI Chat ja FAQ" },
       { href: "/contact", label: "Ota yhteyttä" },
     ],
@@ -29,19 +29,16 @@ const navigationCategories = [
   {
     id: "user",
     title: "Käyttäjän asetukset",
-    links: [
-      { href: "/profiili", label: "Profiili" },
-      { href: "/kirjaudu-ulos", label: "Kirjaudu ulos" },
-    ],
+    links: [{ href: "/profile", label: "Profiili" }],
   },
 ];
 
 const hamburgerLinks = [
   { href: "/", label: "Etusivu" },
-  { href: "/hakuprosessi", label: "Hakuprosessi ja ohjeet" },
+  { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
   { href: "/destinations", label: "Vaihtokohteet" },
-  { href: "/apurahat", label: "Apurahat ja kustannukset" },
-  { href: "/kokemukset", label: "Kokemukset ja vinkit" },
+  { href: "/grants", label: "Apurahat ja kustannukset" },
+  { href: "/tips", label: "Kokemukset ja vinkit" },
   { href: "/ai-chat", label: "AI Chat ja FAQ" },
   { href: "/contact", label: "Ota yhteyttä" },
 ];
@@ -51,10 +48,21 @@ const Navbar = () => {
   const pathname = usePathname();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isEn, setIsEn] = useState(false); // Shared language state
+  const [isEn, setIsEn] = useState(false);
 
   const handleLanguageToggle = () => {
     setIsEn((prevState) => !prevState);
+  };
+
+  // log out... will be done later
+  const handleLogout = () => {
+    console.log("Logging out...");
+    // TODO: clear localStorage/sessionStorage + authentication tokens
+
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("authToken");
+      window.location.href = "/";
+    }
   };
 
   const getCurrentPageInfo = () => {
@@ -81,8 +89,8 @@ const Navbar = () => {
     <>
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
-        <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl px-2 shadow-lg">
-          <div className="mx-auto px-4 h-20 flex items-center justify-between">
+        <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl sm:text-md px-2 shadow-lg">
+          <div className="mx-auto px-4 h-25 flex items-center justify-between">
             <button
               aria-label={mobileMenuOpen ? "Sulje valikko" : "Avaa valikko"}
               className="cursor-pointer p-2 -ml-2 z-60"
@@ -91,13 +99,16 @@ const Navbar = () => {
               {mobileMenuOpen ? "" : <FiMenu size={26} />}
             </button>
             <div
-              className="tracking-wide text-md"
+              className="tracking-wide text-md text-center px-2"
               style={{ fontFamily: "var(--font-machina-bold)" }}
             >
               {currentPageInfo.page}
             </div>
-            <Link href={'/profiili'}>
-              <FiUser className="hover:scale-110 transition-transform duration-300" size={26} />
+            <Link href={"/profile"}>
+              <FiUser
+                className="hover:scale-110 transition-transform duration-300"
+                size={26}
+              />
             </Link>
           </div>
         </header>
@@ -192,6 +203,18 @@ const Navbar = () => {
                             {link.label}
                           </Link>
                         ))}
+                        {category.id === "user" && (
+                          <button
+                            onClick={handleLogout}
+                            className="px-6 py-2 mx-6 block mt-3 mb-4 text-sm uppercase duration-200 tracking-wider bg-[var(--va-orange)] hover:scale-105 rounded-lg"
+                            style={{
+                              fontFamily: "var(--font-machina-bold)",
+                              color: "var(--background)",
+                            }}
+                          >
+                            Kirjaudu ulos
+                          </button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -217,7 +240,7 @@ const Navbar = () => {
         aria-label="Sivunavigaatio"
       >
         <div
-          className="h-20 flex items-center justify-between px-4 tracking-wide"
+          className="h-25 flex items-center justify-between px-4 tracking-wide"
           style={{
             backgroundColor: "var(--va-orange)",
             color: "var(--background)",

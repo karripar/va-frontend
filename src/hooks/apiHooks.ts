@@ -80,10 +80,10 @@ const useProfileData = (userId?: string) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_USER_API;
+    const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
     
     if (!apiUrl) {
-      console.error("NEXT_PUBLIC_USER_API is not defined in environment variables");
+      console.error("NEXT_PUBLIC_AUTH_API is not defined in environment variables");
       setError("API URL not configured");
       setLoading(false);
       return;
