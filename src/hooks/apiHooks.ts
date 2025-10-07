@@ -45,9 +45,9 @@ const useDestinationData = (
         const data = await fetchData<DestinationWithCoordinatesResponse>(url, {
           signal: controller.signal,
         });
-        console.log("Fetched destinations:", data);
+        // console.log("Fetched destinations:", data); # TODO: remove
 
-        // 2️⃣ store in cache
+        // store in cache
         destinationCache[field] = data;
         setDestinationArray(data);
       } catch (err: unknown) {
@@ -101,7 +101,7 @@ const useProfileData = (userId?: string) => {
           ? `${apiUrl}/profile/${userId}` 
           : `${apiUrl}/profile`;
 
-        console.log("Fetching profile from:", endpoint);
+        //console.log("Fetching profile from:", endpoint);
 
         const data = await fetchData<ProfileResponse>(
           endpoint,
