@@ -48,8 +48,9 @@ const useDestinationData = (
         const data = await fetchData<DestinationWithCoordinatesResponse>(url, {
           signal: controller.signal,
         });
+        // console.log("Fetched destinations:", data); # TODO: remove
 
-        // 2️⃣ store in cache
+        // store in cache
         destinationCache[field] = data;
         setDestinationArray(data);
       } catch (err: unknown) {
