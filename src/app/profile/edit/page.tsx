@@ -2,6 +2,7 @@
 import { useProfileData } from "@/hooks/apiHooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { FaArrowLeft } from "react-icons/fa";
 
 export default function EditProfilePage() {
@@ -113,9 +114,11 @@ export default function EditProfilePage() {
           {/* Avatar */}
           <div className="flex flex-col items-center">
           {avatarPreview && (
-            <img
+            <Image
               src={avatarPreview}
               alt="Avatar preview"
+              width={96}
+              height={96}
               className="w-24 h-24 rounded-full mb-4"
             />
           )}

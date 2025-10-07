@@ -1,6 +1,7 @@
 "use client";
 import { useProfileData } from "@/hooks/apiHooks";
 import Link from "next/link";
+import Image from "next/image";
 import { FaEdit } from "react-icons/fa";
 
 export default function ProfilePage() {
@@ -59,9 +60,11 @@ export default function ProfilePage() {
       <div className="flex flex-col items-center p-6">
         {/* Avatar */}
         {profile.avatarUrl && (
-          <img 
+          <Image 
             src={profile.avatarUrl} 
             alt={`${profile.userName}'s avatar`}
+            width={96}
+            height={96}
             className="w-24 h-24 rounded-full mb-4"
           />
         )}
