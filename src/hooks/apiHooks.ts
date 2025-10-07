@@ -72,9 +72,10 @@ const useDestinationData = (
 
 /**
  * Hook to fetch profile data from the user API
- * @param userId - Optional user ID. If not provided, fetches current authenticated user
+ * Since all users must be authenticated with @metropolia.fi accounts,
+ * this hook fetches the current user's profile using their Google ID
  */
-const useProfileData = (userId?: string) => {
+const useProfileData = () => {
   const [profileData, setProfileData] = useState<ProfileResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,18 +97,31 @@ const useProfileData = (userId?: string) => {
         setLoading(true);
         setError(null);
 
-        // Use the actual backend API
-        const endpoint = userId 
-          ? `${apiUrl}/profile/${userId}` 
-          : `${apiUrl}/profile`;
+        // get current authenticated user's Google ID
+        const userProfile = localStorage.getItem("userProfile");
+        if (!userProfile) {
+          throw new Error("No authenticated user found");
+        }
 
-        console.log("Fetching profile from:", endpoint);
+        const currentUser = JSON.parse(userProfile) as GoogleAuthResponse;
+        const endpoint = `${apiUrl}/users/profile`;
+        
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            googleId: currentUser.googleId,
+          }),
+          signal: controller.signal,
+        });
 
-        const data = await fetchData<ProfileResponse>(
-          endpoint,
-          { signal: controller.signal }
-        );
+        if (!response.ok) {
+          throw new Error(`Failed to fetch profile: ${response.status}`);
+        }
 
+        const data = await response.json() as ProfileResponse;
         setProfileData(data);
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {
@@ -124,9 +138,86 @@ const useProfileData = (userId?: string) => {
     return () => {
       controller.abort();
     };
-  }, [userId]);
+  }, []);
 
   return { profileData, loading, error };
 };
 
-export { useDestinationData, useProfileData };
+// types for authentication
+type GoogleAuthResponse = {
+  googleId: string;
+  email: string;
+  name: string;
+  picture?: string;
+};
+
+/**
+ * update user profile
+ */
+const useUpdateProfile = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const updateProfile = async (
+    updates: Partial<ProfileResponse>
+  ): Promise<ProfileResponse | null> => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const authApiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      if (!authApiUrl) {
+        throw new Error("Auth API URL not configured");
+      }
+
+      // Get current user's Google ID
+      const userProfile = localStorage.getItem("userProfile");
+      if (!userProfile) {
+        throw new Error("No authenticated user found");
+      }
+
+      const currentUser = JSON.parse(userProfile) as GoogleAuthResponse;
+
+      const response = await fetch(`${authApiUrl}/users/profile`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          googleId: currentUser.googleId,
+          ...updates,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Update failed: ${response.status}`);
+      }
+
+      const updatedProfile = await response.json() as ProfileResponse;
+      
+      // update localStorage with new profile info
+      const updatedUserData = {
+        ...currentUser,
+        name: updatedProfile.userName
+      };
+      localStorage.setItem("userProfile", JSON.stringify(updatedUserData));
+
+      return updatedProfile;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Update failed";
+      setError(errorMessage);
+      console.error("Profile update error:", err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    updateProfile,
+    loading,
+    error,
+  };
+};
+
+export { useDestinationData, useProfileData, useUpdateProfile };

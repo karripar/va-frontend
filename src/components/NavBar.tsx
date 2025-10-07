@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import ToggleSwitch from "./LanguageToggle";
 import Image from "next/image";
+import { useAuth } from "@/hooks/useAuth";
 
 // navigaation kategoriat
 const navigationCategories = [
@@ -50,19 +51,18 @@ const Navbar = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isEn, setIsEn] = useState(false);
+  const { logout } = useAuth();
 
   const handleLanguageToggle = () => {
     setIsEn((prevState) => !prevState);
   };
 
-  // log out... will be done later
   const handleLogout = () => {
     console.log("Logging out...");
-    // TODO: clear localStorage/sessionStorage + authentication tokens
-
+    logout();
+    
     if (typeof window !== "undefined") {
-      localStorage.removeItem("authToken");
-      window.location.href = "/";
+      window.location.href = "/login";
     }
   };
 
@@ -91,7 +91,7 @@ const Navbar = () => {
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
         <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl sm:text-md px-2 shadow-lg">
-          <div className="mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="mx-auto px-4 h-15 flex items-center justify-between">
             <button
               aria-label={mobileMenuOpen ? "Sulje valikko" : "Avaa valikko"}
               className="cursor-pointer p-2 -ml-2 z-60"
@@ -249,7 +249,7 @@ const Navbar = () => {
         aria-label="Sivunavigaatio"
       >
         <div
-          className="h-20 flex items-center justify-between px-4 tracking-wide"
+          className="h-15 flex items-center justify-between px-4 tracking-wide"
           style={{
             backgroundColor: "var(--va-orange)",
             color: "var(--background)",

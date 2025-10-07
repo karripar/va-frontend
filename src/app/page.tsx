@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[var(--background)]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[var(--va-orange-50)] pt-16 pb-10 md:mb-16 mb-12 shadow-lg">
+      <section className="relative overflow-hidden bg-[var(--va-orange-50)] md:pt-16 md:pb-10 pt-10 pb-2 md:mb-16 mb-12 shadow-lg">
         {/* Liito-orava images */}
         <div className="absolute inset-0 max-w-400">
           <Image

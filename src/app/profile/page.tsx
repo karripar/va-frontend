@@ -1,13 +1,24 @@
 "use client";
 import { useProfileData } from "@/hooks/apiHooks";
+import { useAuth } from "@/hooks/useAuth";
 import React from "react";
-import Image from "next/image";
 
 export default function ProfilePage() {
   const { profileData: profile, loading, error } = useProfileData();
+  const { logout } = useAuth();
+
+  // handle logout
+  const handleLogout = () => {
+    console.log("Logging out...");
+    logout();
+
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+  };
 
   const buttonClassName =
-    "w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange)] flex justify-between items-center text-[var(--typography)] transition-colors";
+    "w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange)] flex justify-between items-center text-[var(--typography)] transition-colors hover:text-white";
 
   // Handle loading state
   if (loading) {
@@ -45,19 +56,13 @@ export default function ProfilePage() {
   // Render profile data
   return (
     <div className="flex flex-col items-center p-4 mt-8">
-      <h1 className="text-xl font-bold">
-        Hey {profile.userName}, welcome to your profile!
+      <h1
+        className="md:text-2xl text-xl text-center mb-4"
+        style={{ fontFamily: "var(--font-machina-bold)" }}
+      >
+        Hey {profile.userName}!
       </h1>
-      
-      {profile.avatarUrl && (
-        <Image
-          src={profile.avatarUrl}
-          alt={`${profile.userName}'s avatar`}
-          width={80}
-          height={80}
-          className="w-20 h-20 rounded-full mt-4"
-        />
-      )}
+
       {/* Optional: Display exchange badge if user has it */}
       {profile.exchangeBadge && (
         <span className="mt-2 px-3 py-1 bg-[var(--va-orange-50)] text-white rounded-full text-sm">
@@ -65,12 +70,12 @@ export default function ProfilePage() {
         </span>
       )}
 
-      <p className="mt-2 text-[var(--typography)] text-center">
+      <p className="m-2 text-[var(--typography)] text-center text-md max-w-150">
         Welcome to your profile, here you can browse your saved exchange
         destinations and documents.
       </p>
 
-      <div className="mt-6 space-y-4 w-full max-w-xs">
+      <div className="mt-6 space-y-4 w-full max-w-xs ">
         <button className={buttonClassName}>
           <span> Favorite destinations ({profile.favorites?.length || 0})</span>
           <span>›</span>
@@ -80,13 +85,15 @@ export default function ProfilePage() {
           <span>›</span>
         </button>
 
+        
+
         {/* Optional: LinkedIn link if available */}
         {profile.linkedinUrl && (
           <a
             href={profile.linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange] flex justify-between items-center text-[var(--typography)] transition-colors"
+            className="w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange] hover:text-white flex justify-between items-center text-[var(--typography)] transition-colors"
           >
             <span> LinkedIn Profile</span>
             <span>↗</span>
@@ -101,6 +108,16 @@ export default function ProfilePage() {
           {new Date(profile.registeredAt).toLocaleDateString("fi-FI")}
         </p>
       </div>
+      <button
+        onClick={handleLogout}
+        className="md:hidden px-6 py-2 mx-6 block m-12 md:text-md text-sm uppercase duration-200 tracking-wider bg-[var(--va-orange)] hover:scale-105 rounded-lg "
+        style={{
+          fontFamily: "var(--font-machina-bold)",
+          color: "var(--background)",
+        }}
+      >
+        Kirjaudu ulos
+      </button>
     </div>
   );
 }
