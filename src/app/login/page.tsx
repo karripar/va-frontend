@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { handleLogin } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,6 +36,7 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           idToken: credentialResponse.credential,
         }),
@@ -45,19 +46,24 @@ export default function LoginPage() {
         throw new Error(`Authentication failed: ${response.status}`);
       }
 
-      // get the userdata from the login
-      const userData = await response.json();
+      // get the auth response from the backend
+      const authResponse = await response.json();
 
-      // update auth context
-      login(userData);
+      // check the user in the response
+      if (authResponse.user) {
+        handleLogin(authResponse.user);
+      } else {
+        throw new Error("Invalid response format from backend");
+      }
 
       if (process.env.NODE_ENV === "development") {
-        console.log("Authentication successful:", userData);
+        console.log("Authentication successful:", authResponse);
       }
 
       router.push("/");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Authentication failed";
+      const errorMessage =
+        err instanceof Error ? err.message : "Authentication failed";
       setError(errorMessage);
       console.error("Authentication error:", err);
     } finally {
@@ -103,7 +109,7 @@ export default function LoginPage() {
                 {error}
               </div>
             )}
-            
+
             <div className="flex justify-center">
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
@@ -114,7 +120,7 @@ export default function LoginPage() {
                 shape="rectangular"
               />
             </div>
-            
+
             {loading && (
               <div className="text-center text-sm text-[var(--typography)]">
                 Kirjaudutaan sisään...

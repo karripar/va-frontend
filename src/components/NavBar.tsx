@@ -51,14 +51,13 @@ const Navbar = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isEn, setIsEn] = useState(false);
-  const { logout } = useAuth();
+  const { handleLogout: logout } = useAuth();
 
   const handleLanguageToggle = () => {
     setIsEn((prevState) => !prevState);
   };
 
   const handleLogout = () => {
-    console.log("Logging out...");
     logout();
     
     if (typeof window !== "undefined") {
@@ -66,6 +65,7 @@ const Navbar = () => {
     }
   };
 
+  // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {
     for (const category of navigationCategories) {
       if (category.links) {
