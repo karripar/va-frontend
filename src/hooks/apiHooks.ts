@@ -75,7 +75,6 @@ const useDestinationData = (
 
 /**
  * Hook to fetch profile data from the user API
- * Uses httpOnly cookies for authentication
  */
 const useProfileData = () => {
   const [profileData, setProfileData] = useState<ProfileResponse | null>(null);
@@ -101,15 +100,21 @@ const useProfileData = () => {
         setLoading(true);
         setError(null);
 
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setError("No auth token found");
+          setLoading(false);
+          return;
+        }
+
         const endpoint = `${apiUrl}/users/profile`;
 
         const response = await fetch(endpoint, {
           method: "GET",
           headers: {
+            Authorization: "Bearer " + token,
             "Content-Type": "application/json",
           },
-          credentials: "include",
-          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -139,7 +144,7 @@ const useProfileData = () => {
 };
 
 /**
- * update user profile using httpOnly cookie authentication
+ * update user profile
  */
 const useUpdateProfile = () => {
   const [loading, setLoading] = useState(false);
@@ -160,9 +165,9 @@ const useUpdateProfile = () => {
       const response = await fetch(`${authApiUrl}/users/profile`, {
         method: "PUT",
         headers: {
+          Authorization: "Bearer " + localStorage.getItem("authToken") || "",
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify(updates),
       });
 
@@ -205,7 +210,11 @@ const useAuthAPI = () => {
       const response = await fetch(
         "http://localhost:3001/api/v1/users/profile",
         {
-          credentials: "include",
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("authToken") || "",
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -232,44 +241,4 @@ const useAuthAPI = () => {
   };
 };
 
-/**
- * Hook to handle user logout
- */
-const useLogout = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const logout = async (): Promise<boolean> => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      await fetch("http://localhost:3001/api/v1/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      return true;
-    } catch (err) {
-      console.error("Logout request failed:", err);
-      setError("Logout failed");
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return {
-    logout,
-    loading,
-    error,
-  };
-};
-
-export {
-  useDestinationData,
-  useProfileData,
-  useUpdateProfile,
-  useAuthAPI,
-  useLogout,
-};
+export { useDestinationData, useProfileData, useUpdateProfile, useAuthAPI };

@@ -3,7 +3,7 @@ import Navbar from "../components/NavBar";
 import ProtectedLayout from "../components/ProtectedLayout";
 import type { Metadata } from "next";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "../context/AuthContext";
 
 export const metadata: Metadata = {
   title: "Vaihtoaktivaattori",

@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useEffect } from "react";
 import { ProfileResponse } from "va-hybrid-types/contentTypes";
-import { useLogout } from "@/hooks/apiHooks";
+import { authService } from "@/services/authService";
 
 type AuthContextType = {
   user: ProfileResponse | null;
@@ -21,17 +21,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<ProfileResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Use apiHooks for data fetching
-  const { logout: apiLogout } = useLogout();
-
   const handleLogin = (userData: ProfileResponse) => {
     setUser(userData);
   };
 
+  // logout
   const handleLogout = async () => {
-    const success = await apiLogout();
-    if (success) {
+    try {
+      authService.removeToken();
       setUser(null);
+    } catch (e) {
+      console.log((e as Error).message);
     }
   };
 
@@ -39,10 +39,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleAutoLogin = async () => {
     try {
       setLoading(true);
+      
+      // get token from localStorage
+      const token = authService.getToken();
+      if (!token) {
+        console.log("No auth token found");
+        return;
+      }
+
       const response = await fetch(
         "http://localhost:3001/api/v1/users/profile",
         {
-          credentials: "include",
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
       );
 

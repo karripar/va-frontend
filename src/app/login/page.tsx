@@ -5,6 +5,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
+import { authService } from "@/services/authService";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,36 +26,14 @@ export default function LoginPage() {
       setLoading(true);
       setError(null);
 
-      const authApiUrl = process.env.NEXT_PUBLIC_AUTH_API;
-      if (!authApiUrl) {
-        throw new Error("Auth API URL not configured");
-      }
+      // Use auth service to verify token
+      const authResponse = await authService.verifyGoogleToken(
+        credentialResponse.credential
+      );
 
-      // Verify token with backend
-      const response = await fetch(`${authApiUrl}/auth/google/verify`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          idToken: credentialResponse.credential,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Authentication failed: ${response.status}`);
-      }
-
-      // get the auth response from the backend
-      const authResponse = await response.json();
-
-      // check the user in the response
-      if (authResponse.user) {
-        handleLogin(authResponse.user);
-      } else {
-        throw new Error("Invalid response format from backend");
-      }
+      // Store token and login user
+      authService.storeToken(authResponse.token);
+      handleLogin(authResponse.user);
 
       if (process.env.NODE_ENV === "development") {
         console.log("Authentication successful:", authResponse);

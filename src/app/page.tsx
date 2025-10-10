@@ -147,7 +147,7 @@ export default function Home() {
                   className="text-lg mb-4 tracking-wide"
                   style={{ fontFamily: "var(--font-machina-bold)" }}
                 >
-                  AKATEEMINEN KASVU
+                  AMMATILLINEN KASVU
                 </h3>
                 <p
                   className="text-md"
