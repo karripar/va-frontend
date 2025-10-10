@@ -3,23 +3,25 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    unoptimized: false,
-    domains: [
-      'lh3.googleusercontent.com',
-      'lh4.googleusercontent.com',
-      'lh5.googleusercontent.com',
-      'lh6.googleusercontent.com'
-    ]
+    unoptimized: true, // allows all external images without restriction
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
+        port: "",
+        pathname: "/7.x/avataaars/svg",
+      },
+    ],
   },
   trailingSlash: false,
   async rewrites() {
     return [
       {
-        source: '/vaihtokohteet',
-        destination: '/destinations'
-      }
-    ]
-  }
+        source: "/vaihtokohteet",
+        destination: "/destinations",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -6,7 +6,6 @@ import React, { useState } from "react";
 import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import ToggleSwitch from "./LanguageToggle";
 import Image from "next/image";
-import { useAuth } from "@/hooks/useAuth";
 
 // navigaation kategoriat
 const navigationCategories = [
@@ -51,18 +50,9 @@ const Navbar = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isEn, setIsEn] = useState(false);
-  const { handleLogout: logout } = useAuth();
 
   const handleLanguageToggle = () => {
     setIsEn((prevState) => !prevState);
-  };
-
-  const handleLogout = () => {
-    logout();
-    
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
   };
 
   // get the current page's name to display it in the nav
@@ -133,7 +123,7 @@ const Navbar = () => {
           >
             <Link href={"/"}>
               <Image
-              className="absolute left-0 ml-4 top-0 mt-2"
+                className="absolute left-0 ml-4 top-0 mt-2"
                 alt="Logo"
                 src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-05.png"
                 width={70}
@@ -212,18 +202,6 @@ const Navbar = () => {
                             {link.label}
                           </Link>
                         ))}
-                        {category.id === "user" && (
-                          <button
-                            onClick={handleLogout}
-                            className="px-6 py-2 mx-6 block mt-3 mb-4 text-sm uppercase duration-200 tracking-wider bg-[var(--va-orange)] hover:scale-105 rounded-lg"
-                            style={{
-                              fontFamily: "var(--font-machina-bold)",
-                              color: "var(--background)",
-                            }}
-                          >
-                            Kirjaudu ulos
-                          </button>
-                        )}
                       </div>
                     )}
                   </div>

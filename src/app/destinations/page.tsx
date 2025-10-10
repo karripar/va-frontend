@@ -4,7 +4,9 @@ import React, { useState } from "react";
 import DestinationList from "@/components/exchange-destinations/DestinationList";
 import Image from "next/image";
 
-const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
+const DestinationMap = React.lazy(
+  () => import("@/components/exchange-destinations/DestinationMap")
+);
 
 const fieldLabels: Record<string, string> = {
   tech: "Tekniikka",
@@ -37,8 +39,11 @@ const DestinationsPage = () => {
   }
 
   return (
-    <div className="p-4 mt-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">
+    <div className="p-4 mt-4 max-w-2xl mx-auto">
+      <h1
+        className="text-2xl mb-6 text-[#FF5000] text-center tracking-wide"
+        style={{ fontFamily: "var(--font-machina-regular)" }}
+      >
         Kansainväliset yhteistyökorkeakoulut
       </h1>
       <Image
@@ -63,10 +68,14 @@ const DestinationsPage = () => {
               e.target.value as "tech" | "health" | "culture" | "business"
             )
           }
-          className="px-6 py-2 bg-[var(--va-mint-50)] rounded-full font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]" 
+          className="px-6 py-2 bg-[var(--va-mint-50)] rounded-full font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
         >
           {Object.entries(fieldLabels).map(([field, label]) => (
-            <option key={field} value={field} className="text-[var(--typography)] bg-[var(--background)]">
+            <option
+              key={field}
+              value={field}
+              className="text-[var(--typography)] bg-[var(--background)]"
+            >
               {label}
             </option>
           ))}
