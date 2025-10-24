@@ -48,7 +48,7 @@ const AdminContactPage: React.FC = () => {
           name: "John Doe",
           email: "john@metropolia.fi",
           topic: "General question",
-          message: "Hi, is the exchange available for spring 2026?",
+          message: "Hi, is the exchange available for spring 2026sefsefs?",
           created_at: "2025-10-05 18:45",
         },
         {
@@ -56,7 +56,7 @@ const AdminContactPage: React.FC = () => {
           name: "John Doe",
           email: "john@metropolia.fi",
           topic: "General question",
-          message: "Hi, is the exchange available for spring 2026?",
+          message: "Hi, is the exchange available for spring 2026sefsef?",
           created_at: "2025-10-05 18:45",
         },
         {
@@ -64,7 +64,7 @@ const AdminContactPage: React.FC = () => {
           name: "John Doe",
           email: "john@metropolia.fi",
           topic: "General question",
-          message: "Hi, is the exchange available for spring 2026?",
+          message: "Hi, is the exchange available for spring 2026 dgdsrgrg?",
           created_at: "2025-10-05 18:45",
         },
         {
@@ -72,7 +72,7 @@ const AdminContactPage: React.FC = () => {
           name: "John Doe",
           email: "john@metropolia.fi",
           topic: "General question",
-          message: "Hi, is the exchange available for spring 2026?",
+          message: "Hi, is the exchange available for spring 2026wadawda?",
           created_at: "2025-10-05 18:45",
         },
         {
@@ -80,7 +80,7 @@ const AdminContactPage: React.FC = () => {
           name: "John Doe",
           email: "john@metropolia.fi",
           topic: "General question",
-          message: "Hi, is the exchange available for spring 2026?",
+          message: "Hi, is the exchange available for spring 2026grggesfd?",
           created_at: "2025-10-05 18:45",
         },
       ];
@@ -194,8 +194,9 @@ const AdminContactPage: React.FC = () => {
               </div>
 
               <form onSubmit={handleReply} className="mt-4 space-y-3">
-                <label className="block font-semibold">Kirjoita vastaus</label>
+                <label htmlFor="reply" className="block font-semibold">Kirjoita vastaus</label>
                 <textarea
+                  id="reply"
                   rows={4}
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}
