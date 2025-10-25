@@ -6,20 +6,44 @@ import { useEffect } from "react";
 // Login page is the only one that don't require authentication
 const PUBLIC_PAGES = ["/login"];
 
+const ADMIN_PREFIX = "/admin";
+
+const ADMIN_LEVEL_ID = process.env.NEXT_PUBLIC_ADMIN_LEVEL_ID;
+
+if (!ADMIN_LEVEL_ID) {
+  console.warn(
+    "NEXT_PUBLIC_ADMIN_LEVEL_ID is not defined in environment variables"
+  );
+}
+
 // create a protected layout for the pages that require authentication
 const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   const isPublicPage = PUBLIC_PAGES.includes(pathname);
+  const isAdminRoute = pathname.startsWith(ADMIN_PREFIX);
 
   useEffect(() => {
+    if (user) {
+      console.log("Authenticated user:", user);
+    }
     // redirect to login if we're not loading, not authenticated, and not on a login page
     if (!loading && !isAuthenticated && !isPublicPage) {
       router.push("/login");
+    }
+
+    // redirect to home if non-admin user tries to access admin routes (user_level_id 2 is admin)
+    if (
+      !loading &&
+      isAuthenticated &&
+      isAdminRoute &&
+      user?.user_level_id !== Number(ADMIN_LEVEL_ID)
+    ) {
+      router.push("/");
     }
   }, [router, isAuthenticated, loading, isPublicPage, pathname]);
 

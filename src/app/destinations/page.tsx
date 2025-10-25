@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import DestinationList from "@/components/exchange-destinations/DestinationList";
 import Image from "next/image";
 
-// const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
+const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
 
 // Normal import for testing purposes, vitest has issues with React.lazy
-import DestinationMap from "@/components/exchange-destinations/DestinationMap";
+// import DestinationMap from "@/components/exchange-destinations/DestinationMap";
 
 
 const fieldLabels: Record<string, string> = {
