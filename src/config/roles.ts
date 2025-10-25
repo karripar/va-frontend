@@ -1,0 +1,1 @@
+export const ADMIN_LEVEL_ID = 2;

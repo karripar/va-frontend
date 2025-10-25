@@ -2,13 +2,12 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { ADMIN_LEVEL_ID } from "@/config/roles";
 
 // Login page is the only one that don't require authentication
 const PUBLIC_PAGES = ["/login"];
 
 const ADMIN_PREFIX = "/admin";
-
-const ADMIN_LEVEL_ID = process.env.NEXT_PUBLIC_ADMIN_LEVEL_ID;
 
 if (!ADMIN_LEVEL_ID) {
   console.warn(
