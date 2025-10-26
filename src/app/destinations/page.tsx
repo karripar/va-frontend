@@ -41,8 +41,8 @@ const DestinationsPage = () => {
   return (
     <div className="p-4 mt-4 max-w-2xl mx-auto">
       <h1
-        className="text-2xl mb-6 text-[#FF5000] text-center tracking-wide"
-        style={{ fontFamily: "var(--font-machina-regular)" }}
+        className="text-3xl mb-6 text-[#FF5000] text-center tracking-wide"
+        style={{ fontFamily: "var(--font-machina-bold)" }}
       >
         Kansainväliset yhteistyökorkeakoulut
       </h1>
