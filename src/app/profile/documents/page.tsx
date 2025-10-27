@@ -36,14 +36,18 @@ export default function DocumentsPage() {
       formData.append("document", file);
 
       const uploadResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_UPLOAD_API}/upload/document`,
+        `${process.env.NEXT_PUBLIC_UPLOAD_API}/profile/document`,
         {
           method: "POST",
           body: formData,
         }
       );
 
-      if (!uploadResponse.ok) throw new Error("Upload failed");
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        console.error("Upload error:", errorText);
+        throw new Error("Upload failed");
+      }
 
       const uploadData = await uploadResponse.json();
 
