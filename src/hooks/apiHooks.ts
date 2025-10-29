@@ -1,5 +1,5 @@
 "use client";
-import fetchData from "@/lib/fetchData"; // remember to use this utility for fetches, not raw fetch
+import fetchData from "@/lib/fetchData"; // remember to use this utility for fetches, not raw fetch. It handles json and errors. Shortens code in the hooks.6
 import { useEffect, useState } from "react";
 import {
   ProfileResponse,
