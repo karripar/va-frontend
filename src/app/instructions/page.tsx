@@ -164,7 +164,7 @@ export default function Instructions() {
       ),
       links: [
         {
-          href: "https://opiskelija.oma.metropolia.fi/fi/group/pakki/hops?p_p_id=PersonalCurriculumStudentPortlet_WAR_personalcurriculumportlet&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&_PersonalCurriculumStudentPortlet_WAR_personalcurriculumportlet_struts.portlet.action=%2Fpersonalcurriculum%2Fdownload_transcript&_PersonalCurriculumStudentPortlet_WAR_personalcurriculumportlet_struts.portlet.mode=view&p_auth=muUAmQ2Y",
+          href: "https://opiskelija.oma.metropolia.fi/group/pakki/opintosuoritukset?p_p_id=StudentTranscriptPortlet_WAR_personalcurriculumportlet&p_p_lifecycle=2&p_p_state=normal&p_p_mode=view&p_p_cacheability=cacheLevelPage&_StudentTranscriptPortlet_WAR_personalcurriculumportlet_struts.portlet.action=%2Fpersonalcurriculum%2Fdownload_transcript&_StudentTranscriptPortlet_WAR_personalcurriculumportlet_struts.portlet.mode=view&p_auth=9KGiC6lh",
           label: "Opintosuoritusote",
         },
         {
@@ -258,7 +258,7 @@ export default function Instructions() {
           alt=""
           width={140}
           height={120}
-          className="mx-auto my-4 sm:w-40 sm:h-35 w-30 h-25 hover:animate-spin z-100"
+          className="mx-auto my-4 sm:w-40 sm:h-35 w-30 h-25 z-100"
         />
         {/* Steps */}
         <div className=" bg-[var(--va-grey-50)] lg:max-w-3xl mb-10 rounded-md p-4 md:p-6 mx-auto">
