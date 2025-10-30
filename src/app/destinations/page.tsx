@@ -1,8 +1,9 @@
 "use client";
-import { useDestinationData } from "@/hooks/apiHooks";
+import { useDestinationData } from "@/hooks/destinationHooks";
 import React, { useState } from "react";
 import DestinationList from "@/components/exchange-destinations/DestinationList";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
 
@@ -17,7 +18,23 @@ const fieldLabels: Record<string, string> = {
   business: "Liiketalous",
 };
 
+const translations: Record<string, Record<string, string>> = {
+  fi: {
+    partnerSchools: "Kansainväliset yhteistyökorkeakoulut",
+    selectField: "Valitse koulutusala rajataksesi tuloksia",
+    loading: "Ladataan kohteita...",
+    error: "Virhe: "
+  },
+  en: {
+    partnerSchools: "International Partner Universities",
+    selectField: "Select a field of study to filter results",
+    loading: "Loading destinations...",
+    error: "Error: "
+  }
+};
+
 const DestinationsPage = () => {
+  const { language } = useLanguage();
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
   const [selectedField, setSelectedField] = useState<
@@ -46,7 +63,7 @@ const DestinationsPage = () => {
         className="text-3xl mb-6 text-[#FF5000] text-center tracking-wide"
         style={{ fontFamily: "var(--font-machina-bold)" }}
       >
-        Kansainväliset yhteistyökorkeakoulut
+        {translations[language].partnerSchools}
       </h1>
       <Image
         src="/liito-orava-liput.png"

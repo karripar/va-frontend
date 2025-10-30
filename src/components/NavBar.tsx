@@ -49,11 +49,14 @@ const Navbar = () => {
   const pathname = usePathname();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isEn, setIsEn] = useState(false);
+  // TODO: Remove these if they are not needed
+  //const [isEn, setIsEn] = useState(false);
 
+  /**
   const handleLanguageToggle = () => {
     setIsEn((prevState) => !prevState);
   };
+  **/
 
   // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {
@@ -131,7 +134,10 @@ const Navbar = () => {
               />
             </Link>
             {currentPageInfo.page}
-            <ToggleSwitch isEn={isEn} onToggle={handleLanguageToggle} />
+            <ToggleSwitch 
+            //isEn={isEn} 
+            //onToggle={handleLanguageToggle} 
+            />
           </div>
           <div className="flex flex-row m-auto z-10 gap-16 justify-center px-4">
             {navigationCategories.map((category) => (
@@ -236,8 +242,8 @@ const Navbar = () => {
         >
           <ToggleSwitch
             isMobileMenu={true}
-            isEn={isEn}
-            onToggle={handleLanguageToggle}
+            //isEn={isEn} TODO: Remove these if they are not needed
+            //onToggle={handleLanguageToggle}
           />
           <button
             aria-label="Sulje valikko"
