@@ -8,9 +8,6 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="p-6 max-w-2xl mx-auto mt-4 text-[var(--typography)]">
-      <h1 className="text-2xl font-bold mb-6 text-[#FF5000] text-center">
-        Ota yhteyttä
-      </h1>
       <p className="text-center text-lg mb-8 text-[var(--typography)]">
         Onko sinulla kysyttävää vaihto-opiskelusta tai sivuston käytöstä? Täytä
         lomake alla, niin palaamme sinulle mahdollisimman pian.

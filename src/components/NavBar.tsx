@@ -55,17 +55,7 @@ const Navbar = () => {
     setIsEn((prevState) => !prevState);
   };
 
-  // log out... will be done later
-  const handleLogout = () => {
-    console.log("Logging out...");
-    // TODO: clear localStorage/sessionStorage + authentication tokens
-
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("authToken");
-      window.location.href = "/";
-    }
-  };
-
+  // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {
     for (const category of navigationCategories) {
       if (category.links) {
@@ -91,7 +81,7 @@ const Navbar = () => {
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
         <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl sm:text-md px-2 shadow-lg">
-          <div className="mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="mx-auto px-4 h-15 flex items-center justify-between">
             <button
               aria-label={mobileMenuOpen ? "Sulje valikko" : "Avaa valikko"}
               className="cursor-pointer p-2 -ml-2 z-60"
@@ -133,7 +123,7 @@ const Navbar = () => {
           >
             <Link href={"/"}>
               <Image
-              className="absolute left-0 ml-4 top-0 mt-2"
+                className="absolute left-0 ml-4 top-0 mt-2"
                 alt="Logo"
                 src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-05.png"
                 width={70}
@@ -212,18 +202,6 @@ const Navbar = () => {
                             {link.label}
                           </Link>
                         ))}
-                        {category.id === "user" && (
-                          <button
-                            onClick={handleLogout}
-                            className="px-6 py-2 mx-6 block mt-3 mb-4 text-sm uppercase duration-200 tracking-wider bg-[var(--va-orange)] hover:scale-105 rounded-lg"
-                            style={{
-                              fontFamily: "var(--font-machina-bold)",
-                              color: "var(--background)",
-                            }}
-                          >
-                            Kirjaudu ulos
-                          </button>
-                        )}
                       </div>
                     )}
                   </div>
@@ -249,7 +227,7 @@ const Navbar = () => {
         aria-label="Sivunavigaatio"
       >
         <div
-          className="h-20 flex items-center justify-between px-4 tracking-wide"
+          className="h-15 flex items-center justify-between px-4 tracking-wide"
           style={{
             backgroundColor: "var(--va-orange)",
             color: "var(--background)",
