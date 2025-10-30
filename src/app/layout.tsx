@@ -4,6 +4,7 @@ import ProtectedLayout from "../components/ProtectedLayout";
 import type { Metadata } from "next";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "../context/AuthContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 export const metadata: Metadata = {
   title: "Vaihtoaktivaattori",
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="fi">
       <body className={` antialiased`}>
+        <LanguageProvider>
         <GoogleOAuthProvider clientId={clientId}>
           <AuthProvider>
             <ConditionalNavbar />
@@ -36,6 +38,7 @@ export default function RootLayout({
             </ProtectedLayout>
           </AuthProvider>
         </GoogleOAuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

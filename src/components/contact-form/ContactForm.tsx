@@ -1,16 +1,35 @@
-import React, { useState } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useContactMessages } from "@/hooks/messageHooks";
 
 interface ContactFormProps {
-  onSubmit: () => void;
+  onSubmit?: () => void;
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
+  const { user } = useAuth();
+  const { postMessage, loading, error } = useContactMessages();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     topic: "",
     message: "",
   });
+
+  const [success, setSuccess] = useState(false);
+
+  // Auto-fill user info if logged in
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: user.userName || "",
+        email: user.email || "",
+      }));
+    }
+  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -19,11 +38,28 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: connect to API or backend route
-    onSubmit();
-    setFormData({ name: "", email: "", topic: "", message: "" });
+    setSuccess(false);
+
+    try {
+      await postMessage({
+        subject: formData.topic,
+        message: formData.message,
+      });
+
+      setSuccess(true);
+      setFormData({
+        name: user?.userName || "",
+        email: user?.email || "",
+        topic: "",
+        message: "",
+      });
+
+      onSubmit?.();
+    } catch (err) {
+      console.error("Error sending contact message:", err);
+    }
   };
 
   return (
@@ -42,6 +78,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
           required
           value={formData.name}
           onChange={handleChange}
+          disabled={!!user}
           className="w-full p-3 border border-[var(--va-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
         />
       </div>
@@ -57,6 +94,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
           required
           value={formData.email}
           onChange={handleChange}
+          disabled={!!user}
           className="w-full p-3 border border-[var(--va-border)] rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
         />
       </div>
@@ -91,11 +129,21 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
         />
       </div>
 
+      {error && (
+        <p className="text-red-500 text-sm font-medium">{error}</p>
+      )}
+      {success && (
+        <p className="text-green-600 text-sm font-medium">
+          Viesti lähetetty onnistuneesti!
+        </p>
+      )}
+
       <button
         type="submit"
-        className="w-full bg-[#FF5000] text-white font-semibold py-3 rounded-lg shadow hover:bg-[#e04e00] transition"
+        disabled={loading}
+        className="w-full bg-[#FF5000] text-white font-semibold py-3 rounded-lg shadow hover:bg-[#e04e00] transition disabled:opacity-50"
       >
-        Lähetä viesti
+        {loading ? "Lähetetään..." : "Lähetä viesti"}
       </button>
     </form>
   );
