@@ -122,3 +122,8 @@ body {
 .focus-ring:focus-visible {
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--va-orange) 30%, background);
 }
+
+.clip-path-m {
+  clip-path: url(#m-shape);
+  -webkit-clip-path: url(#m-shape);
+}

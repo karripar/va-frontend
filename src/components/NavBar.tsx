@@ -93,7 +93,7 @@ const Navbar = () => {
               {mobileMenuOpen ? "" : <FiMenu size={26} />}
             </button>
             <div
-              className="tracking-wide text-md text-center px-2"
+              className="tracking-widest text-md text-center px-2"
               style={{ fontFamily: "var(--font-machina-bold)" }}
             >
               {currentPageInfo.page}
@@ -117,7 +117,7 @@ const Navbar = () => {
           }}
         >
           <div
-            className="px-6 py-6 text-center sm:text-2xl text-md shadow-lg tracking-wider relative items-center flex justify-center"
+            className="px-6 py-6 text-center sm:text-2xl text-md shadow-lg tracking-widest relative items-center flex justify-center"
             style={{
               color: "var(--background)",
               backgroundColor: "var(--va-orange)",
@@ -185,16 +185,16 @@ const Navbar = () => {
                               fontFamily: "var(--font-montreal-mono)",
                               textDecoration:
                                 pathname === link.href
-                                  ? "underline wavy var(--va-orange) .1rem"
+                                  ? "underline var(--va-orange) .1rem"
                                   : "none",
-                              textUnderlineOffset: ".2rem",
+                              textUnderlineOffset: ".3rem",
                             }}
                             onMouseEnter={(e) => {
                               if (pathname !== link.href) {
                                 e.currentTarget.style.textDecoration =
-                                  "underline wavy var(--typography) .1rem";
+                                  "underline var(--typography) .1rem";
                                 e.currentTarget.style.textUnderlineOffset =
-                                  ".2rem";
+                                  ".3rem";
                               }
                             }}
                             onMouseLeave={(e) => {
@@ -264,15 +264,15 @@ const Navbar = () => {
                 fontFamily: "var(--font-montreal-mono-medium)",
                 textDecoration:
                   pathname === link.href
-                    ? "underline wavy var(--va-orange) .1rem"
+                    ? "underline var(--va-orange) .1rem"
                     : "none",
-                textUnderlineOffset: ".2rem",
+                textUnderlineOffset: ".3rem",
               }}
               onMouseEnter={(e) => {
                 if (pathname !== link.href) {
                   e.currentTarget.style.textDecoration =
-                    "underline wavy var(--typography) .1rem";
-                  e.currentTarget.style.textUnderlineOffset = ".2rem";
+                    "underline var(--typography) .1rem";
+                  e.currentTarget.style.textUnderlineOffset = ".3rem";
                 }
               }}
               onMouseLeave={(e) => {
