@@ -1,15 +1,37 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { vi } from "vitest"; // vi for mocking, create fake components etc.
+import { vi } from "vitest";
 
 
-/*
 
-This file is for destinations page component tests. Create a separate test file for other topics.
+// === FIX: define mock BEFORE vi.mock and reuse the SAME reference
+const mockUseDestinationData = vi.fn();
 
-*/
+// === Context mocks
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: {
+      id: 1,
+      name: "Test Admin",
+      email: "admin@example.com",
+      user_level_id: 2,
+    },
+  }),
+}));
 
+vi.mock("@/context/LanguageContext", () => ({
+  useLanguage: () => ({
+    language: "en",
+    toggleLanguage: vi.fn(),
+  }),
+}));
 
-//  Mocks must be declared BEFORE importing the component
+// === Destination hook mock (use the same reference!)
+vi.mock("@/hooks/destinationHooks", () => ({
+  useDestinationData: mockUseDestinationData,
+}));
+
+// === Component mocks
 vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) => (
     <div data-testid="mocked-image" {...props} />
@@ -20,27 +42,16 @@ vi.mock("@/components/exchange-destinations/DestinationMap", () => ({
   default: () => <div data-testid="mock-map" />,
 }));
 
-
 vi.mock("@/components/exchange-destinations/DestinationList", () => ({
   default: (props: { data: { length: number } }) => (
     <div data-testid="mock-list">{props.data.length} destinations</div>
   ),
 }));
 
-vi.mock("@/hooks/apiHooks", () => ({
-  useDestinationData: vi.fn(),
-}));
-
-
-/* Actual tests start here */
-
+// === Import component after mocks
 import DestinationsPage from "../app/destinations/page";
-import { useDestinationData } from "@/hooks/apiHooks";
-
 
 describe("DestinationsPage", () => {
-  const mockUseDestinationData = useDestinationData as unknown as ReturnType<typeof vi.fn>;
-
   beforeEach(() => {
     vi.clearAllMocks();
   });

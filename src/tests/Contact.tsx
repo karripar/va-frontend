@@ -1,5 +1,26 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent} from "@testing-library/react";
 import ContactPage from "../app/contact/page";
+import { vi } from "vitest";
+
+// === Context mocks (exact casing matters)
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: {
+      id: 1,
+      name: "Test Admin",
+      email: "admin@example.com",
+      user_level_id: 2,
+    },
+  }),
+}));
+
+vi.mock("@/context/LanguageContext", () => ({
+  useLanguage: () => ({
+    language: "en",
+    toggleLanguage: vi.fn(),
+  }),
+}));
 
 describe("ContactPage", () => {
   test("renders heading and description", () => {

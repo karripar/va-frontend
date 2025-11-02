@@ -1,77 +1,144 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { vi } from "vitest"; // vi for mocking, create fake components etc.
+import { vi } from "vitest";
 import AdminContactPage from "../app/admin/contact-messages/page";
+import { act } from "@testing-library/react";
 
-// Mock window.alert to prevent actual popups
+// Mock window.alert to prevent popups
 window.alert = vi.fn();
+
+// === Context mocks (exact casing matters)
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: {
+      id: 1,
+      name: "Test Admin",
+      email: "admin@example.com",
+      user_level_id: 2,
+    },
+  }),
+}));
+
+vi.mock("@/context/LanguageContext", () => ({
+  useLanguage: () => ({
+    language: "en",
+    toggleLanguage: vi.fn(),
+  }),
+}));
+
+// === Mock fetch for API calls ===
+const mockMessages = [
+  {
+    id: 1,
+    name: "John Doe",
+    email: "john@example.com",
+    subject: "Exchange program question",
+    message: "Hi! I’d like more info about the exchange process.",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    email: "jane@example.com",
+    subject: "Application help",
+    message: "How do I upload my documents?",
+  },
+];
+
+//  Mock localStorage token (authToken)
+beforeAll(() => {
+  vi.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
+    if (key === "authToken") return "fake-jwt-token";
+    return null;
+  });
+
+  global.fetch = vi.fn(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({ messages: mockMessages }),
+    })
+  ) as unknown as typeof fetch;
+});
+
+afterAll(() => {
+  vi.restoreAllMocks();
+});
 
 describe("AdminContactPage", () => {
   test("renders heading and loading state initially", () => {
     render(<AdminContactPage />);
-    expect(screen.getByText(/Yhteydenottojen hallinta/i)).toBeInTheDocument();
+    expect(screen.getByText(/Manage Contact Messages/i)).toBeInTheDocument();
     expect(screen.getByText(/Loading messages/i)).toBeInTheDocument();
   });
 
-  test("loads messages and allows selecting one", async () => {
+  test("displays messages after fetch", async () => {
     render(<AdminContactPage />);
 
-    // Wait for mock messages to appear (setTimeout 500ms in useEffect)
+    // Wait until fetch is called and messages appear
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
     await waitFor(() => {
-      expect(screen.getByText(/Matti Meikäläinen/i)).toBeInTheDocument();
+      expect(screen.getByText(/John Doe/i)).toBeInTheDocument();
+      expect(screen.getByText(/Jane Smith/i)).toBeInTheDocument();
     });
-
-    // Click on first message
-    const firstMsg = screen.getByText(/Vaihto-ohjelman hakeminen/i);
-    fireEvent.click(firstMsg);
-
-    // Right column shows message details
-    const messageDetails = screen.getAllByText(
-      /Hei, haluaisin tietää lisää hakuprosessista/i
-    )[1]; // pick the second one (details panel)
-
-    expect(messageDetails).toBeInTheDocument();
-
-    expect(screen.getByLabelText(/Kirjoita vastaus/i)).toBeInTheDocument();
   });
 
-  test("filters messages based on input", async () => {
+  test("filters messages by input", async () => {
     render(<AdminContactPage />);
-
     await waitFor(() => {
-      expect(screen.getByText(/Matti Meikäläinen/i)).toBeInTheDocument();
+      expect(screen.getByText(/John Doe/i)).toBeInTheDocument();
     });
 
-    const filterInput = screen.getByPlaceholderText(
-      /Hae nimen, sähköpostin tai aiheen perusteella/i
+    const search = screen.getByPlaceholderText(
+      /Search by name, email, or subject/i
     );
-    fireEvent.change(filterInput, { target: { value: "Anna" } });
+    fireEvent.change(search, { target: { value: "Jane" } });
 
-    expect(screen.queryByText(/Matti Meikäläinen/i)).not.toBeInTheDocument();
-    expect(screen.getByText(/Anna Virtanen/i)).toBeInTheDocument();
+    expect(screen.queryByText(/John Doe/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Jane Smith/i)).toBeInTheDocument();
   });
 
-  test("sends a reply to selected message", async () => {
+  it("sends a reply to selected message", async () => {
     render(<AdminContactPage />);
 
-    await waitFor(() => {
-      expect(screen.getByText(/Matti Meikäläinen/i)).toBeInTheDocument();
+    const messageItem = await screen.findByText((content) =>
+      content.includes("John") || content.includes("john@example.com")
+    );
+    
+
+    await act(async () => {
+      fireEvent.click(messageItem);
     });
 
-    const firstMsg = screen.getByText(/Vaihto-ohjelman hakeminen/i);
-    fireEvent.click(firstMsg);
+    const replyInput = screen.getByPlaceholderText("Write a Reply");
 
-    const replyTextarea = screen.getByLabelText(/Kirjoita vastaus/i);
-    fireEvent.change(replyTextarea, {
-      target: { value: "Kiitos viestistäsi!" },
+    await act(async () => {
+      fireEvent.change(replyInput, {
+        target: { value: "Thanks for your question!" },
+      });
     });
 
-    const submitButton = screen.getByRole("button", {
-      name: /Lähetä vastaus/i,
+    const sendButton = screen.getByText("Send Reply");
+
+    await act(async () => {
+      fireEvent.click(sendButton);
     });
-    fireEvent.click(submitButton);
 
     expect(window.alert).toHaveBeenCalledWith(
-      "Reply sent to matti@example.com: Kiitos viestistäsi!"
+      "Reply sent to john@example.com"
     );
+    
+  });
+
+  test("shows error message if fetch fails", async () => {
+    (global.fetch as ReturnType<typeof vi.fn>).mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: false,
+        json: () => Promise.resolve({ error: "Unauthorized" }),
+      })
+    );
+
+    render(<AdminContactPage />);
+    await waitFor(() => {
+      expect(screen.getByText(/Failed to fetch messages/i)).toBeInTheDocument();
+    });
   });
 });
