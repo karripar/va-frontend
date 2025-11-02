@@ -4,6 +4,7 @@ import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import { DefaultIcon } from "../../../leafletConfig";
 import MapSearchbar from "./MapSearchbar";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface DestinationMapProps {
   data: DestinationWithCoordinatesResponse;
@@ -19,6 +20,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCountry, setSelectedCountry] =
     useState<SelectedCountry | null>(null);
+  const { language } = useLanguage();
 
   const defaultCenter: [number, number] = [60.1699, 24.9384]; // Helsinki fallback
 

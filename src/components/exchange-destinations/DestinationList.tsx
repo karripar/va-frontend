@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface DestinationListProps {
   data: DestinationWithCoordinatesResponse;
@@ -11,6 +12,7 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
     {}
   );
   const [openPrograms, setOpenPrograms] = useState<Record<string, boolean>>({});
+  const { language } = useLanguage();
 
   const toggleCountry = (countryKey: string) => {
     setOpenCountries((prev) => ({ ...prev, [countryKey]: !prev[countryKey] }));
@@ -18,6 +20,15 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
 
   const toggleProgram = (programKey: string) => {
     setOpenPrograms((prev) => ({ ...prev, [programKey]: !prev[programKey] }));
+  };
+
+  const translations: Record<string, Record<string, string>> = {
+    en: {
+      visitWebsite: "Visit Website",
+    },
+    fi: {
+      visitWebsite: "Vieraile verkkosivuilla",
+    },
   };
 
   return (
@@ -113,7 +124,7 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
                                 rel="noopener noreferrer"
                                 className="text-[#FF5000] text-sm hover:underline"
                               >
-                                Vieraile verkkosivuilla
+                                {translations[language]?.visitWebsite || "Visit Website"}
                               </a>
                             )}
                           </li>
