@@ -1,12 +1,11 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { vi } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { vi, describe, test, beforeEach, expect } from "vitest";
+import React, { Suspense } from "react";
 
+vi.setConfig({ testTimeout: 10000 });
 
-
-// === FIX: define mock BEFORE vi.mock and reuse the SAME reference
 const mockUseDestinationData = vi.fn();
 
-// === Context mocks
 vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => ({
     isAuthenticated: true,
@@ -26,12 +25,10 @@ vi.mock("@/context/LanguageContext", () => ({
   }),
 }));
 
-// === Destination hook mock (use the same reference!)
 vi.mock("@/hooks/destinationHooks", () => ({
-  useDestinationData: mockUseDestinationData,
+  useDestinationData: () => mockUseDestinationData(),
 }));
 
-// === Component mocks
 vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) => (
     <div data-testid="mocked-image" {...props} />
@@ -48,13 +45,19 @@ vi.mock("@/components/exchange-destinations/DestinationList", () => ({
   ),
 }));
 
-// === Import component after mocks
-import DestinationsPage from "../app/destinations/page";
+import DestinationsPage from "@/app/destinations/page";
 
 describe("DestinationsPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
+  const renderWithSuspense = () =>
+    render(
+      <Suspense fallback={<div>Loading...</div>}>
+        <DestinationsPage />
+      </Suspense>
+    );
 
   test("renders loading state", () => {
     mockUseDestinationData.mockReturnValue({
@@ -63,7 +66,7 @@ describe("DestinationsPage", () => {
       destinationArray: null,
     });
 
-    render(<DestinationsPage />);
+    renderWithSuspense();
     expect(screen.getByText(/Loading destinations/i)).toBeInTheDocument();
   });
 
@@ -74,7 +77,7 @@ describe("DestinationsPage", () => {
       destinationArray: null,
     });
 
-    render(<DestinationsPage />);
+    renderWithSuspense();
     expect(screen.getByText(/Error: Failed to fetch/i)).toBeInTheDocument();
   });
 
@@ -85,11 +88,11 @@ describe("DestinationsPage", () => {
       destinationArray: null,
     });
 
-    render(<DestinationsPage />);
+    renderWithSuspense();
     expect(screen.getByText(/No destinations available/i)).toBeInTheDocument();
   });
 
-  test("renders destinations and components", () => {
+  test("renders destinations and components", async () => {
     mockUseDestinationData.mockReturnValue({
       loading: false,
       error: null,
@@ -98,8 +101,12 @@ describe("DestinationsPage", () => {
       ],
     });
 
-    render(<DestinationsPage />);
-    expect(screen.getByTestId("mock-map")).toBeInTheDocument();
+    renderWithSuspense();
+
+    // Wait until the lazy mock finishes rendering (lazy import is needed in actual component)
+    await waitFor(() =>
+      expect(screen.getByTestId("mock-map")).toBeInTheDocument()
+    );
     expect(screen.getByTestId("mock-list")).toHaveTextContent("1 destinations");
   });
 
@@ -112,7 +119,7 @@ describe("DestinationsPage", () => {
       ],
     });
 
-    render(<DestinationsPage />);
+    renderWithSuspense();
     const select = screen.getByRole("combobox");
     fireEvent.change(select, { target: { value: "business" } });
     expect(select).toHaveValue("business");
