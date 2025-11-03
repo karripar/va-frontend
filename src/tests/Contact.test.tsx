@@ -2,7 +2,7 @@ import { renderHook, act } from "@testing-library/react";
 import { useContactMessages } from "@/hooks/messageHooks";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 
-// ✅ Mock directly inside vi.mock without external variable
+// Mock directly inside vi.mock without external variable
 vi.mock("@/lib/fetchData", () => {
   return {
     default: vi.fn(),
@@ -11,7 +11,7 @@ vi.mock("@/lib/fetchData", () => {
 
 import fetchData from "@/lib/fetchData";
 
-// ✅ Mock auth hook
+// Mock auth hook
 vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => ({
     user: { email: "test@example.com", userName: "TestUser" },
