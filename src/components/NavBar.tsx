@@ -6,67 +6,106 @@ import React, { useState } from "react";
 import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import ToggleSwitch from "./LanguageToggle";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 // navigaation kategoriat
 const navigationCategories = [
   {
     id: "exchange",
     title: "Opiskelijavaihto",
+    titleEn: "Student Exchange",
     links: [
-      { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
-      { href: "/destinations", label: "Vaihtokohteet" },
-      { href: "/grants", label: "Apurahat ja kustannukset" },
+      {
+        href: "/instructions",
+        label: "Hakuprosessi ja ohjeet",
+        labelEn: "Application Process",
+      },
+      {
+        href: "/destinations",
+        label: "Vaihtokohteet",
+        labelEn: "Destinations",
+      },
+      {
+        href: "/grants",
+        label: "Apurahat ja kustannukset",
+        labelEn: "Grants & Costs",
+      },
     ],
   },
   {
     id: "community",
     title: "Yhteisö ja tuki",
+    titleEn: "Community & Support",
     links: [
-      { href: "/tips", label: "Kokemukset ja vinkit" },
-      { href: "/ai-chat", label: "AI Chat ja FAQ" },
-      { href: "/contact", label: "Ota yhteyttä" },
+      {
+        href: "/tips",
+        label: "Kokemukset ja vinkit",
+        labelEn: "Experiences & Tips",
+      },
+      { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
+      { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
     ],
   },
   {
     id: "user",
     title: "Käyttäjän asetukset",
-    links: [{ href: "/profile", label: "Profiili" }],
+    titleEn: "User Settings",
+    links: [{ href: "/profile", label: "Profiili", labelEn: "Profile" }],
   },
 ];
 
 const hamburgerLinks = [
-  { href: "/", label: "Etusivu" },
-  { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
-  { href: "/destinations", label: "Vaihtokohteet" },
-  { href: "/grants", label: "Apurahat ja kustannukset" },
-  { href: "/tips", label: "Kokemukset ja vinkit" },
-  { href: "/ai-chat", label: "AI Chat ja FAQ" },
-  { href: "/contact", label: "Ota yhteyttä" },
+  { href: "/", label: "Etusivu", labelEn: "Home" },
+  {
+    href: "/instructions",
+    label: "Hakuprosessi ja ohjeet",
+    labelEn: "Application Process",
+  },
+  { href: "/destinations", label: "Vaihtokohteet", labelEn: "Destinations" },
+  {
+    href: "/grants",
+    label: "Apurahat ja kustannukset",
+    labelEn: "Grants & Costs",
+  },
+  {
+    href: "/tips",
+    label: "Kokemukset ja vinkit",
+    labelEn: "Experiences & Tips",
+  },
+  { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
+  { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
 ];
+
+// Helper function to get label based on language
+const getLabel = (language: string, label: string, labelEn: string): string => {
+  return language === "en" ? labelEn : label;
+};
 
 // navigation
 const Navbar = () => {
+  const { language } = useLanguage();
   const pathname = usePathname();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // TODO: Remove these if they are not needed
-  //const [isEn, setIsEn] = useState(false);
-
-  /**
-  const handleLanguageToggle = () => {
-    setIsEn((prevState) => !prevState);
-  };
-  **/
 
   // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {
     for (const category of navigationCategories) {
       if (category.links) {
         const link = category.links.find((link) => link.href === pathname);
-        if (link) return { category: category.title, page: link.label };
+        if (link)
+          return {
+            category: category.title,
+            page: link.label,
+            pageEn: link.labelEn,
+          };
       }
     }
-    return { category: "Vaihtoaktivaattori", page: "Vaihtoaktivaattori" };
+    return {
+      category: "Vaihtoaktivaattori",
+      page: "Vaihtoaktivaattori",
+      pageEn: "Vaihtoaktivaattori",
+    };
   };
 
   const currentPageInfo = getCurrentPageInfo();
@@ -84,9 +123,17 @@ const Navbar = () => {
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
         <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl sm:text-md px-2 shadow-lg">
-          <div className="mx-auto px-4 h-15 flex items-center justify-between">
+          <div className="mx-auto px-4 h-20 flex items-center justify-between">
             <button
-              aria-label={mobileMenuOpen ? "Sulje valikko" : "Avaa valikko"}
+              aria-label={
+                mobileMenuOpen
+                  ? language === "en"
+                    ? "Close menu"
+                    : "Sulje valikko"
+                  : language === "en"
+                  ? "Open menu"
+                  : "Avaa valikko"
+              }
               className="cursor-pointer p-2 -ml-2 z-60"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
@@ -96,7 +143,7 @@ const Navbar = () => {
               className="tracking-widest text-md text-center px-2"
               style={{ fontFamily: "var(--font-machina-bold)" }}
             >
-              {currentPageInfo.page}
+              {getLabel(language, currentPageInfo.page, currentPageInfo.pageEn)}
             </div>
             <Link href={"/profile"}>
               <FiUser
@@ -133,11 +180,8 @@ const Navbar = () => {
                 height={70}
               />
             </Link>
-            {currentPageInfo.page}
-            <ToggleSwitch 
-            //isEn={isEn} 
-            //onToggle={handleLanguageToggle} 
-            />
+            {getLabel(language, currentPageInfo.page, currentPageInfo.pageEn)}
+            <ToggleSwitch />
           </div>
           <div className="flex flex-row m-auto z-10 gap-16 justify-center px-4">
             {navigationCategories.map((category) => (
@@ -160,7 +204,7 @@ const Navbar = () => {
                       activeCategory === category.id ? "active" : ""
                     }`}
                   >
-                    {category.title}
+                    {getLabel(language, category.title, category.titleEn)}
                   </span>
                   <span
                     className={`text-[var(--va-orange)] pl-1 transition-transform duration-300 ${
@@ -205,7 +249,7 @@ const Navbar = () => {
                               }
                             }}
                           >
-                            {link.label}
+                            {getLabel(language, link.label, link.labelEn)}
                           </Link>
                         ))}
                       </div>
@@ -233,20 +277,16 @@ const Navbar = () => {
         aria-label="Sivunavigaatio"
       >
         <div
-          className="h-15 flex items-center justify-between px-4 tracking-wide"
+          className="h-20 flex items-center justify-between px-4 tracking-wide"
           style={{
             backgroundColor: "var(--va-orange)",
             color: "var(--background)",
             fontFamily: "var(--font-machina-bold)",
           }}
         >
-          <ToggleSwitch
-            isMobileMenu={true}
-            //isEn={isEn} TODO: Remove these if they are not needed
-            //onToggle={handleLanguageToggle}
-          />
+          <ToggleSwitch isMobileMenu={true} />
           <button
-            aria-label="Sulje valikko"
+            aria-label={language === "en" ? "Close menu" : "Sulje valikko"}
             onClick={closeMobileMenu}
             className="p-2"
           >
@@ -282,7 +322,7 @@ const Navbar = () => {
                 }
               }}
             >
-              {link.label}
+              {getLabel(language, link.label, link.labelEn)}
             </Link>
           ))}
         </nav>
