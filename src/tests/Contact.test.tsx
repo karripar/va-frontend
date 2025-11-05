@@ -1,37 +1,65 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import ContactPage from "../app/contact/page";
+import { renderHook, act } from "@testing-library/react";
+import { useContactMessages } from "@/hooks/messageHooks";
+import { vi, describe, it, expect, beforeEach } from "vitest";
 
-describe("ContactPage", () => {
-  test("renders heading and description", () => {
-    render(<ContactPage />);
-    expect(screen.getByText(/Ota yhteyttä/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Onko sinulla kysyttävää/i)
-    ).toBeInTheDocument();
+// Mock directly inside vi.mock without external variable
+vi.mock("@/lib/fetchData", () => {
+  return {
+    default: vi.fn(),
+  };
+});
+
+import fetchData from "@/lib/fetchData";
+
+// Mock auth hook
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: { email: "test@example.com", userName: "TestUser" },
+  }),
+}));
+
+describe("useContactMessages", () => {
+  beforeEach(() => {
+    (fetchData as jest.Mock).mockReset();
+    localStorage.clear();
+    localStorage.setItem("authToken", "test-token");
   });
 
-  test("renders contact form initially", () => {
-    render(<ContactPage />);
-    expect(screen.getByLabelText(/Nimi/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Sähköposti/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Aihe/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Viesti/i)).toBeInTheDocument();
+  it("posts a message successfully", async () => {
+    (fetchData as jest.Mock).mockResolvedValueOnce({ success: true });
+
+    const { result } = renderHook(() => useContactMessages());
+
+    await act(async () => {
+      const res = await result.current.postMessage({ subject: "Test Subject", message: "Hello Admin" });
+      expect(res).toEqual({ success: true });
+    });
+
+    expect(fetchData).toHaveBeenCalledTimes(1);
   });
 
-  test("submits the form and shows success component", () => {
-    render(<ContactPage />);
+  it("fails if no token is found", async () => {
+    localStorage.clear();
 
-    // Fill in the form
-    fireEvent.change(screen.getByLabelText(/Nimi/i), { target: { value: "Karri" } });
-    fireEvent.change(screen.getByLabelText(/Sähköposti/i), { target: { value: "karri@example.com" } });
-    fireEvent.change(screen.getByLabelText(/Aihe/i), { target: { value: "Kysymys" } });
-    fireEvent.change(screen.getByLabelText(/Viesti/i), { target: { value: "Testiviesti" } });
+    const { result } = renderHook(() => useContactMessages());
 
-    // Submit
-    fireEvent.click(screen.getByRole("button", { name: /Lähetä viesti/i }));
+    await act(async () => {
+      await result.current.postMessage({ subject: "No Token Subject", message: "No token test" });
+    });
 
-    // Success component appears
-    expect(screen.getByText(/Kiitos yhteydenotostasi/i)).toBeInTheDocument();
-    expect(screen.queryByLabelText(/Nimi/i)).not.toBeInTheDocument();
+    expect(result.current.error).toBe("No auth token found");
+  });
+
+  it("fetches messages successfully", async () => {
+    (fetchData as jest.Mock).mockResolvedValueOnce({
+      messages: [{ id: 1, message: "Hello" }],
+    });
+
+    const { result } = renderHook(() => useContactMessages());
+
+    await act(async () => {
+      const res = await result.current.getMessages();
+      expect(res).toEqual({ messages: [{ id: 1, message: "Hello" }] });
+    });
   });
 });

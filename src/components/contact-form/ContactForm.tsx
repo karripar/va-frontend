@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useContactMessages } from "@/hooks/messageHooks";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface ContactFormProps {
   onSubmit?: () => void;
@@ -10,6 +11,7 @@ interface ContactFormProps {
 const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   const { user } = useAuth();
   const { postMessage, loading, error } = useContactMessages();
+  const { language } = useLanguage();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -62,6 +64,27 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     }
   };
 
+  const translations : Record<string, Record<string, string>> = {
+    en: {
+      successMessage: "Message sent successfully!",
+      name: "Name",
+      email: "Email",
+      topic: "Topic",
+      message: "Message",
+      sendMessage: "Send Message",
+      sending: "Sending...",
+    },
+    fi: {
+      successMessage: "Viesti lähetetty onnistuneesti!",
+      name: "Nimi",
+      email: "Sähköposti",
+      topic: "Aihe",
+      message: "Viesti",
+      sendMessage: "Lähetä viesti",
+      sending: "Lähetetään...",
+    },
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -69,7 +92,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     >
       <div>
         <label htmlFor="name" className="block font-semibold mb-1">
-          Nimi
+          {translations[language]?.name || "Name"}
         </label>
         <input
           type="text"
@@ -85,7 +108,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
 
       <div>
         <label htmlFor="email" className="block font-semibold mb-1">
-          Sähköposti
+          {translations[language]?.email || "Email"}
         </label>
         <input
           type="email"
@@ -101,7 +124,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
 
       <div>
         <label htmlFor="topic" className="block font-semibold mb-1">
-          Aihe
+          {translations[language]?.topic || "Topic"}
         </label>
         <input
           type="text"
@@ -116,7 +139,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
 
       <div>
         <label htmlFor="message" className="block font-semibold mb-1">
-          Viesti
+          {translations[language]?.message || "Message"}
         </label>
         <textarea
           id="message"
@@ -134,7 +157,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
       )}
       {success && (
         <p className="text-green-600 text-sm font-medium">
-          Viesti lähetetty onnistuneesti!
+          {translations[language]?.successMessage || "Message sent successfully!"}
         </p>
       )}
 
@@ -143,7 +166,9 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
         disabled={loading}
         className="w-full bg-[#FF5000] text-white font-semibold py-3 rounded-lg shadow hover:bg-[#e04e00] transition disabled:opacity-50"
       >
-        {loading ? "Lähetetään..." : "Lähetä viesti"}
+        {loading
+          ? translations[language]?.sending || "Sending..."
+          : translations[language]?.sendMessage || "Send Message"}
       </button>
     </form>
   );
