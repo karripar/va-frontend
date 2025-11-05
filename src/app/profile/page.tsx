@@ -135,7 +135,7 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-gray-800">
                 <span className="font-medium">
-                  Hakemukset ({profile.applications ? Object.keys(profile.applications).length : 0})
+                  Hakemukset ja kustannusarviointi ({profile.applications ? Object.keys(profile.applications).length : 0})
                 </span>
                 <span>›</span>
               </div>

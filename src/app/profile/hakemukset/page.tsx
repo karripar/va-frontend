@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import { useProfileData, useApplicationsData, useApplicationDocuments } from "@/hooks/apiHooks";
+import { useApplicationDocuments } from "@/hooks/documentsHooks";
+import{ useApplicationsData} from "@/hooks/applicationsHooks";
+import { useProfileData } from "@/hooks/apiHooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { 
@@ -38,11 +40,15 @@ interface ApplicationStage {
 export default function HakemuksetPage() {
   const { profileData: profile, loading: profileLoading, error: profileError } = useProfileData();
   const { applications, loading: appsLoading, error: appsError } = useApplicationsData();
-  const { documents, uploadDocument, deleteDocument } = useApplicationDocuments();
+  const { documents, addDocumentLink, deleteDocument } = useApplicationDocuments();
   const router = useRouter();
   
   const [activePhase, setActivePhase] = useState<ApplicationPhase>("esihaku");
   const [expandedStage, setExpandedStage] = useState<string | null>(null);
+  const [activeBudgetTab, setActiveBudgetTab] = useState<"stages" | "budget">("stages");
+  // For calculator demo
+  const [budgetAmount, setBudgetAmount] = useState(540);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Mock application stages data - this would come from your backend
   const applicationStages: ApplicationStage[] = [
@@ -236,132 +242,341 @@ export default function HakemuksetPage() {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto p-6">
-        <div className="space-y-6">
-          {filteredStages.map((stage) => (
-            <div key={stage.id} className="bg-white rounded-lg shadow-sm border">
-              {/* Stage Header */}
-              <div 
-                className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-                onClick={() => setExpandedStage(expandedStage === stage.id ? null : stage.id)}
+        {activePhase === "apurahat" ? (
+          <div>
+            {/* Tabs for grants and budget calculator */}
+            <div className="flex space-x-2 mb-6">
+              <button
+                className={`px-4 py-2 rounded-t-lg font-medium border-b-2 transition-colors ${activeBudgetTab === "stages" ? "border-[#FF5722] text-[#FF5722] bg-white" : "border-transparent text-gray-500 bg-gray-100"}`}
+                onClick={() => setActiveBudgetTab("stages")}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    {getStatusIcon(stage.status)}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{stage.title}</h3>
-                      <p className="text-gray-600">{stage.description}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <span className={`px-3 py-1 text-sm rounded-full ${
-                      stage.status === "completed" 
-                        ? "bg-green-100 text-green-800"
-                        : stage.status === "in_progress"
-                        ? "bg-yellow-100 text-yellow-800" 
-                        : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {getStatusText(stage.status)}
-                    </span>
-                    <FaEye className="text-gray-400" />
-                  </div>
-                </div>
-                
-                {stage.deadline && (
-                  <div className="mt-3 text-sm text-gray-500">
-                    Määräaika: {new Date(stage.deadline).toLocaleDateString("fi-FI")}
-                  </div>
-                )}
-              </div>
+                Apurahat ja tuet
+              </button>
+              <button
+                className={`px-4 py-2 rounded-t-lg font-medium border-b-2 transition-colors ${activeBudgetTab === "budget" ? "border-[#FF5722] text-[#FF5722] bg-white" : "border-transparent text-gray-500 bg-gray-100"}`}
+                onClick={() => setActiveBudgetTab("budget")}
+              >
+                Kustannukset ja kustannusarviointi
+              </button>
+            </div>
 
-              {/* Expanded Content */}
-              {expandedStage === stage.id && (
-                <div className="border-t px-6 py-4">
-                  {/* Required Documents */}
-                  <div className="mb-6">
-                    <h4 className="text-md font-medium text-gray-900 mb-3">Pakolliset dokumentit</h4>
-                    <div className="space-y-2">
-                      {stage.requiredDocuments.map((doc, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <FaFileAlt className="text-gray-400" />
-                            <span className="text-gray-700">{doc}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
-                              <FaUpload size={14} />
-                            </button>
-                            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
-                              <FaDownload size={14} />
-                            </button>
+            {activeBudgetTab === "stages" && (
+              <div className="space-y-6">
+                {filteredStages.map((stage) => (
+                  <div key={stage.id} className="bg-white rounded-lg shadow-sm border">
+                    {/*  stage rendering placeholder */}
+                    <div 
+                      className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => setExpandedStage(expandedStage === stage.id ? null : stage.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          {getStatusIcon(stage.status)}
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">{stage.title}</h3>
+                            <p className="text-gray-600">{stage.description}</p>
                           </div>
                         </div>
-                      ))}
+                        <div className="flex items-center space-x-4">
+                          <span className={`px-3 py-1 text-sm rounded-full ${
+                            stage.status === "completed" 
+                              ? "bg-green-100 text-green-800"
+                              : stage.status === "in_progress"
+                              ? "bg-yellow-100 text-yellow-800" 
+                              : "bg-gray-100 text-gray-600"
+                          }`}>
+                            {getStatusText(stage.status)}
+                          </span>
+                          <FaEye className="text-gray-400" />
+                        </div>
+                      </div>
+                      {stage.deadline && (
+                        <div className="mt-3 text-sm text-gray-500">
+                          Määräaika: {new Date(stage.deadline).toLocaleDateString("fi-FI")}
+                        </div>
+                      )}
                     </div>
-                  </div>
-
-                  {/* Optional Documents */}
-                  {stage.optionalDocuments && (
-                    <div className="mb-6">
-                      <h4 className="text-md font-medium text-gray-900 mb-3">Valinnaiset dokumentit</h4>
-                      <div className="space-y-2">
-                        {stage.optionalDocuments.map((doc, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                            <div className="flex items-center space-x-3">
-                              <FaFileAlt className="text-blue-400" />
-                              <span className="text-gray-700">{doc}</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors">
-                                <FaUpload size={14} />
-                              </button>
+                    {expandedStage === stage.id && (
+                      <div className="border-t px-6 py-4">
+                        <div className="mb-6">
+                          <h4 className="text-md font-medium text-gray-900 mb-3">Pakolliset dokumentit</h4>
+                          <div className="space-y-2">
+                            {stage.requiredDocuments.map((doc, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                  <FaFileAlt className="text-gray-400" />
+                                  <span className="text-gray-700">{doc}</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+                                    <FaUpload size={14} />
+                                  </button>
+                                  <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                                    <FaDownload size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        {/*  Documents */}
+                        {stage.optionalDocuments && (
+                          <div className="mb-6">
+                            <h4 className="text-md font-medium text-gray-900 mb-3">Valinnaiset dokumentit</h4>
+                            <div className="space-y-2">
+                              {stage.optionalDocuments.map((doc, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                  <div className="flex items-center space-x-3">
+                                    <FaFileAlt className="text-blue-400" />
+                                    <span className="text-gray-700">{doc}</span>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors">
+                                      <FaUpload size={14} />
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* External Links */}
-                  {stage.externalLinks && (
-                    <div className="mb-6">
-                      <h4 className="text-md font-medium text-gray-900 mb-3">Ulkoiset palvelut</h4>
-                      <div className="space-y-2">
-                        {stage.externalLinks.map((link, index) => (
-                          <a
-                            key={index}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
-                          >
-                            <div>
-                              <div className="flex items-center space-x-3">
-                                <FaExternalLinkAlt className="text-green-600" />
-                                <span className="font-medium text-gray-900">{link.title}</span>
-                              </div>
-                              <p className="text-sm text-gray-600 mt-1">{link.description}</p>
+                        )}
+                        {/* External Links */}
+                        {stage.externalLinks && (
+                          <div className="mb-6">
+                            <h4 className="text-md font-medium text-gray-900 mb-3">Ulkoiset palvelut</h4>
+                            <div className="space-y-2">
+                              {stage.externalLinks.map((link, index) => (
+                                <a
+                                  key={index}
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                                >
+                                  <div>
+                                    <div className="flex items-center space-x-3">
+                                      <FaExternalLinkAlt className="text-green-600" />
+                                      <span className="font-medium text-gray-900">{link.title}</span>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mt-1">{link.description}</p>
+                                  </div>
+                                </a>
+                              ))}
                             </div>
-                          </a>
+                          </div>
+                        )}
+                        {/* Action Buttons */}
+                        <div className="flex justify-end space-x-3">
+                          <button className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                            Tallenna luonnos
+                          </button>
+                          <button className="px-4 py-2 bg-[#FF5722] text-white rounded-md hover:bg-[#E64A19] transition-colors">
+                            Merkitse valmiiksi
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeBudgetTab === "budget" && (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Kustannusarviointi!</h3>
+                {/* GrantCalculator UI */}
+                <div className="mb-8">
+                  <div className="text-gray-700 mb-2">Arvioi apuraha ja budjetti vaihdolle:</div>
+                  <div className="flex flex-col md:flex-row md:space-x-8">
+                    <div className="flex-1 mb-6 md:mb-0">
+                      {/* Simple GrantCalculator UI */}
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Arvioitu apuraha (€ / kk)</label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={10000}
+                        value={budgetAmount}
+                        onChange={e => setBudgetAmount(Number(e.target.value))}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #8BC34A 0%, #8BC34A ${((budgetAmount) / 10000) * 100}%, #E5E7EB ${((budgetAmount) / 10000) * 100}%, #E5E7EB 100%)`
+                        }}
+                      />
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>0€</span>
+                        <span>10000€</span>
+                      </div>
+                      <div className="mt-2 text-center text-2xl font-bold text-[#8BC34A]">{budgetAmount}€ / kk</div>
+                    </div>
+                    <div className="flex-1">
+                      {/* BudgetCategories UI */}
+                      <label className="block mb-2 text-sm font-medium text-gray-700">Valitse kustannuskategoria</label>
+                      <div className="grid grid-cols-1 gap-2">
+                        {[
+                          { key: "matkakulut", label: "Matkakulut" },
+                          { key: "vakuutukset", label: "Vakuutukset" },
+                          { key: "asuminen", label: "Asuminen" },
+                          { key: "ruoka_ja_arki", label: "Ruoka ja arki" },
+                          { key: "opintovalineet", label: "Opintovälineet" }
+                        ].map(cat => (
+                          <button
+                            key={cat.key}
+                            className={`w-full p-3 rounded-lg border-2 transition-all text-left ${selectedCategory === cat.key ? "border-[#FF5722] bg-orange-50" : "border-gray-200 bg-white hover:bg-orange-50"}`}
+                            onClick={() => setSelectedCategory(cat.key)}
+                          >
+                            <span className="font-semibold text-gray-900">{cat.label}</span>
+                          </button>
                         ))}
                       </div>
+                      {selectedCategory && (
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                          <div className="font-medium text-gray-800 mb-2">Valittu kategoria: {selectedCategory}</div>
+                          <div className="text-sm text-gray-600">Tähän voi lisätä tarkemman kustannusarvion ja muistiinpanot.</div>
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex justify-end space-x-3">
-                    <button className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                      Tallenna luonnos
-                    </button>
-                    <button className="px-4 py-2 bg-[#FF5722] text-white rounded-md hover:bg-[#E64A19] transition-colors">
-                      Merkitse valmiiksi
-                    </button>
                   </div>
                 </div>
-              )}
+                {/* Summary */}
+                <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-900 mb-2">Yhteenveto</h4>
+                  <p className="text-sm text-green-800">
+                    Arvioitu apuraha: <span className="font-bold">{budgetAmount}€ / kk</span>
+                  </p>
+                  {selectedCategory && (
+                    <p className="text-sm text-green-800 mt-2">
+                      Valittu kustannuskategoria: <span className="font-bold">{selectedCategory}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* ...existing code for other phases... */}
+            <div className="space-y-6">
+              {filteredStages.map((stage) => (
+                <div key={stage.id} className="bg-white rounded-lg shadow-sm border">
+                  {/* ...existing code for stage header and expanded content... */}
+                  <div 
+                    className="p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onClick={() => setExpandedStage(expandedStage === stage.id ? null : stage.id)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        {getStatusIcon(stage.status)}
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{stage.title}</h3>
+                          <p className="text-gray-600">{stage.description}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <span className={`px-3 py-1 text-sm rounded-full ${
+                          stage.status === "completed" 
+                            ? "bg-green-100 text-green-800"
+                            : stage.status === "in_progress"
+                            ? "bg-yellow-100 text-yellow-800" 
+                            : "bg-gray-100 text-gray-600"
+                        }`}>
+                          {getStatusText(stage.status)}
+                        </span>
+                        <FaEye className="text-gray-400" />
+                      </div>
+                    </div>
+                    {stage.deadline && (
+                      <div className="mt-3 text-sm text-gray-500">
+                        Määräaika: {new Date(stage.deadline).toLocaleDateString("fi-FI")}
+                      </div>
+                    )}
+                  </div>
+                  {expandedStage === stage.id && (
+                    <div className="border-t px-6 py-4">
+                      {/* ...existing code for expanded content... */}
+                      {/* Required Documents */}
+                      <div className="mb-6">
+                        <h4 className="text-md font-medium text-gray-900 mb-3">Pakolliset dokumentit</h4>
+                        <div className="space-y-2">
+                          {stage.requiredDocuments.map((doc, index) => (
+                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                              <div className="flex items-center space-x-3">
+                                <FaFileAlt className="text-gray-400" />
+                                <span className="text-gray-700">{doc}</span>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
+                                  <FaUpload size={14} />
+                                </button>
+                                <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                                  <FaDownload size={14} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Optional Documents */}
+                      {stage.optionalDocuments && (
+                        <div className="mb-6">
+                          <h4 className="text-md font-medium text-gray-900 mb-3">Valinnaiset dokumentit</h4>
+                          <div className="space-y-2">
+                            {stage.optionalDocuments.map((doc, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <div className="flex items-center space-x-3">
+                                  <FaFileAlt className="text-blue-400" />
+                                  <span className="text-gray-700">{doc}</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors">
+                                    <FaUpload size={14} />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* External Links */}
+                      {stage.externalLinks && (
+                        <div className="mb-6">
+                          <h4 className="text-md font-medium text-gray-900 mb-3">Ulkoiset palvelut</h4>
+                          <div className="space-y-2">
+                            {stage.externalLinks.map((link, index) => (
+                              <a
+                                key={index}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                              >
+                                <div>
+                                  <div className="flex items-center space-x-3">
+                                    <FaExternalLinkAlt className="text-green-600" />
+                                    <span className="font-medium text-gray-900">{link.title}</span>
+                                  </div>
+                                  <p className="text-sm text-gray-600 mt-1">{link.description}</p>
+                                </div>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {/* Action Buttons */}
+                      <div className="flex justify-end space-x-3">
+                        <button className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                          Tallenna luonnos
+                        </button>
+                        <button className="px-4 py-2 bg-[#FF5722] text-white rounded-md hover:bg-[#E64A19] transition-colors">
+                          Merkitse valmiiksi
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-
+          </>
+        )}
         {/* Progress Summary */}
         <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Vaihdon eteneminen</h3>
@@ -370,7 +585,6 @@ export default function HakemuksetPage() {
               const phaseStages = applicationStages.filter(s => s.phase === phase);
               const completedStages = phaseStages.filter(s => s.status === "completed");
               const progress = phaseStages.length > 0 ? (completedStages.length / phaseStages.length) * 100 : 0;
-              
               return (
                 <div key={phase} className="text-center">
                   <div className="mb-2">
