@@ -7,6 +7,7 @@ import useAdminActions from "@/hooks/adminHooks";
 interface Admin {
   _id: string;
   userName?: string;
+  title?: string;
   email: string;
 }
 
@@ -29,6 +30,7 @@ const AdminBoard = () => {
       addAdmin: "Add New Admin",
       enterEmail: "Enter user email",
       confirmEmail: "Confirm user email",
+      enterTitle: "Enter user title",
       addAsAdmin: "Add as Admin",
       adding: "Adding...",
       currentAdmins: "Current Admins",
@@ -42,6 +44,7 @@ const AdminBoard = () => {
       addAdmin: "Lisää uusi ylläpitäjä",
       enterEmail: "Syötä käyttäjän sähköposti",
       confirmEmail: "Vahvista käyttäjän sähköposti",
+      enterTitle: "Syötä yhteyshenkilön titteli",
       addAsAdmin: "Lisää ylläpitäjäksi",
       adding: "Lisätään...",
       currentAdmins: "Nykyiset ylläpitäjät",

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useContactMessages } from "@/hooks/messageHooks";
+import { useContactMessages } from "@/hooks/contactHooks";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface ContactFormProps {
@@ -64,7 +64,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
     }
   };
 
-  const translations : Record<string, Record<string, string>> = {
+  const translations: Record<string, Record<string, string>> = {
     en: {
       successMessage: "Message sent successfully!",
       name: "Name",
@@ -152,12 +152,11 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
         />
       </div>
 
-      {error && (
-        <p className="text-red-500 text-sm font-medium">{error}</p>
-      )}
+      {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
       {success && (
         <p className="text-green-600 text-sm font-medium">
-          {translations[language]?.successMessage || "Message sent successfully!"}
+          {translations[language]?.successMessage ||
+            "Message sent successfully!"}
         </p>
       )}
 
