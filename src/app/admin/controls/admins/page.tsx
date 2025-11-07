@@ -39,7 +39,7 @@ const AdminBoard = () => {
       emptyFields: "Please fill in both fields.",
       emailMismatch: "Emails do not match.",
       success: "User promoted to admin successfully!",
-      fail: "Failed to promote user. Check the email.",
+      fail: "Failed to promote user. Check the email. You may not promote an existing admin or yourself.",
     },
     fi: {
       addAdmin: "Lisää uusi ylläpitäjä",
@@ -54,7 +54,7 @@ const AdminBoard = () => {
       emptyFields: "Täytä molemmat kentät.",
       emailMismatch: "Sähköpostit eivät täsmää.",
       success: "Käyttäjä lisättiin ylläpitäjäksi onnistuneesti!",
-      fail: "Käyttäjän lisääminen epäonnistui. Tarkista sähköposti.",
+      fail: "Käyttäjän lisääminen epäonnistui. Tarkista sähköposti. Et voi lisätä ylläpitäjäksi jo olemassa olevaa ylläpitäjää tai itseäsi.",
     },
   };
 
@@ -110,6 +110,7 @@ const AdminBoard = () => {
         if (updated && Array.isArray(updated.admins)) {
           setAdmins(updated.admins);
         }
+      
       } else {
         setError(response?.error || t.fail);
       }
