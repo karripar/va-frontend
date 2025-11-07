@@ -28,6 +28,7 @@ const AdminBoard = () => {
   const translations: Record<string, Record<string, string>> = {
     en: {
       addAdmin: "Add New Admin",
+      notice: "Adding a new admin will grant them administrative privileges. They may alter content and add other admins. Double-check the email before proceeding.",
       enterEmail: "Enter user email",
       confirmEmail: "Confirm user email",
       enterTitle: "Enter user title",
@@ -42,6 +43,7 @@ const AdminBoard = () => {
     },
     fi: {
       addAdmin: "Lisää uusi ylläpitäjä",
+      notice: "Uuden ylläpitäjän lisääminen antaa heille hallinnolliset oikeudet. He voivat muokata sisältöä ja lisätä muita ylläpitäjiä. Tarkista sähköposti huolellisesti ennen jatkamista.",
       enterEmail: "Syötä käyttäjän sähköposti",
       confirmEmail: "Vahvista käyttäjän sähköposti",
       enterTitle: "Syötä yhteyshenkilön titteli",
@@ -93,6 +95,9 @@ const AdminBoard = () => {
       return;
     }
 
+    const confirmAdd = window.confirm(`Are you sure you want to promote ${email.trim()} to admin?`);
+    if (!confirmAdd) return;
+
     try {
       const response = await promoteToAdmin(email.trim());
       if (response?.message) {
@@ -116,6 +121,7 @@ const AdminBoard = () => {
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
       <h2 className="text-xl font-semibold">{t.addAdmin}</h2>
+      <p className="text-sm text-gray-600">{t.notice}</p>
 
       {/* Add new admin form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -139,7 +145,7 @@ const AdminBoard = () => {
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+          className="bg-[#FF5000] text-white py-2 rounded disabled:bg-gray-400 hover:disabled:cursor-not-allowed hover:bg-[#e04e00] transition"
         >
           {loading ? t.adding : t.addAsAdmin}
         </button>
