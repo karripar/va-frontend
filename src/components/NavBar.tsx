@@ -49,11 +49,14 @@ const Navbar = () => {
   const pathname = usePathname();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isEn, setIsEn] = useState(false);
+  // TODO: Remove these if they are not needed
+  //const [isEn, setIsEn] = useState(false);
 
+  /**
   const handleLanguageToggle = () => {
     setIsEn((prevState) => !prevState);
   };
+  **/
 
   // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {
@@ -90,7 +93,7 @@ const Navbar = () => {
               {mobileMenuOpen ? "" : <FiMenu size={26} />}
             </button>
             <div
-              className="tracking-wide text-md text-center px-2"
+              className="tracking-widest text-md text-center px-2"
               style={{ fontFamily: "var(--font-machina-bold)" }}
             >
               {currentPageInfo.page}
@@ -114,7 +117,7 @@ const Navbar = () => {
           }}
         >
           <div
-            className="px-6 py-6 text-center sm:text-2xl text-md shadow-lg tracking-wider relative items-center flex justify-center"
+            className="px-6 py-6 text-center sm:text-2xl text-md shadow-lg tracking-widest relative items-center flex justify-center"
             style={{
               color: "var(--background)",
               backgroundColor: "var(--va-orange)",
@@ -131,7 +134,10 @@ const Navbar = () => {
               />
             </Link>
             {currentPageInfo.page}
-            <ToggleSwitch isEn={isEn} onToggle={handleLanguageToggle} />
+            <ToggleSwitch 
+            //isEn={isEn} 
+            //onToggle={handleLanguageToggle} 
+            />
           </div>
           <div className="flex flex-row m-auto z-10 gap-16 justify-center px-4">
             {navigationCategories.map((category) => (
@@ -179,16 +185,16 @@ const Navbar = () => {
                               fontFamily: "var(--font-montreal-mono)",
                               textDecoration:
                                 pathname === link.href
-                                  ? "underline wavy var(--va-orange) .1rem"
+                                  ? "underline var(--va-orange) .1rem"
                                   : "none",
-                              textUnderlineOffset: ".2rem",
+                              textUnderlineOffset: ".3rem",
                             }}
                             onMouseEnter={(e) => {
                               if (pathname !== link.href) {
                                 e.currentTarget.style.textDecoration =
-                                  "underline wavy var(--typography) .1rem";
+                                  "underline var(--typography) .1rem";
                                 e.currentTarget.style.textUnderlineOffset =
-                                  ".2rem";
+                                  ".3rem";
                               }
                             }}
                             onMouseLeave={(e) => {
@@ -236,8 +242,8 @@ const Navbar = () => {
         >
           <ToggleSwitch
             isMobileMenu={true}
-            isEn={isEn}
-            onToggle={handleLanguageToggle}
+            //isEn={isEn} TODO: Remove these if they are not needed
+            //onToggle={handleLanguageToggle}
           />
           <button
             aria-label="Sulje valikko"
@@ -258,15 +264,15 @@ const Navbar = () => {
                 fontFamily: "var(--font-montreal-mono-medium)",
                 textDecoration:
                   pathname === link.href
-                    ? "underline wavy var(--va-orange) .1rem"
+                    ? "underline var(--va-orange) .1rem"
                     : "none",
-                textUnderlineOffset: ".2rem",
+                textUnderlineOffset: ".3rem",
               }}
               onMouseEnter={(e) => {
                 if (pathname !== link.href) {
                   e.currentTarget.style.textDecoration =
-                    "underline wavy var(--typography) .1rem";
-                  e.currentTarget.style.textUnderlineOffset = ".2rem";
+                    "underline var(--typography) .1rem";
+                  e.currentTarget.style.textUnderlineOffset = ".3rem";
                 }
               }}
               onMouseLeave={(e) => {

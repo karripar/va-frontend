@@ -46,9 +46,11 @@ export async function sendChatMessage(
           fileSearchEnabled: true,
           webSearchEnabled: false,
           codeInterpreterEnabled: false,
-          vectorStore: {
-            id: 'vs_68fa07260d8881918b4120b38a649a9e',
-          },
+          vectorStore: process.env.NEXT_PUBLIC_VECTOR_STORE_ID
+            ? {
+                id: process.env.NEXT_PUBLIC_VECTOR_STORE_ID,
+              }
+            : undefined,
         },
       }),
     });

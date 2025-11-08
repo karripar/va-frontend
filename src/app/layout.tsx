@@ -2,13 +2,12 @@ import "./globals.css";
 import ConditionalNavbar from "../components/ConditionalNavbar";
 import ProtectedLayout from "../components/ProtectedLayout";
 import type { Metadata } from "next";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { AuthProvider } from "../context/AuthContext";
+import ClientProviders from "./clientProviders";
 
 export const metadata: Metadata = {
   title: "Vaihtoaktivaattori",
   description: "Platform for students interested in student exchange.",
-  manifest: "/manifest.json", // points to your manifest
+  manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
     apple: [
@@ -20,22 +19,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
-
+}) {
   return (
     <html lang="fi">
-      <body className={` antialiased`}>
-        <GoogleOAuthProvider clientId={clientId}>
-          <AuthProvider>
-            <ConditionalNavbar />
-            <ProtectedLayout>
-              <main className="mx-auto max-w-full mb-10">{children}</main>
-            </ProtectedLayout>
-          </AuthProvider>
-        </GoogleOAuthProvider>
+      <body className="antialiased">
+        <ClientProviders>
+          <ConditionalNavbar />
+          <ProtectedLayout>
+            <main className="mx-auto max-w-full mb-10">{children}</main>
+          </ProtectedLayout>
+        </ClientProviders>
       </body>
     </html>
   );

@@ -1,23 +1,17 @@
 "use client";
-import { useDestinationData } from "@/hooks/apiHooks";
+import { useDestinationData } from "@/hooks/destinationHooks";
 import React, { useState } from "react";
 import DestinationList from "@/components/exchange-destinations/DestinationList";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
 
 // Normal import for testing purposes, vitest has issues with React.lazy
 // import DestinationMap from "@/components/exchange-destinations/DestinationMap";
 
-
-const fieldLabels: Record<string, string> = {
-  tech: "Tekniikka",
-  health: "Sosiaali- ja terveysala",
-  culture: "Kulttuuri",
-  business: "Liiketalous",
-};
-
 const DestinationsPage = () => {
+  const { language } = useLanguage();
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
 
   const [selectedField, setSelectedField] = useState<
@@ -39,6 +33,38 @@ const DestinationsPage = () => {
   if (!destinationArray) {
     return <div className="p-4 text-center">No destinations available.</div>;
   }
+  
+  const translations: Record<string, Record<string, string>> = {
+    fi: {
+      partnerSchools: "Kansainväliset yhteistyökorkeakoulut",
+      selectField: "Valitse koulutusala rajataksesi tuloksia",
+      loading: "Ladataan kohteita...",
+      error: "Virhe: ",
+      chooseField: "Valitse koulutusala rajataksesi tuloksia",
+      tech: "Tekniikka",
+      health: "Sosiaali- ja terveysala",
+      culture: "Kulttuuri",
+      business: "Liiketalous",
+    },
+    en: {
+      partnerSchools: "International Partner Universities",
+      selectField: "Select a field of study to filter results",
+      loading: "Loading destinations...",
+      error: "Error: ",
+      chooseField: "Select a field of study to filter results",
+      tech: "Technology",
+      health: "Health and Social Services",
+      culture: "Culture",
+      business: "Business",
+    }
+  };
+
+  const fieldLabels: Record<string, string> = {
+    tech: translations[language].tech,
+    health: translations[language].health,
+    culture: translations[language].culture,
+    business: translations[language].business,
+  };
 
   return (
     <div className="p-4 mt-4 max-w-2xl mx-auto">
@@ -46,7 +72,7 @@ const DestinationsPage = () => {
         className="text-3xl mb-6 text-[#FF5000] text-center tracking-wide"
         style={{ fontFamily: "var(--font-machina-bold)" }}
       >
-        Kansainväliset yhteistyökorkeakoulut
+        {translations[language].partnerSchools}
       </h1>
       <Image
         src="/liito-orava-liput.png"
@@ -59,7 +85,7 @@ const DestinationsPage = () => {
       {/** field switcher */}
       <div className="text-center overflow-hidden rounded-lg my-6 p-4 ">
         <h2 className="text-lg mb-4">
-          Valitse koulutusala rajataksesi tuloksia
+          {translations[language].chooseField}
         </h2>
         {/** Buttons for the switch */}
 

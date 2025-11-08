@@ -1,5 +1,5 @@
 "use client";
-import { useProfileData } from "@/hooks/apiHooks";
+import { useProfileData } from "@/hooks/profileHooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaTrash, FaArrowLeft } from "react-icons/fa";
@@ -51,7 +51,6 @@ export default function FavoritesPage() {
 
   return (
     <div className="min-h-screen">
-      
       <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
         <button
           onClick={() => router.back()}
@@ -62,12 +61,13 @@ export default function FavoritesPage() {
         <h1 className="text-2xl font-bold">Suosikki kohteet</h1>
       </div>
 
-     
       <div className="bg-white min-h-screen">
         <div className="p-6 max-w-2xl mx-auto">
           {favorites.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-[var(--typography)] mb-4 text-base">Ei suosikkeja vielä</p>
+              <p className="text-[var(--typography)] mb-4 text-base">
+                Ei suosikkeja vielä
+              </p>
               <button
                 onClick={() => router.push("/destinations")}
                 className="px-6 py-2 bg-[#FFB299] hover:bg-[#FFA07A] text-[var(--typography)] rounded-lg font-medium"
@@ -82,7 +82,9 @@ export default function FavoritesPage() {
                   key={destination}
                   className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
                 >
-                  <span className="font-medium text-[var(--typography)]">{destination}</span>
+                  <span className="font-medium text-[var(--typography)]">
+                    {destination}
+                  </span>
                   <button
                     onClick={() => handleRemoveFavorite(destination)}
                     disabled={removing === destination}
