@@ -1,65 +1,147 @@
-import { renderHook, act } from "@testing-library/react";
-import { useContactMessages } from "@/hooks/messageHooks";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { vi, describe, test, beforeEach, expect } from "vitest";
+import React from "react";
 
-// Mock directly inside vi.mock without external variable
-vi.mock("@/lib/fetchData", () => {
-  return {
-    default: vi.fn(),
-  };
-});
+const mockGetContacts = vi.fn();
+const mockAddContact = vi.fn();
+const mockDeleteContact = vi.fn();
 
-import fetchData from "@/lib/fetchData";
-
-// Mock auth hook
-vi.mock("@/hooks/useAuth", () => ({
-  useAuth: () => ({
-    user: { email: "test@example.com", userName: "TestUser" },
+// Mock hooks
+vi.mock("@/hooks/contactHooks", () => ({
+  useAdminContacts: () => ({
+    getContacts: mockGetContacts,
+    addContact: mockAddContact,
+    deleteContact: mockDeleteContact,
+    loading: false,
+    error: null,
   }),
 }));
 
-describe("useContactMessages", () => {
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: {
+      id: 1,
+      name: "Admin Tester",
+      email: "admin@example.com",
+      user_level_id: 2,
+    },
+    loading: false,
+  }),
+}));
+
+vi.mock("@/context/LanguageContext", () => ({
+  useLanguage: () => ({
+    language: "en",
+    toggleLanguage: vi.fn(),
+  }),
+}));
+
+import ContactPage from "@/app/contact/page";
+
+describe("ContactPage", () => {
   beforeEach(() => {
-    (fetchData as jest.Mock).mockReset();
-    localStorage.clear();
-    localStorage.setItem("authToken", "test-token");
+    vi.clearAllMocks();
   });
 
-  it("posts a message successfully", async () => {
-    (fetchData as jest.Mock).mockResolvedValueOnce({ success: true });
-
-    const { result } = renderHook(() => useContactMessages());
-
-    await act(async () => {
-      const res = await result.current.postMessage({ subject: "Test Subject", message: "Hello Admin" });
-      expect(res).toEqual({ success: true });
+  test("renders fetched contacts", async () => {
+    mockGetContacts.mockResolvedValueOnce({
+      contacts: [
+        {
+          _id: "1",
+          name: "John Doe",
+          title: "Manager",
+          email: "john@example.com",
+        },
+        {
+          _id: "2",
+          name: "Jane Smith",
+          title: "Admin",
+          email: "jane@example.com",
+        },
+      ],
     });
 
-    expect(fetchData).toHaveBeenCalledTimes(1);
+    render(<ContactPage />);
+
+    expect(await screen.findByText("John Doe")).toBeInTheDocument();
+    expect(await screen.findByText("Jane Smith")).toBeInTheDocument();
   });
 
-  it("fails if no token is found", async () => {
-    localStorage.clear();
-
-    const { result } = renderHook(() => useContactMessages());
-
-    await act(async () => {
-      await result.current.postMessage({ subject: "No Token Subject", message: "No token test" });
+  test("allows admin to add a new contact", async () => {
+    mockGetContacts.mockResolvedValueOnce({ contacts: [] });
+    mockAddContact.mockResolvedValueOnce({
+      contact: {
+        _id: "3",
+        name: "New Admin",
+        title: "Support",
+        email: "new@admin.com",
+      },
     });
 
-    expect(result.current.error).toBe("No auth token found");
+    render(<ContactPage />);
+
+    await userEvent.type(screen.getByPlaceholderText(/Name/i), "New Admin");
+    await userEvent.type(screen.getByPlaceholderText(/Title/i), "Support");
+    await userEvent.type(
+      screen.getByPlaceholderText(/Email/i),
+      "new@admin.com"
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /Add/i }));
+
+    expect(mockAddContact).toHaveBeenCalledWith({
+      name: "New Admin",
+      title: "Support",
+      email: "new@admin.com",
+    });
+
+    // Optional: verify new contact appears
+    expect(await screen.findByText("New Admin")).toBeInTheDocument();
   });
 
-  it("fetches messages successfully", async () => {
-    (fetchData as jest.Mock).mockResolvedValueOnce({
-      messages: [{ id: 1, message: "Hello" }],
+  test("allows admin to delete a contact", async () => {
+    mockGetContacts.mockResolvedValueOnce({
+      contacts: [
+        {
+          _id: "1",
+          name: "John Doe",
+          title: "Manager",
+          email: "john@example.com",
+        },
+      ],
     });
+    mockDeleteContact.mockResolvedValueOnce({ success: true });
+    vi.spyOn(window, "confirm").mockReturnValue(true);
 
-    const { result } = renderHook(() => useContactMessages());
+    render(<ContactPage />);
 
-    await act(async () => {
-      const res = await result.current.getMessages();
-      expect(res).toEqual({ messages: [{ id: 1, message: "Hello" }] });
-    });
+    expect(await screen.findByText("John Doe")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByText(/Remove/i));
+
+    expect(mockDeleteContact).toHaveBeenCalledWith("1");
+  });
+
+  test("renders error message if fetching fails", async () => {
+    mockGetContacts.mockRejectedValueOnce(new Error("Failed to fetch"));
+
+    // Override hook to propagate error
+    vi.mock("@/hooks/contactHooks", () => ({
+      useAdminContacts: () => ({
+        getContacts: mockGetContacts,
+        addContact: mockAddContact,
+        deleteContact: mockDeleteContact,
+        loading: false,
+        error: "Failed to fetch contacts", // simulate what component expects
+      }),
+    }));
+
+    render(<ContactPage />);
+
+    // wait for the error message to appear
+    const errorEl = await screen.findByText("Failed to fetch contacts");
+    expect(errorEl).toBeInTheDocument();
   });
 });

@@ -7,6 +7,7 @@ import useAdminActions from "@/hooks/adminHooks";
 interface Admin {
   _id: string;
   userName?: string;
+  title?: string;
   email: string;
 }
 
@@ -27,8 +28,10 @@ const AdminBoard = () => {
   const translations: Record<string, Record<string, string>> = {
     en: {
       addAdmin: "Add New Admin",
+      notice: "Adding a new admin will grant them administrative privileges. They may alter content and add other admins. Double-check the email before proceeding.",
       enterEmail: "Enter user email",
       confirmEmail: "Confirm user email",
+      enterTitle: "Enter user title",
       addAsAdmin: "Add as Admin",
       adding: "Adding...",
       currentAdmins: "Current Admins",
@@ -36,12 +39,14 @@ const AdminBoard = () => {
       emptyFields: "Please fill in both fields.",
       emailMismatch: "Emails do not match.",
       success: "User promoted to admin successfully!",
-      fail: "Failed to promote user. Check the email.",
+      fail: "Failed to promote user. Check the email. You may not promote an existing admin or yourself.",
     },
     fi: {
       addAdmin: "Lisää uusi ylläpitäjä",
+      notice: "Uuden ylläpitäjän lisääminen antaa heille hallinnolliset oikeudet. He voivat muokata sisältöä ja lisätä muita ylläpitäjiä. Tarkista sähköposti huolellisesti ennen jatkamista.",
       enterEmail: "Syötä käyttäjän sähköposti",
       confirmEmail: "Vahvista käyttäjän sähköposti",
+      enterTitle: "Syötä yhteyshenkilön titteli",
       addAsAdmin: "Lisää ylläpitäjäksi",
       adding: "Lisätään...",
       currentAdmins: "Nykyiset ylläpitäjät",
@@ -49,7 +54,7 @@ const AdminBoard = () => {
       emptyFields: "Täytä molemmat kentät.",
       emailMismatch: "Sähköpostit eivät täsmää.",
       success: "Käyttäjä lisättiin ylläpitäjäksi onnistuneesti!",
-      fail: "Käyttäjän lisääminen epäonnistui. Tarkista sähköposti.",
+      fail: "Käyttäjän lisääminen epäonnistui. Tarkista sähköposti. Et voi lisätä ylläpitäjäksi jo olemassa olevaa ylläpitäjää tai itseäsi.",
     },
   };
 
@@ -90,6 +95,9 @@ const AdminBoard = () => {
       return;
     }
 
+    const confirmAdd = window.confirm(`Are you sure you want to promote ${email.trim()} to admin?`);
+    if (!confirmAdd) return;
+
     try {
       const response = await promoteToAdmin(email.trim());
       if (response?.message) {
@@ -102,6 +110,7 @@ const AdminBoard = () => {
         if (updated && Array.isArray(updated.admins)) {
           setAdmins(updated.admins);
         }
+      
       } else {
         setError(response?.error || t.fail);
       }
@@ -113,6 +122,7 @@ const AdminBoard = () => {
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6">
       <h2 className="text-xl font-semibold">{t.addAdmin}</h2>
+      <p className="text-sm text-gray-600">{t.notice}</p>
 
       {/* Add new admin form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -136,7 +146,7 @@ const AdminBoard = () => {
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+          className="bg-[#FF5000] text-white py-2 rounded disabled:bg-gray-400 hover:disabled:cursor-not-allowed hover:bg-[#e04e00] transition"
         >
           {loading ? t.adding : t.addAsAdmin}
         </button>
