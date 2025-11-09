@@ -9,16 +9,19 @@ import {
   FaFileAlt, 
   FaTrash, 
   FaDownload, 
-  FaUpload, 
+  FaLink, 
   FaArrowLeft, 
   FaCheck, 
   FaClock, 
   FaExclamationTriangle,
   FaPlus,
   FaEye,
-  FaExternalLinkAlt
+  FaExternalLinkAlt,
+  FaSpinner,
+  FaTimes
 } from "react-icons/fa";
 import Link from "next/link";
+import { ApplicationDocument } from "va-hybrid-types";
 
 // Application status types
 type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
@@ -37,6 +40,99 @@ interface ApplicationStage {
   completedAt?: string;
 }
 
+// Compact inline document link form component
+interface QuickDocumentLinkFormProps {
+  documentType: string;
+  phase: string;
+  onDocumentAdded: (doc: ApplicationDocument) => void;
+  onCancel: () => void;
+}
+
+const QuickDocumentLinkForm = ({ documentType, phase, onDocumentAdded, onCancel }: QuickDocumentLinkFormProps) => {
+  const [documentUrl, setDocumentUrl] = useState("");
+  const [sourceType, setSourceType] = useState("google_drive");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!documentUrl.trim()) {
+      alert('Liitä dokumenttilinkki');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      if (!apiUrl) throw new Error("API URL not configured");
+
+      const response = await fetch(`${apiUrl}/profile/applications/documents`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phase,
+          documentType,
+          fileName: documentType,
+          fileUrl: documentUrl,
+          sourceType,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add document');
+
+      const newDoc = await response.json();
+      onDocumentAdded(newDoc);
+      setDocumentUrl("");
+    } catch (error) {
+      console.error("Error adding document:", error);
+      alert("Dokumentin lisääminen epäonnistui");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+      <div className="space-y-2">
+        <select
+          value={sourceType}
+          onChange={(e) => setSourceType(e.target.value)}
+          className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md"
+        >
+          <option value="google_drive">Google Drive</option>
+          <option value="onedrive">OneDrive</option>
+          <option value="dropbox">Dropbox</option>
+          <option value="icloud">iCloud</option>
+          <option value="other_url">Muu URL</option>
+        </select>
+        
+        <input
+          type="url"
+          placeholder="Liitä jaettava linkki tähän"
+          value={documentUrl}
+          onChange={(e) => setDocumentUrl(e.target.value)}
+          className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md"
+        />
+        
+        <div className="flex gap-2">
+          <button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="flex-1 px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+          >
+            {submitting ? <FaSpinner className="animate-spin mx-auto" /> : 'Lisää'}
+          </button>
+          <button
+            onClick={onCancel}
+            disabled={submitting}
+            className="px-3 py-1 text-sm bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+          >
+            Peruuta
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function HakemuksetPage() {
   const { profileData: profile, loading: profileLoading, error: profileError } = useProfileData();
   const { applications, loading: appsLoading, error: appsError } = useApplicationsData();
@@ -49,6 +145,10 @@ export default function HakemuksetPage() {
   // For calculator demo
   const [budgetAmount, setBudgetAmount] = useState(540);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  
+  // State for managing which document is being added
+  const [activeDocumentForm, setActiveDocumentForm] = useState<{ stageId: string; docIndex: number } | null>(null);
+  const [stageDocuments, setStageDocuments] = useState<Record<string, ApplicationDocument[]>>({});
 
   // Mock application stages data - this would come from your backend
   const applicationStages: ApplicationStage[] = [
@@ -300,43 +400,154 @@ export default function HakemuksetPage() {
                       <div className="border-t px-6 py-4">
                         <div className="mb-6">
                           <h4 className="text-md font-medium text-gray-900 mb-3">Pakolliset dokumentit</h4>
-                          <div className="space-y-2">
-                            {stage.requiredDocuments.map((doc, index) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div className="flex items-center space-x-3">
-                                  <FaFileAlt className="text-gray-400" />
-                                  <span className="text-gray-700">{doc}</span>
+                          <div className="space-y-3">
+                            {stage.requiredDocuments.map((doc, index) => {
+                              const docKey = `${stage.id}-req-${index}`;
+                              const isFormActive = activeDocumentForm?.stageId === stage.id && activeDocumentForm?.docIndex === index;
+                              const existingDocs = stageDocuments[docKey] || [];
+                              
+                              return (
+                                <div key={index} className="space-y-2">
+                                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center space-x-3">
+                                      <FaFileAlt className="text-gray-400" />
+                                      <span className="text-gray-700">{doc}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <button 
+                                        onClick={() => setActiveDocumentForm({ stageId: stage.id, docIndex: index })}
+                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                        title="Lisää dokumenttilinkki"
+                                      >
+                                        <FaLink size={14} />
+                                      </button>
+                                      {existingDocs.length > 0 && (
+                                        <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                                          <FaEye size={14} />
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+                                  {isFormActive && (
+                                    <QuickDocumentLinkForm
+                                      documentType={doc}
+                                      phase={stage.phase}
+                                      onDocumentAdded={(newDoc) => {
+                                        setStageDocuments(prev => ({
+                                          ...prev,
+                                          [docKey]: [...(prev[docKey] || []), newDoc]
+                                        }));
+                                        setActiveDocumentForm(null);
+                                      }}
+                                      onCancel={() => setActiveDocumentForm(null)}
+                                    />
+                                  )}
+                                  {existingDocs.length > 0 && (
+                                    <div className="ml-8 space-y-1">
+                                      {existingDocs.map((linkDoc, idx) => (
+                                        <div key={idx} className="flex items-center justify-between p-2 bg-white border rounded text-sm">
+                                          <a href={linkDoc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-2">
+                                            <FaExternalLinkAlt size={10} />
+                                            {linkDoc.sourceType === 'google_drive' ? 'Google Drive' : 
+                                             linkDoc.sourceType === 'onedrive' ? 'OneDrive' :
+                                             linkDoc.sourceType === 'dropbox' ? 'Dropbox' :
+                                             linkDoc.sourceType === 'icloud' ? 'iCloud' : 'Linkki'}
+                                          </a>
+                                          <button 
+                                            onClick={() => {
+                                              setStageDocuments(prev => ({
+                                                ...prev,
+                                                [docKey]: prev[docKey].filter((_, i) => i !== idx)
+                                              }));
+                                            }}
+                                            className="text-red-500 hover:text-red-700"
+                                          >
+                                            <FaTrash size={12} />
+                                          </button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                  <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
-                                    <FaUpload size={14} />
-                                  </button>
-                                  <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
-                                    <FaDownload size={14} />
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                         {/*  Documents */}
                         {stage.optionalDocuments && (
                           <div className="mb-6">
                             <h4 className="text-md font-medium text-gray-900 mb-3">Valinnaiset dokumentit</h4>
-                            <div className="space-y-2">
-                              {stage.optionalDocuments.map((doc, index) => (
-                                <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                                  <div className="flex items-center space-x-3">
-                                    <FaFileAlt className="text-blue-400" />
-                                    <span className="text-gray-700">{doc}</span>
+                            <div className="space-y-3">
+                              {stage.optionalDocuments.map((doc, index) => {
+                                const docKey = `${stage.id}-opt-${index}`;
+                                const isFormActive = activeDocumentForm?.stageId === stage.id && activeDocumentForm?.docIndex === -(index + 1); // Negative for optional
+                                const existingDocs = stageDocuments[docKey] || [];
+                                
+                                return (
+                                  <div key={index} className="space-y-2">
+                                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                      <div className="flex items-center space-x-3">
+                                        <FaFileAlt className="text-blue-400" />
+                                        <span className="text-gray-700">{doc}</span>
+                                      </div>
+                                      <div className="flex items-center space-x-2">
+                                        <button 
+                                          onClick={() => setActiveDocumentForm({ stageId: stage.id, docIndex: -(index + 1) })}
+                                          className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors"
+                                          title="Lisää dokumenttilinkki"
+                                        >
+                                          <FaLink size={14} />
+                                        </button>
+                                        {existingDocs.length > 0 && (
+                                          <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                                            <FaEye size={14} />
+                                          </button>
+                                        )}
+                                      </div>
+                                    </div>
+                                    {isFormActive && (
+                                      <QuickDocumentLinkForm
+                                        documentType={doc}
+                                        phase={stage.phase}
+                                        onDocumentAdded={(newDoc) => {
+                                          setStageDocuments(prev => ({
+                                            ...prev,
+                                            [docKey]: [...(prev[docKey] || []), newDoc]
+                                          }));
+                                          setActiveDocumentForm(null);
+                                        }}
+                                        onCancel={() => setActiveDocumentForm(null)}
+                                      />
+                                    )}
+                                    {existingDocs.length > 0 && (
+                                      <div className="ml-8 space-y-1">
+                                        {existingDocs.map((linkDoc, idx) => (
+                                          <div key={idx} className="flex items-center justify-between p-2 bg-white border rounded text-sm">
+                                            <a href={linkDoc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-2">
+                                              <FaExternalLinkAlt size={10} />
+                                              {linkDoc.sourceType === 'google_drive' ? 'Google Drive' : 
+                                               linkDoc.sourceType === 'onedrive' ? 'OneDrive' :
+                                               linkDoc.sourceType === 'dropbox' ? 'Dropbox' :
+                                               linkDoc.sourceType === 'icloud' ? 'iCloud' : 'Linkki'}
+                                            </a>
+                                            <button 
+                                              onClick={() => {
+                                                setStageDocuments(prev => ({
+                                                  ...prev,
+                                                  [docKey]: prev[docKey].filter((_, i) => i !== idx)
+                                                }));
+                                              }}
+                                              className="text-red-500 hover:text-red-700"
+                                            >
+                                              <FaTrash size={12} />
+                                            </button>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
                                   </div>
-                                  <div className="flex items-center space-x-2">
-                                    <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors">
-                                      <FaUpload size={14} />
-                                    </button>
-                                  </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
                         )}
@@ -496,43 +707,154 @@ export default function HakemuksetPage() {
                       {/* Required Documents */}
                       <div className="mb-6">
                         <h4 className="text-md font-medium text-gray-900 mb-3">Pakolliset dokumentit</h4>
-                        <div className="space-y-2">
-                          {stage.requiredDocuments.map((doc, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                              <div className="flex items-center space-x-3">
-                                <FaFileAlt className="text-gray-400" />
-                                <span className="text-gray-700">{doc}</span>
+                        <div className="space-y-3">
+                          {stage.requiredDocuments.map((doc, index) => {
+                            const docKey = `${stage.id}-req2-${index}`;
+                            const isFormActive = activeDocumentForm?.stageId === `${stage.id}-2` && activeDocumentForm?.docIndex === index;
+                            const existingDocs = stageDocuments[docKey] || [];
+                            
+                            return (
+                              <div key={index} className="space-y-2">
+                                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                  <div className="flex items-center space-x-3">
+                                    <FaFileAlt className="text-gray-400" />
+                                    <span className="text-gray-700">{doc}</span>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <button 
+                                      onClick={() => setActiveDocumentForm({ stageId: `${stage.id}-2`, docIndex: index })}
+                                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                      title="Lisää dokumenttilinkki"
+                                    >
+                                      <FaLink size={14} />
+                                    </button>
+                                    {existingDocs.length > 0 && (
+                                      <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                                        <FaEye size={14} />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                                {isFormActive && (
+                                  <QuickDocumentLinkForm
+                                    documentType={doc}
+                                    phase={stage.phase}
+                                    onDocumentAdded={(newDoc) => {
+                                      setStageDocuments(prev => ({
+                                        ...prev,
+                                        [docKey]: [...(prev[docKey] || []), newDoc]
+                                      }));
+                                      setActiveDocumentForm(null);
+                                    }}
+                                    onCancel={() => setActiveDocumentForm(null)}
+                                  />
+                                )}
+                                {existingDocs.length > 0 && (
+                                  <div className="ml-8 space-y-1">
+                                    {existingDocs.map((linkDoc, idx) => (
+                                      <div key={idx} className="flex items-center justify-between p-2 bg-white border rounded text-sm">
+                                        <a href={linkDoc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-2">
+                                          <FaExternalLinkAlt size={10} />
+                                          {linkDoc.sourceType === 'google_drive' ? 'Google Drive' : 
+                                           linkDoc.sourceType === 'onedrive' ? 'OneDrive' :
+                                           linkDoc.sourceType === 'dropbox' ? 'Dropbox' :
+                                           linkDoc.sourceType === 'icloud' ? 'iCloud' : 'Linkki'}
+                                        </a>
+                                        <button 
+                                          onClick={() => {
+                                            setStageDocuments(prev => ({
+                                              ...prev,
+                                              [docKey]: prev[docKey].filter((_, i) => i !== idx)
+                                            }));
+                                          }}
+                                          className="text-red-500 hover:text-red-700"
+                                        >
+                                          <FaTrash size={12} />
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
-                              <div className="flex items-center space-x-2">
-                                <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
-                                  <FaUpload size={14} />
-                                </button>
-                                <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
-                                  <FaDownload size={14} />
-                                </button>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                       {/* Optional Documents */}
                       {stage.optionalDocuments && (
                         <div className="mb-6">
                           <h4 className="text-md font-medium text-gray-900 mb-3">Valinnaiset dokumentit</h4>
-                          <div className="space-y-2">
-                            {stage.optionalDocuments.map((doc, index) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                                <div className="flex items-center space-x-3">
-                                  <FaFileAlt className="text-blue-400" />
-                                  <span className="text-gray-700">{doc}</span>
+                          <div className="space-y-3">
+                            {stage.optionalDocuments.map((doc, index) => {
+                              const docKey = `${stage.id}-opt2-${index}`;
+                              const isFormActive = activeDocumentForm?.stageId === `${stage.id}-2` && activeDocumentForm?.docIndex === -(index + 1);
+                              const existingDocs = stageDocuments[docKey] || [];
+                              
+                              return (
+                                <div key={index} className="space-y-2">
+                                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                    <div className="flex items-center space-x-3">
+                                      <FaFileAlt className="text-blue-400" />
+                                      <span className="text-gray-700">{doc}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <button 
+                                        onClick={() => setActiveDocumentForm({ stageId: `${stage.id}-2`, docIndex: -(index + 1) })}
+                                        className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors"
+                                        title="Lisää dokumenttilinkki"
+                                      >
+                                        <FaLink size={14} />
+                                      </button>
+                                      {existingDocs.length > 0 && (
+                                        <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
+                                          <FaEye size={14} />
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+                                  {isFormActive && (
+                                    <QuickDocumentLinkForm
+                                      documentType={doc}
+                                      phase={stage.phase}
+                                      onDocumentAdded={(newDoc) => {
+                                        setStageDocuments(prev => ({
+                                          ...prev,
+                                          [docKey]: [...(prev[docKey] || []), newDoc]
+                                        }));
+                                        setActiveDocumentForm(null);
+                                      }}
+                                      onCancel={() => setActiveDocumentForm(null)}
+                                    />
+                                  )}
+                                  {existingDocs.length > 0 && (
+                                    <div className="ml-8 space-y-1">
+                                      {existingDocs.map((linkDoc, idx) => (
+                                        <div key={idx} className="flex items-center justify-between p-2 bg-white border rounded text-sm">
+                                          <a href={linkDoc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-2">
+                                            <FaExternalLinkAlt size={10} />
+                                            {linkDoc.sourceType === 'google_drive' ? 'Google Drive' : 
+                                             linkDoc.sourceType === 'onedrive' ? 'OneDrive' :
+                                             linkDoc.sourceType === 'dropbox' ? 'Dropbox' :
+                                             linkDoc.sourceType === 'icloud' ? 'iCloud' : 'Linkki'}
+                                          </a>
+                                          <button 
+                                            onClick={() => {
+                                              setStageDocuments(prev => ({
+                                                ...prev,
+                                                [docKey]: prev[docKey].filter((_, i) => i !== idx)
+                                              }));
+                                            }}
+                                            className="text-red-500 hover:text-red-700"
+                                          >
+                                            <FaTrash size={12} />
+                                          </button>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                  <button className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors">
-                                    <FaUpload size={14} />
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                       )}
@@ -613,3 +935,5 @@ export default function HakemuksetPage() {
     </div>
   );
 }
+
+
