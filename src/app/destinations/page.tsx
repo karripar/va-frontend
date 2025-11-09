@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import DestinationAdminPanel from "@/components/exchange-destinations/destinationAdminPanel";
 import { useAuth } from "@/hooks/useAuth";
+import { ADMIN_LEVEL_ID } from "@/config/roles";
 
 const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
 
@@ -34,7 +35,7 @@ const DestinationsPage = () => {
   }
 
   if (!destinationArray) {
-    return <div className="p-4 text-center">No destinations available.</div>;
+    return <div className="p-4 text-center">No destinations available. Try refreshing the page.</div>;
   }
   
   const translations: Record<string, Record<string, string>> = {
@@ -79,7 +80,7 @@ const DestinationsPage = () => {
       </h1>
 
       {/** Admin board for changing scraping url's */}
-      {isAuthenticated && user?.user_level_id === 2 && <DestinationAdminPanel />}
+      {isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID) && <DestinationAdminPanel />}
 
       <Image
         src="/liito-orava-liput.png"
