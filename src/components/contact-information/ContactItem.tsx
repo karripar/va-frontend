@@ -13,7 +13,9 @@ const ContactItem: React.FC<ContactItemProps> = ({ contact, isAdmin, onRemove, t
       <div>
         <p className="font-medium">{contact.name}</p>
         <p className="text-sm italic text-gray-500">{contact.title}</p>
-        <p className="text-sm text-gray-600">{contact.email}</p>
+        <a href={`mailto:${contact.email}`} className="text-blue-600 hover:underline">
+          {contact.email}
+        </a>
       </div>
       {isAdmin && (
         <button onClick={() => onRemove(contact._id)} className="text-red-600 hover:underline">

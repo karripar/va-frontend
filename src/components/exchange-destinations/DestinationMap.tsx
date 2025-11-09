@@ -24,6 +24,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
 
   const defaultCenter: [number, number] = [60.1699, 24.9384]; // Helsinki fallback
 
+
   // Clear program filter when searching
   useEffect(() => {
     if (searchTerm) {
@@ -83,7 +84,9 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
           onChange={(e) => setProgramFilter(e.target.value || null)}
           className="p-2 border rounded"
         >
-          <option value="all">Kaikki yhteistyösopimukset</option>
+          <option value="all">
+            {language === "fi" ? "Kaikki ohjelmat" : "All Programs"}
+          </option>
           {Object.keys(data.destinations).map((program) => (
             <option key={program} value={program}>
               {program}
