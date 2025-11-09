@@ -57,7 +57,7 @@ const useDestinationData = (
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {
           console.error("Error fetching destinations:", err);
-          setError("Failed to fetch destinations");
+          setError("Failed to fetch destinations, check the urls provided to the service.");
         }
       } finally {
         setLoading(false);
