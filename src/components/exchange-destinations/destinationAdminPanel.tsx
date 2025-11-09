@@ -24,11 +24,12 @@ const DestinationAdminPanel = () => {
   const [field, setField] = useState("tech");
   const [lang, setLang] = useState("en");
   const [url, setUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { language } = useLanguage();
 
   const translations: Record<string, Record<string, string>> = {
     fi: {
-      adminPanel: "Admin: Hallinnoi kohteiden URL-osoitteita",
+      adminPanel: "Ylläpitäjä: Hallinnoi kohteiden URL-osoitteita",
       field: "Koulutusala",
       lang: "Kieli",
       url: "URL-osoite",
@@ -78,6 +79,7 @@ const DestinationAdminPanel = () => {
         if (data?.urls) setUrls(data.urls);
       } catch (err) {
         console.error("Failed to load URLs:", err);
+        setErrorMessage("Failed to load URLs");
       }
     })();
   }, []);
@@ -130,6 +132,7 @@ const DestinationAdminPanel = () => {
       {/* FORM SECTION — responsive */}
       <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mb-4">
         <select
+          data-testid="destination-field-select"
           value={field}
           onChange={(e) => setField(e.target.value)}
           className="border rounded px-2 py-1 w-full sm:w-auto"
@@ -166,7 +169,7 @@ const DestinationAdminPanel = () => {
         </button>
       </div>
 
-      {/* TABLE SECTION — horizontally scrollable on small screens */}
+      {/* TABLE SECTION  */}
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm border-t border-gray-300">
           <thead>
@@ -200,7 +203,9 @@ const DestinationAdminPanel = () => {
             {urls.length === 0 && !loading && (
               <tr>
                 <td colSpan={4} className="p-4 text-center text-gray-500">
-                  No destination URLs found.
+                  {
+                    errorMessage || "No destination URLs found. Add a new URL above."
+                  }
                 </td>
               </tr>
             )}
