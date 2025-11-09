@@ -29,7 +29,7 @@ const DestinationAdminPanel = () => {
 
   const translations: Record<string, Record<string, string>> = {
     fi: {
-      adminPanel: "Admin: Hallinnoi kohteiden URL-osoitteita",
+      adminPanel: "Ylläpitäjä: Hallinnoi kohteiden URL-osoitteita",
       field: "Koulutusala",
       lang: "Kieli",
       url: "URL-osoite",
@@ -132,6 +132,7 @@ const DestinationAdminPanel = () => {
       {/* FORM SECTION — responsive */}
       <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mb-4">
         <select
+          data-testid="destination-field-select"
           value={field}
           onChange={(e) => setField(e.target.value)}
           className="border rounded px-2 py-1 w-full sm:w-auto"
@@ -168,7 +169,7 @@ const DestinationAdminPanel = () => {
         </button>
       </div>
 
-      {/* TABLE SECTION — horizontally scrollable on small screens */}
+      {/* TABLE SECTION  */}
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm border-t border-gray-300">
           <thead>
