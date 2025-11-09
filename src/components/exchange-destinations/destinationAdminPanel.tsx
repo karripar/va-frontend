@@ -24,6 +24,7 @@ const DestinationAdminPanel = () => {
   const [field, setField] = useState("tech");
   const [lang, setLang] = useState("en");
   const [url, setUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { language } = useLanguage();
 
   const translations: Record<string, Record<string, string>> = {
@@ -78,6 +79,7 @@ const DestinationAdminPanel = () => {
         if (data?.urls) setUrls(data.urls);
       } catch (err) {
         console.error("Failed to load URLs:", err);
+        setErrorMessage("Failed to load URLs");
       }
     })();
   }, []);
@@ -200,7 +202,9 @@ const DestinationAdminPanel = () => {
             {urls.length === 0 && !loading && (
               <tr>
                 <td colSpan={4} className="p-4 text-center text-gray-500">
-                  No destination URLs found.
+                  {
+                    errorMessage || "No destination URLs found. Add a new URL above."
+                  }
                 </td>
               </tr>
             )}
