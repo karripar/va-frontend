@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import DestinationList from "@/components/exchange-destinations/DestinationList";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import DestinationAdminPanel from "@/components/exchange-destinations/destinationAdminPanel";
+import { useAuth } from "@/hooks/useAuth";
 
 const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
 
@@ -13,6 +15,7 @@ const DestinationMap = React.lazy(() => import("@/components/exchange-destinatio
 const DestinationsPage = () => {
   const { language } = useLanguage();
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
+  const { isAuthenticated, user } = useAuth();
 
   const [selectedField, setSelectedField] = useState<
     "tech" | "health" | "culture" | "business"
@@ -74,6 +77,10 @@ const DestinationsPage = () => {
       >
         {translations[language].partnerSchools}
       </h1>
+
+      {/** Admin board for changing scraping url's */}
+      {isAuthenticated && user?.user_level_id === 2 && <DestinationAdminPanel />}
+
       <Image
         src="/liito-orava-liput.png"
         alt="Liito orava"
