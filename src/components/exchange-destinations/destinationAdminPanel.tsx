@@ -4,7 +4,13 @@ import React, { useEffect, useState } from "react";
 import { useDestinationUrls } from "@/hooks/destinationUrlHooks";
 import { useLanguage } from "@/context/LanguageContext";
 
-const DestinationAdminPanel = () => {
+interface DestinationAdminPanelProps {
+  fetchError?: string | null;
+}
+
+const DestinationAdminPanel: React.FC<DestinationAdminPanelProps> = ({
+  fetchError,
+}) => {
   const {
     getDestinationUrls,
     updateDestinationUrl,
@@ -45,9 +51,9 @@ const DestinationAdminPanel = () => {
       finnish: "Suomi",
       saving: "Tallennetaan...",
       notice:
-        "Uuden URL-osoitteen lisääminen tai muokkaaminen vaikuttaa kohteiden tietolähteisiin. Varmista, että syötät oikeat tiedot ennen tallentamista. Virheelliset URL-osoitteet voivat johtaa kohteiden katoamiseen tai virheelliseen näyttämiseen.",
+        "Kohteiden tietolähteet päivittyvät, kun lisäät tai muokkaat URL-osoitetta. Tarkista tiedot huolellisesti ennen tallentamista — virheellinen osoite voi aiheuttaa sen, että kohteet katoavat tai näkyvät virheellisesti.",
       howToUpdate:
-        "Päivittääksesi olemassa olevan URL-osoitteen, syötä sama koulutusala ja kieli uuden URL-osoitteen kanssa ja klikkaa Tallenna. Järjestelmä päivittää vanhan merkinnän uudella tiedolla automaattisesti.",
+        "Päivittääksesi olemassa olevan URL-osoitteen, valitse sama koulutusala ja kieli, syötä uusi osoite ja klikkaa Tallenna. Järjestelmä korvaa vanhan osoitteen automaattisesti uudella. Jos haluat asettaa esimerkiksi tekniikan kohteiden URL-osoitteen suomeksi, valitse 'Tekniikka' ja 'Suomi', syötä uusi osoite ja tallenna.",
     },
     en: {
       adminPanel: "Admin: Manage Destination URLs",
@@ -66,9 +72,9 @@ const DestinationAdminPanel = () => {
       finnish: "Finnish",
       saving: "Saving...",
       notice:
-        "Adding or modifying a destination URL will affect the data sources for destinations. Ensure you enter the correct information before saving. Incorrect URLs may lead to destinations disappearing or displaying incorrectly.",
+        "Changing or adding a destination URL will update the data source used for destinations. Please double-check the information before saving — incorrect URLs may cause destinations to disappear or display incorrectly.",
       howToUpdate:
-        "To update an existing URL, enter the same field and language with the new URL and click Save. The system will automatically update the old entry with the new information.",
+        "To update an existing URL, enter the same field and language with the new URL, then click Save. The existing entry will be automatically replaced with the updated one. For example, to set the URL for technical field destinations in Finnish, select 'Tech' and 'Finnish', enter the new URL, and save.",
     },
   };
 
@@ -117,6 +123,8 @@ const DestinationAdminPanel = () => {
 
   return (
     <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mt-10 shadow-md">
+      {fetchError && <p className="text-red-500 mb-3">{fetchError}</p>}
+
       <h2 className="text-xl font-semibold mb-4 text-gray-700">
         {translations[language].adminPanel}
       </h2>
@@ -165,7 +173,9 @@ const DestinationAdminPanel = () => {
           disabled={loading}
           className="bg-[#FF5000] text-white rounded px-4 py-1 hover:bg-[#e04500] w-full sm:w-auto"
         >
-          {loading ? translations[language].saving : translations[language].save}
+          {loading
+            ? translations[language].saving
+            : translations[language].save}
         </button>
       </div>
 
@@ -186,10 +196,15 @@ const DestinationAdminPanel = () => {
                 <td className="p-2">{entry.field}</td>
                 <td className="p-2">{entry.lang}</td>
                 <td className="p-2 truncate max-w-[200px]">
-                  <a href={entry.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a
+                    href={entry.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
                     {entry.url}
                   </a>
-                  </td>
+                </td>
                 <td className="p-2">
                   <button
                     onClick={() => handleDelete(entry._id)}
@@ -203,9 +218,8 @@ const DestinationAdminPanel = () => {
             {urls.length === 0 && !loading && (
               <tr>
                 <td colSpan={4} className="p-4 text-center text-gray-500">
-                  {
-                    errorMessage || "No destination URLs found. Add a new URL above."
-                  }
+                  {errorMessage ||
+                    "No destination URLs found. Add a new URL above."}
                 </td>
               </tr>
             )}

@@ -2,7 +2,6 @@
 import { useDestinationData } from "@/hooks/destinationHooks";
 import React, { useState } from "react";
 import DestinationList from "@/components/exchange-destinations/DestinationList";
-import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import DestinationAdminPanel from "@/components/exchange-destinations/destinationAdminPanel";
 import { useAuth } from "@/hooks/useAuth";
@@ -30,13 +29,14 @@ const DestinationsPage = () => {
     return <div className="p-4 text-center">Loading destinations...</div>;
   }
 
-  if (error) {
+  if (error && isAuthenticated && user?.user_level_id !== Number(ADMIN_LEVEL_ID)) {
     return <div className="p-4 text-center text-red-500">Error: {error}</div>;
   }
 
-  if (!destinationArray) {
+  if (!destinationArray && isAuthenticated && user?.user_level_id !== Number(ADMIN_LEVEL_ID)) {
     return <div className="p-4 text-center">No destinations available. Try refreshing the page.</div>;
   }
+
   
   const translations: Record<string, Record<string, string>> = {
     fi: {
@@ -49,6 +49,8 @@ const DestinationsPage = () => {
       health: "Sosiaali- ja terveysala",
       culture: "Kulttuuri",
       business: "Liiketalous",
+      couldNotLoad: "Kohteita ei voida ladata: ",
+      youCanStillModify: "Voit silti muokata kohteiden URL-osoitteita alla.",
     },
     en: {
       partnerSchools: "International Partner Universities",
@@ -60,6 +62,8 @@ const DestinationsPage = () => {
       health: "Health and Social Services",
       culture: "Culture",
       business: "Business",
+      couldNotLoad: "Could not load destinations: ",
+      youCanStillModify: "You can still modify destination URLs below.",
     }
   };
 
@@ -78,52 +82,55 @@ const DestinationsPage = () => {
       >
         {translations[language].partnerSchools}
       </h1>
-
-      {/** Admin board for changing scraping url's */}
-      {isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID) && <DestinationAdminPanel />}
-
-      <Image
-        src="/liito-orava-liput.png"
-        alt="Liito orava"
-        width={940} // intrinsic width
-        height={814} // intrinsic height
-        className="max-w-[200] h-auto mx-auto mb-6 hover:rotate-360 transition-transform duration-300"
-      />
-
-      {/** field switcher */}
-      <div className="text-center overflow-hidden rounded-lg my-6 p-4 ">
-        <h2 className="text-lg mb-4">
-          {translations[language].chooseField}
-        </h2>
-        {/** Buttons for the switch */}
-
-        <select
-          value={selectedField}
-          onChange={(e) =>
-            setSelectedField(
-              e.target.value as "tech" | "health" | "culture" | "business"
-            )
-          }
-          className="px-6 py-2 bg-[var(--va-mint-50)] rounded-full font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
-        >
-          {Object.entries(fieldLabels).map(([field, label]) => (
-            <option
-              key={field}
-              value={field}
-              className="text-[var(--typography)] bg-[var(--background)]"
+  
+      {/** Admin board for changing scraping URLs (always visible for admins) */}
+      {isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID) && (
+        <DestinationAdminPanel fetchError={error} />
+      )}
+  
+      {/** Only render field selection & map/list if data is valid */}
+      {!error && destinationArray && (
+        <>
+          <div className="text-center overflow-hidden rounded-lg my-12 p-4">
+            <h2 className="text-lg mb-4">
+              {translations[language].chooseField}
+            </h2>
+            <select
+              value={selectedField}
+              onChange={(e) =>
+                setSelectedField(
+                  e.target.value as "tech" | "health" | "culture" | "business"
+                )
+              }
+              className="px-6 py-2 bg-[var(--va-mint-50)] rounded-full font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
             >
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
-      {/** Map */}
-      {destinationArray && <DestinationMap data={destinationArray} />}
-
-      {/* Programs & Countries */}
-      {destinationArray && <DestinationList data={destinationArray} />}
+              {Object.entries(fieldLabels).map(([field, label]) => (
+                <option
+                  key={field}
+                  value={field}
+                  className="text-[var(--typography)] bg-[var(--background)]"
+                >
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+  
+          <DestinationMap data={destinationArray} />
+          <DestinationList data={destinationArray} />
+        </>
+      )}
+  
+      {/** Optional message for admins when data fetch failed */}
+      {error && isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID) && (
+        <div className="p-4 text-center text-red-500">
+          {translations[language].couldNotLoad} {error} <br />
+          {translations[language].youCanStillModify}
+        </div>
+      )}
     </div>
   );
+  
 };
 
 export default DestinationsPage;

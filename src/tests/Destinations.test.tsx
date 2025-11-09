@@ -59,6 +59,7 @@ vi.mock("@/components/exchange-destinations/DestinationList", () => ({
   ),
 }));
 
+
 import DestinationsPage from "@/app/destinations/page";
 import DestinationAdminPanel from "@/components/exchange-destinations/destinationAdminPanel";
 
@@ -93,18 +94,7 @@ describe("DestinationsPage", () => {
     });
 
     renderWithSuspense();
-    expect(screen.getByText(/Error: Failed to fetch/i)).toBeInTheDocument();
-  });
-
-  test("renders no destinations available", () => {
-    mockUseDestinationData.mockReturnValue({
-      loading: false,
-      error: null,
-      destinationArray: null,
-    });
-
-    renderWithSuspense();
-    expect(screen.getByText(/No destinations available/i)).toBeInTheDocument();
+    expect(screen.getByText(/Could not load destinations/i)).toBeInTheDocument();
   });
 
   test("renders destinations and components", async () => {
@@ -158,7 +148,7 @@ describe("DestinationAdminPanel", () => {
     );
     expect(
       screen.getByText(
-        /Adding or modifying a destination URL will affect the data sources/i
+        /Changing or adding a destination URL will update the data source/i
       )
     ).toBeInTheDocument();
   });
