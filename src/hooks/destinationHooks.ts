@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   DestinationWithCoordinatesResponse,
 } from "va-hybrid-types/contentTypes";
+import { useLanguage } from "@/context/LanguageContext";
 
 // simple cache that survives re-renders but not page reloads
 const destinationCache: Record<string, DestinationWithCoordinatesResponse> = {};
@@ -16,6 +17,7 @@ const useDestinationData = (
     useState<DestinationWithCoordinatesResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { language } = useLanguage();
 
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
@@ -42,7 +44,7 @@ const useDestinationData = (
 
         const url = useMock
           ? "/testDestinations.json"
-          : `${apiUrl}/data/metropolia/destinations?field=${field}&lang=fi`;
+          : `${apiUrl}/destinations/metropolia/destinations?field=${field}&lang=${language}`;
 
         const data = await fetchData<DestinationWithCoordinatesResponse>(url, {
           signal: controller.signal,
@@ -55,7 +57,7 @@ const useDestinationData = (
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {
           console.error("Error fetching destinations:", err);
-          setError("Failed to fetch destinations");
+          setError("Failed to fetch destinations, check the urls provided to the service.");
         }
       } finally {
         setLoading(false);

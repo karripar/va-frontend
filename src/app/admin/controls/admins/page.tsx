@@ -115,6 +115,7 @@ const AdminBoard = () => {
         if (updated && Array.isArray(updated.admins)) {
           setAdmins(updated.admins);
         }
+      
       } else {
         setError(response?.error || t.fail);
       }
