@@ -287,15 +287,27 @@ export default function Instructions() {
             </p>
           </section>
           <div className="flex flex-col w-full justify-center gap-3 my-8 items-center mx-auto sm:px-10 px-4">
-            <Button href="https://opiskelijan.metropolia.fi/fi/opintojen-suorittaminen/kansainvalistyminen-ja-vaihto-opiskelu">
+            <Button
+              href="https://opiskelijan.metropolia.fi/fi/opintojen-suorittaminen/kansainvalistyminen-ja-vaihto-opiskelu"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Vaihto-opiskelu
               <FiExternalLink size={20} className="pb-1 font-bold" />
             </Button>
-            <Button href="https://opiskelijan.metropolia.fi/fi/opintojen-suorittaminen/kansainvalistyminen-ja-vaihto-opiskelu/opiskelijavaihto/hakeminen">
+            <Button
+              href="https://opiskelijan.metropolia.fi/fi/opintojen-suorittaminen/kansainvalistyminen-ja-vaihto-opiskelu/opiskelijavaihto/hakeminen"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Hae vaihtoon
               <FiExternalLink size={20} className="pb-1 font-bold" />
             </Button>
-            <Button href="https://opiskelijan.metropolia.fi/fi/opintojen-suorittaminen/kansainvalistyminen-ja-vaihto-opiskelu/vaihto-opiskelu/lahtevan-muistilista">
+            <Button
+              href="https://opiskelijan.metropolia.fi/fi/opintojen-suorittaminen/kansainvalistyminen-ja-vaihto-opiskelu/vaihto-opiskelu/lahtevan-muistilista"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Muistilista
               <FiExternalLink size={20} className="pb-1 font-bold" />
             </Button>

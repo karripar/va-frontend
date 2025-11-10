@@ -6,10 +6,37 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { authService } from "@/services/authService";
+import { useLanguage } from "@/context/LanguageContext";
+
+const translations = {
+  en: {
+    title: "LOG IN",
+    description:
+      "Log in with your Metropolia credentials to access the application",
+    loading: "Logging in...",
+    error: {
+      noCredential: "No credential received from Google",
+      authFailed: "Google authentication failed",
+      generic: "Authentication failed",
+    },
+  },
+  fi: {
+    title: "KIRJAUDU SISÄÄN",
+    description:
+      "Kirjaudu sisään Metropolia tunnuksilla päästäksesi käyttämään sovellusta",
+    loading: "Kirjaudutaan sisään...",
+    error: {
+      noCredential: "Google-tunnuksia ei vastaanotettu",
+      authFailed: "Google-kirjautuminen epäonnistui",
+      generic: "Kirjautuminen epäonnistui",
+    },
+  },
+};
 
 export default function LoginPage() {
   const router = useRouter();
   const { handleLogin } = useAuth();
+  const { language } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +45,7 @@ export default function LoginPage() {
   }) => {
     if (!credentialResponse.credential) {
       console.error("No credential received");
-      setError("No credential received from Google");
+      setError(translations[language].error.noCredential);
       return;
     }
 
@@ -35,10 +62,6 @@ export default function LoginPage() {
       authService.storeToken(authResponse.token);
       handleLogin(authResponse.user);
 
-      if (process.env.NODE_ENV === "development") {
-        console.log("Authentication successful:", authResponse);
-      }
-
       router.push("/");
     } catch (err) {
       const errorMessage =
@@ -52,7 +75,7 @@ export default function LoginPage() {
 
   const handleGoogleError = () => {
     console.error("Google authentication failed");
-    setError("Google authentication failed");
+    setError(translations[language].error.authFailed);
   };
 
   return (
@@ -70,14 +93,13 @@ export default function LoginPage() {
             className="md:text-2xl text-xl tracking-wider text-[var(--typography)] my-6"
             style={{ fontFamily: "var(--font-machina-bold)" }}
           >
-            KIRJAUDU SISÄÄN
+            {translations[language].title}
           </h1>
           <p
-            className="md:text-lg text-md text-[var(--typography)]"
+            className="md:text-lg text-md text-[var(--typography)] px-4"
             style={{ fontFamily: "var(--font-montreal-mono)" }}
           >
-            Kirjaudu sisään Metropolia tunnuksilla päästäksesi käyttämään
-            sovellusta
+            {translations[language].description}
           </p>
         </div>
 
@@ -102,7 +124,7 @@ export default function LoginPage() {
 
             {loading && (
               <div className="text-center text-sm text-[var(--typography)]">
-                Kirjaudutaan sisään...
+                {translations[language].loading}
               </div>
             )}
           </div>

@@ -2,29 +2,11 @@
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 import Link from "next/link";
-import { FiEdit, FiLogOut } from "react-icons/fi";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { FiEdit } from "react-icons/fi";
+import LogoutButton from "@/components/ui/LogoutButton";
 
 export default function ProfilePage() {
-  const { user: profile, loading, handleLogout } = useAuth();
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const router = useRouter();
-
-  // handle logout
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true);
-  };
-
-  const confirmLogout = () => {
-    handleLogout();
-    setShowLogoutModal(false);
-    router.push("/login");
-  };
-
-  const cancelLogout = () => {
-    setShowLogoutModal(false);
-  };
+  const { user: profile, loading } = useAuth();
 
   // Handling loading state
   if (loading) {
@@ -40,12 +22,12 @@ export default function ProfilePage() {
     return (
       <div className="flex flex-col items-center p-4 mt-8">
         <p>Profiilia ei löytynyt</p>
-        <button
-          onClick={handleLogoutClick}
+        <Link
+          href="/login"
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
           Kirjaudu uudelleen
-        </button>
+        </Link>
       </div>
     );
   }
@@ -66,7 +48,7 @@ export default function ProfilePage() {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-5 h-5"
           >
             <path
               strokeLinecap="round"
@@ -76,7 +58,7 @@ export default function ProfilePage() {
           </svg>
         </Link>
         <h1
-          className="text-2xl tracking-wide pt-1"
+          className="tracking-widest sm:text-2xl text-xl"
           style={{ fontFamily: "var(--font-machina-bold)" }}
         >
           Profiili
@@ -85,14 +67,9 @@ export default function ProfilePage() {
           href="/profile/edit"
           className="absolute right-16 text-white hover:scale-110"
         >
-          <FiEdit size={24} />
+          <FiEdit size={22} />
         </Link>
-        <button
-          onClick={handleLogoutClick}
-          className=" hover:scale-110 absolute right-6 text-white"
-        >
-          <FiLogOut size={24} />
-        </button>
+        <LogoutButton className="absolute right-6 text-white hover:scale-110" />
       </div>
 
       {/* Profile Content - White background */}
@@ -176,34 +153,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
-
-        <div className="fixed inset-0 flex items-center justify-center z-50 text-center bg-[var(--va-grey)]/40">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 border border-[var(--va-border)] shadow-lg">
-            <h3 className="text-lg font-semibold text-[var(--typography)] mb-4">
-              Vahvista uloskirjautuminen
-            </h3>
-            <p className="text-[var(--typography)] mb-6">
-              Oletko varma, että haluat kirjautua ulos?
-            </p>
-            <div className="flex gap-4 mt-8 mb-2 justify-center">
-              <button
-                onClick={cancelLogout}
-                className="px-4 py-2 text-[var(--background)] bg-[var(--va-dark-grey)] rounded-md hover:scale-110"
-              >
-                Peruuta
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="px-4 py-2 bg-[var(--va-orange)] text-white rounded-md hover:scale-110"
-              >
-                Kirjaudu ulos
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal moved to LogoutButton component */}
     </div>
   );
 }

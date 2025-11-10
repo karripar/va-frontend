@@ -7,6 +7,7 @@ import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import ToggleSwitch from "./LanguageToggle";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 
 // navigaation kategoriat
 const navigationCategories = [
@@ -50,7 +51,10 @@ const navigationCategories = [
     id: "user",
     title: "Käyttäjän asetukset",
     titleEn: "User Settings",
-    links: [{ href: "/profile", label: "Profiili", labelEn: "Profile" }],
+    links: [
+      { href: "/profile", label: "Profiili", labelEn: "Profile" },
+      { href: "/admin", label: "Ylläpito", labelEn: "Admin Panel", requiresAdmin: true },
+    ],
   },
 ];
 
@@ -74,9 +78,10 @@ const hamburgerLinks = [
   },
   { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
   { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
+  { href: "/admin", label: "Ylläpito", labelEn: "Admin Panel", requiresAdmin: true },
 ];
 
-// Helper function to get label based on language
+// get label based on language
 const getLabel = (language: string, label: string, labelEn: string): string => {
   return language === "en" ? labelEn : label;
 };
@@ -87,6 +92,8 @@ const Navbar = () => {
   const pathname = usePathname();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const isAdmin = user?.user_level_id === 2;
 
   // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {
@@ -123,7 +130,7 @@ const Navbar = () => {
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
         <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl sm:text-md px-2 shadow-lg">
-          <div className="mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="mx-auto h-20 flex items-center justify-between px-2 my-auto">
             <button
               aria-label={
                 mobileMenuOpen
@@ -137,18 +144,18 @@ const Navbar = () => {
               className="cursor-pointer p-2 -ml-2 z-60"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? "" : <FiMenu size={26} />}
+              {mobileMenuOpen ? "" : <FiMenu size={22} />}
             </button>
-            <div
+            <h1
               className="tracking-widest text-md text-center px-2"
               style={{ fontFamily: "var(--font-machina-bold)" }}
             >
               {getLabel(language, currentPageInfo.page, currentPageInfo.pageEn)}
-            </div>
+            </h1>
             <Link href={"/profile"}>
               <FiUser
                 className="hover:scale-110 transition-transform duration-300"
-                size={26}
+                size={22}
               />
             </Link>
           </div>
@@ -218,10 +225,12 @@ const Navbar = () => {
                 {/* category content */}
                 {activeCategory === category.id && (
                   <div className="absolute shadow-lg left-1/2 transform -translate-x-1/2 top-full w-60 lg:w-80 bg-[var(--background)] border border-[var(--va-border)] rounded-b-lg">
-                    {category.links && (
+                        {category.links && (
                       <div>
-                        {category.links.map((link) => (
-                          <Link
+                        {category.links
+                          .filter(link => !link.requiresAdmin || isAdmin)
+                          .map((link) => (
+                            <Link
                             key={link.href}
                             href={link.href}
                             className="block px-6 py-3 m-1 text-md duration-200 tracking-wide "
@@ -294,7 +303,9 @@ const Navbar = () => {
           </button>
         </div>
         <nav className="px-4 py-3 space-y-2 overflow-y-auto h-[calc(100%-5rem)]">
-          {hamburgerLinks.map((link) => (
+          {hamburgerLinks
+            .filter(link => !link.requiresAdmin || isAdmin)
+            .map((link) => (
             <Link
               key={link.href}
               href={link.href}

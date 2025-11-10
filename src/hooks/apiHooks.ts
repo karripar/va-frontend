@@ -1,11 +1,7 @@
 "use client";
 import fetchData from "@/lib/fetchData"; // remember to use this utility for fetches, not raw fetch. It handles json and errors. Shortens code in the hooks.6
 import { useEffect, useState } from "react";
-import {
-  ProfileResponse,
-} from "va-hybrid-types/contentTypes";
-
-
+import { ProfileResponse } from "va-hybrid-types/contentTypes";
 
 /**
  * Hook to fetch profile data from the user API

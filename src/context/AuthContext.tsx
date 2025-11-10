@@ -39,11 +39,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleAutoLogin = async () => {
     try {
       setLoading(true);
-      
+
       // get token from localStorage
       const token = authService.getToken();
       if (!token) {
-        console.log("No auth token found");
+        setUser(null);
+        setLoading(false);
         return;
       }
 
@@ -51,8 +52,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         "http://localhost:3001/api/v1/users/profile",
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -61,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const userData = await response.json();
         setUser(userData);
       } else {
-        console.log("Auto-login failed: no valid cookie");
+        console.log("Auto-login failed: no valid token");
       }
     } catch (error) {
       console.error("Auto-login failed:", error);
