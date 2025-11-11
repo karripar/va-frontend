@@ -13,6 +13,8 @@ type AuthContextType = {
   handleAutoLogin: () => Promise<void>;
 };
 
+const authAPI = process.env.NEXT_PUBLIC_AUTH_API || "http://localhost:3001/api/v1";
+
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -49,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       const response = await fetch(
-        "http://localhost:3001/api/v1/users/profile",
+        authAPI + "/users/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
