@@ -2,13 +2,7 @@
 import { useState } from "react";
 import { FaPlane, FaShieldAlt, FaHome, FaShoppingCart, FaPencilAlt } from "react-icons/fa";
 import React from "react";
-
-export type BudgetCategory = 
-  | "matkakulut"
-  | "vakuutukset"
-  | "asuminen"
-  | "ruoka_ja_arki"
-  | "opintovalineet";
+import { BudgetCategory } from "va-hybrid-types";
 
 interface BudgetCategoryData {
   category: BudgetCategory;
@@ -52,7 +46,7 @@ export default function BudgetCategories({ onCategorySelect }: BudgetCategoriesP
       bgColor: "bg-orange-50 hover:bg-orange-100"
     },
     {
-      category: "ruoka_ja_arki",
+      category: "ruoka ja arki",
       title: "Ruoka ja arki",
       description: "Kaupat ja ravintolat, hygieniä",
       icon: <FaShoppingCart size={24} />,

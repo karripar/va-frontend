@@ -15,7 +15,7 @@ const navigationCategories = [
     links: [
       { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
       { href: "/destinations", label: "Vaihtokohteet" },
-      { href: "/grants", label: "Apurahat ja kustannukset" },
+      { href: "/profile/hakemukset?tab=budget", label: "Apurahat ja kustannukset" },
     ],
   },
   {
@@ -23,7 +23,8 @@ const navigationCategories = [
     title: "Yhteisö ja tuki",
     links: [
       { href: "/tips", label: "Kokemukset ja vinkit" },
-      { href: "/ai-chat", label: "AI Chat ja FAQ" },
+      { href: "/faq", label: "FAQ" },
+      { href: "/ai-chat", label: "AI Chat" },
       { href: "/contact", label: "Ota yhteyttä" },
     ],
   },
@@ -38,9 +39,10 @@ const hamburgerLinks = [
   { href: "/", label: "Etusivu" },
   { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
   { href: "/destinations", label: "Vaihtokohteet" },
-  { href: "/grants", label: "Apurahat ja kustannukset" },
+  { href: "/profile/hakemukset?tab=budget", label: "Apurahat ja kustannukset" },
   { href: "/tips", label: "Kokemukset ja vinkit" },
-  { href: "/ai-chat", label: "AI Chat ja FAQ" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/ai-chat", label: "AI Chat" },
   { href: "/contact", label: "Ota yhteyttä" },
 ];
 

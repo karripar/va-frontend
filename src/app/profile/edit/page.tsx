@@ -3,7 +3,8 @@ import { useProfileData } from "@/hooks/apiHooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaArrowLeft } from "react-icons/fa";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import LoadingSpinner from "@/components/profile/LoadingSpinner";
 
 export default function EditProfilePage() {
   const { profileData: profile, loading } = useProfileData();
@@ -11,14 +12,12 @@ export default function EditProfilePage() {
   const [userName, setUserName] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>("");
-  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [saving, setSaving] = useState(false);
 
   // Initialize form when profile loads
   useState(() => {
     if (profile) {
       setUserName(profile.userName || "");
-      setLinkedinUrl(profile.linkedinUrl || "");
       setAvatarPreview(profile.avatarUrl || "");
     }
   });
@@ -69,7 +68,6 @@ export default function EditProfilePage() {
           body: JSON.stringify({
             userName,
             avatarUrl,
-            linkedinUrl,
           }),
         }
       );
@@ -88,25 +86,12 @@ export default function EditProfilePage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p>Ladataan...</p>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Orange Header with Title and Back Button */}
-      <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
-        <button
-          onClick={() => router.back()}
-          className="absolute left-4 text-white hover:text-gray-200"
-        >
-          <FaArrowLeft size={20} />
-        </button>
-        <h1 className="text-2xl font-bold">Muokkaa profiilia</h1>
-      </div>
+      <ProfileHeader title="Muokkaa profiilia" />
 
       {/* Content */}
       <div className="p-6 max-w-md mx-auto">
@@ -144,20 +129,6 @@ export default function EditProfilePage() {
             onChange={(e) => setUserName(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent"
             required
-          />
-        </div>
-
-        {/* LinkedIn */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            LinkedIn URL (valinnainen)
-          </label>
-          <input
-            type="url"
-            value={linkedinUrl}
-            onChange={(e) => setLinkedinUrl(e.target.value)}
-            placeholder="https://linkedin.com/in/..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFB299] focus:border-transparent"
           />
         </div>
 

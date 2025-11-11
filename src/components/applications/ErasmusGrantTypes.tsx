@@ -1,11 +1,6 @@
 "use client";
 import { useState } from "react";
-
-export type ErasmusPlusGrantType = 
-  | "base_grant"
-  | "travel_grant"
-  | "green_travel_supplement"
-  | "inclusion_support";
+import { ErasmusPlusGrantType } from "va-hybrid-types";
 
 interface ErasmusGrantOption {
   type: ErasmusPlusGrantType;

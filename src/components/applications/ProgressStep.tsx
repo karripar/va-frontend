@@ -1,8 +1,6 @@
 "use client";
 import { FaCheck, FaClock, FaExclamationTriangle, FaChevronRight } from "react-icons/fa";
-
-type ApplicationStatus = "not_started" | "in_progress" | "completed" | "pending_review";
-type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
+import { ApplicationStatus, ApplicationPhase } from "va-hybrid-types";
 
 interface ProgressStepProps {
   phase: ApplicationPhase;

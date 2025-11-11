@@ -145,8 +145,10 @@ export default function ProfilePage() {
           {/* Member since */}
           <div className="mt-8 text-center text-sm text-gray-500">
             <p>
-              Member since:{" "}
-              {new Date(profile.registeredAt).toLocaleDateString("fi-FI")}
+              Jäsen alkaen:{" "}
+              {profile.registeredAt 
+                ? new Date(profile.registeredAt).toLocaleDateString("fi-FI")
+                : "Ei saatavilla"}
             </p>
           </div>
         </div>
