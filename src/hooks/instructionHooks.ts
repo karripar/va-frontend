@@ -102,7 +102,8 @@ const useInstructionLinks = () => {
     Array<{
       _id: string;
       stepIndex: number;
-      label: string;
+      labelFi?: string;
+      labelEn?: string;
       href: string;
       isExternal: boolean;
       isFile: boolean;
@@ -124,7 +125,8 @@ const useInstructionLinks = () => {
         const data: Array<{
           _id: string;
           stepIndex: number;
-          label: string;
+          labelFi?: string;
+          labelEn?: string;
           href: string;
           isExternal: boolean;
           isFile: boolean;
@@ -155,14 +157,16 @@ const useUpdateInstructionLink = () => {
   const updateLink = async (
     linkId: string,
     updates: {
-      label?: string;
+      labelFi?: string;
+      labelEn?: string;
       href?: string;
       isExternal?: boolean;
       isFile?: boolean;
     }
   ): Promise<{
     _id: string;
-    label: string;
+    labelFi?: string;
+    labelEn?: string;
     href: string;
     isExternal: boolean;
     isFile: boolean;
@@ -180,7 +184,8 @@ const useUpdateInstructionLink = () => {
         message: string;
         link: {
           _id: string;
-          label: string;
+          labelFi?: string;
+          labelEn?: string;
           href: string;
           isExternal: boolean;
           isFile: boolean;

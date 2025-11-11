@@ -15,7 +15,7 @@ function ToggleSwitch({ isMobileMenu = false }: { isMobileMenu?: boolean }) {
       >
         {/* FI Label */}
         <span
-          className="pt-1 absolute left-2 text-sm transition-colors duration-200 text-[var(--typography)]"
+          className="pt-1 absolute left-3 text-sm transition-colors duration-200 text-[var(--typography)]"
           style={{
             fontFamily: "var(--font-machina-bold)",
           }}
@@ -35,8 +35,8 @@ function ToggleSwitch({ isMobileMenu = false }: { isMobileMenu?: boolean }) {
 
         {/* Slider */}
         <span
-          className={`flex justify-center items-center h-6 w-10 transform rounded-lg transition-transform duration-200 ${
-            isEn ? "translate-x-8" : "translate-x-0"
+          className={`flex justify-center items-center h-6 w-9 transform rounded-lg transition-transform duration-200 ${
+            isEn ? "translate-x-9" : "translate-x-0"
           } text-sm pt-1 text-[var(--background)]`}
           style={{
             backgroundColor: "var(--va-orange)",
