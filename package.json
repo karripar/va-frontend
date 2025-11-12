@@ -11,7 +11,10 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.2",
+    "@types/leaflet": "^1.9.20",
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.548.0",
     "next": "15.5.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -35,6 +38,7 @@
     "@vitejs/plugin-react-swc": "^4.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
+    "happy-dom": "^20.0.10",
     "jsdom": "^27.0.0",
     "tailwindcss": "^4",
     "typescript": "^5",

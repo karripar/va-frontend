@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'leaflet/dist/leaflet.css';
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 /* Metropolian fontit */
 
@@ -10,8 +10,8 @@
 /* Huom! Pääotsikoissa ja CTA painikkeissa käytetään VERSAALIKIRJAIMIA */
 
 @font-face {
-  font-family: 'PP Neue Machina Bold';
-  src: url('/fonts/PPNeueMachina-PlainUltrabold.otf') format('opentype');
+  font-family: "PP Neue Machina Bold";
+  src: url("/fonts/PPNeueMachina-PlainUltrabold.otf") format("opentype");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -21,8 +21,8 @@
 /* Tätä fonttia käytetään väliotsikoissa */
 
 @font-face {
-  font-family: 'PP Neue Machina';
-  src: url('/fonts/PPNeueMachina-PlainRegular.otf') format('opentype');
+  font-family: "PP Neue Machina";
+  src: url("/fonts/PPNeueMachina-PlainRegular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -31,8 +31,8 @@
 /* PP Neue Montreal Mono Medium */
 /* Tätä fonttia käytetään kuvateksteissä ja ylä- ja alatunnisteissa */
 @font-face {
-  font-family: 'PP Neue Montreal Mono Medium';
-  src: url('/fonts/PPNeueMontrealMono-Medium.otf') format('opentype');
+  font-family: "PP Neue Montreal Mono Medium";
+  src: url("/fonts/PPNeueMontrealMono-Medium.otf") format("opentype");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -41,8 +41,8 @@
 /* PP Neue Montreal Mono */
 /* Tätä fonttia käytetään leipätekstissä */
 @font-face {
-  font-family: 'PP Neue Montreal Mono';
-  src: url('/fonts/PPNeueMontrealMono-Book.otf') format('opentype');
+  font-family: "PP Neue Montreal Mono";
+  src: url("/fonts/PPNeueMontrealMono-Book.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -63,11 +63,11 @@
   --typography: #363e3c;
 
   /* Custom Font Variables */
-  --font-machina-bold: 'PP Neue Machina Bold', Arial, Helvetica, sans-serif;
-  --font-machina-regular: 'PP Neue Machina', Arial, Helvetica, sans-serif;
-  --font-montreal-mono-medium: 'PP Neue Montreal Mono Medium', 'Courier New',
+  --font-machina-bold: "PP Neue Machina Bold", Arial, Helvetica, sans-serif;
+  --font-machina-regular: "PP Neue Machina", Arial, Helvetica, sans-serif;
+  --font-montreal-mono-medium: "PP Neue Montreal Mono Medium", "Courier New",
     monospace;
-  --font-montreal-mono: 'PP Neue Montreal Mono', 'Courier New', monospace;
+  --font-montreal-mono: "PP Neue Montreal Mono", "Courier New", monospace;
 }
 
 /* NOTE: @theme is not supported
@@ -100,7 +100,7 @@ body {
 
 .underline-center::after {
   position: absolute;
-  content: '';
+  content: "";
   width: 0;
   height: 0.3rem;
   bottom: 0.7rem;

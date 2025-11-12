@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { FiArrowLeft, FiSend, FiChevronRight } from "react-icons/fi";
+import { FiSend, FiChevronRight } from "react-icons/fi";
 
 type Role = "bot" | "user";
 type ChatMessage = { id: string; role: Role; text: string };
@@ -59,26 +58,19 @@ export default function AIChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+    <div className="min-h-screen bg-[var(--background)]">
       {/* Main content */}
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-10 py-6 space-y-6">
-        {/* Back row */}
-        <div className="flex items-center gap-2 text-sm">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 text-[var(--va-muted)] hover:opacity-80"
-          >
-            <FiArrowLeft /> Takaisin
-          </Link>
-        </div>
-
+      <main className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-10 py-6 space-y-6 my-4">
         {/* Chat card */}
         <div
           className="rounded-lg border border-[var(--va-grey)] shadow-md pb-4 px-4 flex flex-col min-h-[45vh] sm:min-h-[55vh] lg:min-h-[65vh] xl:min-h-[70vh]"
           style={{ backgroundColor: "var(--va-card)" }}
         >
           {/* Messages */}
-          <div ref={listRef} className="flex-1 overflow-y-auto pr-1 md:text-md text-sm">
+          <div
+            ref={listRef}
+            className="flex-1 overflow-y-auto pr-1 md:text-md text-sm"
+          >
             {messages.map((m, i) => {
               const prev = messages[i - 1];
               const groupStart = !prev || prev.role !== m.role;

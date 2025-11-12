@@ -1,24 +1,21 @@
+"use client";
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
-function ToggleSwitch({
-  isMobileMenu = false,
-  isEn,
-  onToggle,
-}: {
-  isMobileMenu?: boolean;
-  isEn: boolean;
-  onToggle: () => void;
-}) {
+function ToggleSwitch({ isMobileMenu = false }: { isMobileMenu?: boolean }) {
+  const { language, toggleLanguage } = useLanguage();
+  const isEn = language === "en";
+
   return (
     <div className={isMobileMenu ? "" : "absolute right-0 top-5 md:mr-6 mr-4"}>
       <button
-        onClick={onToggle}
+        onClick={toggleLanguage}
         className="relative inline-flex h-8 w-20 items-center transition-colors duration-200 px-1 rounded-lg bg-[var(--background)] cursor-pointer"
         aria-label={`Switch to ${isEn ? "Finnish" : "English"}`}
       >
         {/* FI Label */}
         <span
-          className="pt-1 absolute left-2 text-sm transition-colors duration-200 text-[var(--typography)]"
+          className="pt-1 absolute left-3 text-sm transition-colors duration-200 text-[var(--typography)]"
           style={{
             fontFamily: "var(--font-machina-bold)",
           }}
@@ -38,9 +35,9 @@ function ToggleSwitch({
 
         {/* Slider */}
         <span
-          className={`flex justify-center items-center h-6 w-10 transform rounded-lg transition-transform duration-200 ${
-            isEn ? "translate-x-8" : "translate-x-0"
-          } flex items-center justify-center text-sm pt-1 text-[var(--background)]`}
+          className={`flex justify-center items-center h-6 w-9 transform rounded-lg transition-transform duration-200 ${
+            isEn ? "translate-x-9" : "translate-x-0"
+          } text-sm pt-1 text-[var(--background)]`}
           style={{
             backgroundColor: "var(--va-orange)",
             fontFamily: "var(--font-machina-bold)",

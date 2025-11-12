@@ -4,6 +4,7 @@ import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import { DefaultIcon } from "../../../leafletConfig";
 import MapSearchbar from "./MapSearchbar";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface DestinationMapProps {
   data: DestinationWithCoordinatesResponse;
@@ -19,8 +20,10 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCountry, setSelectedCountry] =
     useState<SelectedCountry | null>(null);
+  const { language } = useLanguage();
 
   const defaultCenter: [number, number] = [60.1699, 24.9384]; // Helsinki fallback
+
 
   // Clear program filter when searching
   useEffect(() => {
@@ -81,7 +84,9 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
           onChange={(e) => setProgramFilter(e.target.value || null)}
           className="p-2 border rounded"
         >
-          <option value="all">Kaikki yhteistyösopimukset</option>
+          <option value="all">
+            {language === "fi" ? "Kaikki ohjelmat" : "All Programs"}
+          </option>
           {Object.keys(data.destinations).map((program) => (
             <option key={program} value={program}>
               {program}

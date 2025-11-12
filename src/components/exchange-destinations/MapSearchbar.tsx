@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface MapSearchbarProps {
   onSearch: (query: string) => void;
@@ -7,6 +8,18 @@ interface MapSearchbarProps {
 
 const MapSearchbar: React.FC<MapSearchbarProps> = ({ onSearch }) => {
   const [query, setQuery] = useState("");
+  const { language } = useLanguage();
+
+  const translations: Record<string, Record<string, string>> = {
+    en: {
+      searchPlaceholder: "Search destinations...",
+      search: "Search",
+    },
+    fi: {
+      searchPlaceholder: "Hae kohteita...",
+      search: "Haku",
+    },
+  };
 
   // Debounce effect: waits until typing pauses
   useEffect(() => {
@@ -28,7 +41,7 @@ const MapSearchbar: React.FC<MapSearchbarProps> = ({ onSearch }) => {
     >
       <input
         type="text"
-        placeholder="Hae kohteita..."
+        placeholder={translations[language]?.searchPlaceholder || "Search..."}
         value={query}
         onChange={(e) => setQuery(e.target.value)} 
         className="flex-grow px-3 py-2 rounded-l-lg outline-none"
@@ -37,7 +50,7 @@ const MapSearchbar: React.FC<MapSearchbarProps> = ({ onSearch }) => {
         type="submit"
         className="px-4 py-2 bg-[#FF5000] text-white rounded-r-lg hover:bg-orange-600 transition"
       >
-        Haku
+        {translations[language]?.search || "Search"}
       </button>
     </form>
   );

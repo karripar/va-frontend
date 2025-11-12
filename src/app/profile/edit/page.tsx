@@ -1,5 +1,5 @@
 "use client";
-import { useProfileData } from "@/hooks/apiHooks";
+import { useProfileData } from "@/hooks/profileHooks";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -45,7 +45,7 @@ export default function EditProfilePage() {
       if (avatarFile) {
         const formData = new FormData();
         formData.append("avatar", avatarFile);
-        
+
         const uploadResponse = await fetch(
           `${process.env.NEXT_PUBLIC_UPLOAD_API}/upload/avatar`,
           {
@@ -53,7 +53,7 @@ export default function EditProfilePage() {
             body: formData,
           }
         );
-        
+
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json();
           avatarUrl = uploadData.url;
@@ -113,72 +113,72 @@ export default function EditProfilePage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Avatar */}
           <div className="flex flex-col items-center">
-          {avatarPreview && (
-            <Image
-              src={avatarPreview}
-              alt="Avatar preview"
-              width={96}
-              height={96}
-              className="w-24 h-24 rounded-full mb-4"
-            />
-          )}
-          <label className="cursor-pointer bg-[#FFB299] hover:bg-[#FFA07A] text-gray-800 px-4 py-2 rounded-lg">
-            Vaihda kuva
+            {avatarPreview && (
+              <Image
+                src={avatarPreview}
+                alt="Avatar preview"
+                width={96}
+                height={96}
+                className="w-24 h-24 rounded-full mb-4"
+              />
+            )}
+            <label className="cursor-pointer bg-[#FFB299] hover:bg-[#FFA07A] text-[var(--typography)] px-4 py-2 rounded-lg">
+              Vaihda kuva
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+            </label>
+          </div>
+
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--typography)] mb-2">
+              Käyttäjänimi
+            </label>
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="hidden"
+              type="text"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent"
+              required
             />
-          </label>
-        </div>
+          </div>
 
-        {/* Username */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Käyttäjänimi
-          </label>
-          <input
-            type="text"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent"
-            required
-          />
-        </div>
+          {/* LinkedIn */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--typography)] mb-2">
+              LinkedIn URL (valinnainen)
+            </label>
+            <input
+              type="url"
+              value={linkedinUrl}
+              onChange={(e) => setLinkedinUrl(e.target.value)}
+              placeholder="https://linkedin.com/in/..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFB299] focus:border-transparent"
+            />
+          </div>
 
-        {/* LinkedIn */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            LinkedIn URL (valinnainen)
-          </label>
-          <input
-            type="url"
-            value={linkedinUrl}
-            onChange={(e) => setLinkedinUrl(e.target.value)}
-            placeholder="https://linkedin.com/in/..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFB299] focus:border-transparent"
-          />
-        </div>
-
-        {/* Buttons */}
-        <div className="flex gap-4">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            Peruuta
-          </button>
-          <button
-            type="submit"
-            disabled={saving}
-            className="flex-1 px-4 py-2 bg-[#FFB299] hover:bg-[#FFA07A] text-gray-800 rounded-lg disabled:opacity-50"
-          >
-            {saving ? "Tallennetaan..." : "Tallenna"}
-          </button>
-        </div>
-      </form>
+          {/* Buttons */}
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Peruuta
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 px-4 py-2 bg-[#FFB299] hover:bg-[#FFA07A] text-[var(--typography)] rounded-lg disabled:opacity-50"
+            >
+              {saving ? "Tallennetaan..." : "Tallenna"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

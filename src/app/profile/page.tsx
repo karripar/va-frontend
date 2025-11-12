@@ -1,11 +1,12 @@
 "use client";
-import { useProfileData } from "@/hooks/apiHooks";
-import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
-import { FaEdit } from "react-icons/fa";
+import Link from "next/link";
+import { FiEdit } from "react-icons/fi";
+import LogoutButton from "@/components/ui/LogoutButton";
 
 export default function ProfilePage() {
-  const { profileData: profile, loading, error } = useProfileData();
+  const { user: profile, loading } = useAuth();
 
   // Handling loading state
   if (loading) {
@@ -16,26 +17,17 @@ export default function ProfilePage() {
     );
   }
 
-  // Handling error state
-  if (error) {
-    return (
-      <div className="flex flex-col items-center p-4 mt-8">
-        <p className="text-red-500">Virhe: {error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-8 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Yritä uudelleen
-        </button>
-      </div>
-    );
-  }
-
   // Handling no data state
   if (!profile) {
     return (
       <div className="flex flex-col items-center p-4 mt-8">
         <p>Profiilia ei löytynyt</p>
+        <Link
+          href="/login"
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Kirjaudu uudelleen
+        </Link>
       </div>
     );
   }
@@ -43,11 +35,11 @@ export default function ProfilePage() {
   // Rendering profile data
   return (
     <div className="min-h-screen">
-      {/* Orange Header with Title, Back Arrow and Edit Icon */}
-      <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
+      {/* Orange Header with Title, Back Arrow and Edit Icon, Logout */}
+      <div className="bg-[#FF5722] text-white px-8 py-6 flex items-center justify-center relative">
         <Link
           href="/"
-          className="absolute left-4 text-white hover:text-gray-200 transition-colors"
+          className="absolute left-6 text-white hover:scale-110"
           aria-label="Takaisin etusivulle"
         >
           <svg
@@ -56,7 +48,7 @@ export default function ProfilePage() {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-5 h-5"
           >
             <path
               strokeLinecap="round"
@@ -65,13 +57,19 @@ export default function ProfilePage() {
             />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold">Profiili</h1>
+        <h1
+          className="tracking-widest sm:text-2xl text-xl"
+          style={{ fontFamily: "var(--font-machina-bold)" }}
+        >
+          Profiili
+        </h1>
         <Link
           href="/profile/edit"
-          className="absolute right-4 text-white hover:text-gray-200 transition-colors"
+          className="absolute right-16 text-white hover:scale-110"
         >
-          <FaEdit size={24} />
+          <FiEdit size={22} />
         </Link>
+        <LogoutButton className="absolute right-6 text-white hover:scale-110" />
       </div>
 
       {/* Profile Content - White background */}
@@ -97,7 +95,7 @@ export default function ProfilePage() {
             )}
 
             {/* Welcome text */}
-            <p className="text-gray-800 text-center text-base mb-2 font-normal">
+            <p className="text-gray-800 text-center text-base mb-2 font-normal mt-4">
               Tervetuloa profiiliisi, täällä voit selata tallentamiasi
               vaihtokohteitä ja seurata hakemustesi etenemistä vaiheittain.
             </p>
@@ -109,7 +107,7 @@ export default function ProfilePage() {
               href="/profile/favorites"
               className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
             >
-              <div className="flex justify-between items-center text-gray-800">
+              <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
                   Suosikkikohteet ({profile.favorites?.length || 0})
                 </span>
@@ -121,7 +119,7 @@ export default function ProfilePage() {
               href="/profile/documents"
               className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
             >
-              <div className="flex justify-between items-center text-gray-800">
+              <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
                   Omat dokumentit ({profile.documents?.length || 0})
                 </span>
@@ -140,11 +138,24 @@ export default function ProfilePage() {
                 <span>›</span>
               </div>
             </Link>
-
+            {/* LinkedIn link */}
+            {profile.linkedinUrl && (
+              <a
+                href={profile.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
+              >
+                <div className="flex justify-between items-center text-[var(--typography)]">
+                  <span className="font-medium">LinkedIn Profile</span>
+                  <span>↗</span>
+                </div>
+              </a>
+            )}
           </div>
 
           {/* Member since */}
-          <div className="mt-8 text-center text-sm text-gray-500">
+          <div className="mt-8 text-center text-sm text-[var(--typography)]">
             <p>
               Member since:{" "}
               {new Date(profile.registeredAt).toLocaleDateString("fi-FI")}
@@ -152,6 +163,8 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Modal moved to LogoutButton component */}
     </div>
   );
 }

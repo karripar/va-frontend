@@ -6,74 +6,113 @@ import React, { useState } from "react";
 import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import ToggleSwitch from "./LanguageToggle";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 
 // navigaation kategoriat
 const navigationCategories = [
   {
     id: "exchange",
     title: "Opiskelijavaihto",
+    titleEn: "Student Exchange",
     links: [
-      { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
-      { href: "/destinations", label: "Vaihtokohteet" },
-      { href: "/grants", label: "Apurahat ja kustannukset" },
+      {
+        href: "/instructions",
+        label: "Hakuprosessi ja ohjeet",
+        labelEn: "Application Process",
+      },
+      {
+        href: "/destinations",
+        label: "Vaihtokohteet",
+        labelEn: "Destinations",
+      },
+      {
+        href: "/grants",
+        label: "Apurahat ja kustannukset",
+        labelEn: "Grants & Costs",
+      },
     ],
   },
   {
     id: "community",
     title: "Yhteisö ja tuki",
+    titleEn: "Community & Support",
     links: [
-      { href: "/tips", label: "Kokemukset ja vinkit" },
-      { href: "/ai-chat", label: "AI Chat ja FAQ" },
-      { href: "/contact", label: "Ota yhteyttä" },
+      {
+        href: "/tips",
+        label: "Kokemukset ja vinkit",
+        labelEn: "Experiences & Tips",
+      },
+      { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
+      { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
     ],
   },
   {
     id: "user",
     title: "Käyttäjän asetukset",
-    links: [{ href: "/profile", label: "Profiili" }],
+    titleEn: "User Settings",
+    links: [
+      { href: "/profile", label: "Profiili", labelEn: "Profile" },
+      { href: "/admin", label: "Ylläpito", labelEn: "Admin Panel", requiresAdmin: true },
+    ],
   },
 ];
 
 const hamburgerLinks = [
-  { href: "/", label: "Etusivu" },
-  { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
-  { href: "/destinations", label: "Vaihtokohteet" },
-  { href: "/grants", label: "Apurahat ja kustannukset" },
-  { href: "/tips", label: "Kokemukset ja vinkit" },
-  { href: "/ai-chat", label: "AI Chat ja FAQ" },
-  { href: "/contact", label: "Ota yhteyttä" },
+  { href: "/", label: "Etusivu", labelEn: "Home" },
+  {
+    href: "/instructions",
+    label: "Hakuprosessi ja ohjeet",
+    labelEn: "Application Process",
+  },
+  { href: "/destinations", label: "Vaihtokohteet", labelEn: "Destinations" },
+  {
+    href: "/grants",
+    label: "Apurahat ja kustannukset",
+    labelEn: "Grants & Costs",
+  },
+  {
+    href: "/tips",
+    label: "Kokemukset ja vinkit",
+    labelEn: "Experiences & Tips",
+  },
+  { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
+  { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
+  { href: "/admin", label: "Ylläpito", labelEn: "Admin Panel", requiresAdmin: true },
 ];
+
+// get label based on language
+const getLabel = (language: string, label: string, labelEn: string): string => {
+  return language === "en" ? labelEn : label;
+};
 
 // navigation
 const Navbar = () => {
+  const { language } = useLanguage();
   const pathname = usePathname();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isEn, setIsEn] = useState(false);
+  const { user } = useAuth();
+  const isAdmin = user?.user_level_id === 2;
 
-  const handleLanguageToggle = () => {
-    setIsEn((prevState) => !prevState);
-  };
-
-  // log out... will be done later
-  const handleLogout = () => {
-    console.log("Logging out...");
-    // TODO: clear localStorage/sessionStorage + authentication tokens
-
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("authToken");
-      window.location.href = "/";
-    }
-  };
-
+  // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {
     for (const category of navigationCategories) {
       if (category.links) {
         const link = category.links.find((link) => link.href === pathname);
-        if (link) return { category: category.title, page: link.label };
+        if (link)
+          return {
+            category: category.title,
+            page: link.label,
+            pageEn: link.labelEn,
+          };
       }
     }
-    return { category: "Vaihtoaktivaattori", page: "Vaihtoaktivaattori" };
+    return {
+      category: "Vaihtoaktivaattori",
+      page: "Vaihtoaktivaattori",
+      pageEn: "Vaihtoaktivaattori",
+    };
   };
 
   const currentPageInfo = getCurrentPageInfo();
@@ -91,24 +130,32 @@ const Navbar = () => {
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
         <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl sm:text-md px-2 shadow-lg">
-          <div className="mx-auto px-4 h-20 flex items-center justify-between">
+          <div className="mx-auto h-20 flex items-center justify-between px-2 my-auto">
             <button
-              aria-label={mobileMenuOpen ? "Sulje valikko" : "Avaa valikko"}
+              aria-label={
+                mobileMenuOpen
+                  ? language === "en"
+                    ? "Close menu"
+                    : "Sulje valikko"
+                  : language === "en"
+                  ? "Open menu"
+                  : "Avaa valikko"
+              }
               className="cursor-pointer p-2 -ml-2 z-60"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? "" : <FiMenu size={26} />}
+              {mobileMenuOpen ? "" : <FiMenu size={22} />}
             </button>
-            <div
-              className="tracking-wide text-md text-center px-2"
+            <h1
+              className="tracking-widest text-md text-center px-2"
               style={{ fontFamily: "var(--font-machina-bold)" }}
             >
-              {currentPageInfo.page}
-            </div>
+              {getLabel(language, currentPageInfo.page, currentPageInfo.pageEn)}
+            </h1>
             <Link href={"/profile"}>
               <FiUser
                 className="hover:scale-110 transition-transform duration-300"
-                size={26}
+                size={22}
               />
             </Link>
           </div>
@@ -124,7 +171,7 @@ const Navbar = () => {
           }}
         >
           <div
-            className="px-6 py-6 text-center sm:text-2xl text-md shadow-lg tracking-wider relative items-center flex justify-center"
+            className="px-6 py-6 text-center sm:text-2xl text-md shadow-lg tracking-widest relative items-center flex justify-center"
             style={{
               color: "var(--background)",
               backgroundColor: "var(--va-orange)",
@@ -133,15 +180,15 @@ const Navbar = () => {
           >
             <Link href={"/"}>
               <Image
-              className="absolute left-0 ml-4 top-0 mt-2"
+                className="absolute left-0 ml-4 top-0 mt-2"
                 alt="Logo"
                 src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-05.png"
                 width={70}
                 height={70}
               />
             </Link>
-            {currentPageInfo.page}
-            <ToggleSwitch isEn={isEn} onToggle={handleLanguageToggle} />
+            {getLabel(language, currentPageInfo.page, currentPageInfo.pageEn)}
+            <ToggleSwitch />
           </div>
           <div className="flex flex-row m-auto z-10 gap-16 justify-center px-4">
             {navigationCategories.map((category) => (
@@ -164,7 +211,7 @@ const Navbar = () => {
                       activeCategory === category.id ? "active" : ""
                     }`}
                   >
-                    {category.title}
+                    {getLabel(language, category.title, category.titleEn)}
                   </span>
                   <span
                     className={`text-[var(--va-orange)] pl-1 transition-transform duration-300 ${
@@ -178,10 +225,12 @@ const Navbar = () => {
                 {/* category content */}
                 {activeCategory === category.id && (
                   <div className="absolute shadow-lg left-1/2 transform -translate-x-1/2 top-full w-60 lg:w-80 bg-[var(--background)] border border-[var(--va-border)] rounded-b-lg">
-                    {category.links && (
+                        {category.links && (
                       <div>
-                        {category.links.map((link) => (
-                          <Link
+                        {category.links
+                          .filter(link => !link.requiresAdmin || isAdmin)
+                          .map((link) => (
+                            <Link
                             key={link.href}
                             href={link.href}
                             className="block px-6 py-3 m-1 text-md duration-200 tracking-wide "
@@ -189,16 +238,16 @@ const Navbar = () => {
                               fontFamily: "var(--font-montreal-mono)",
                               textDecoration:
                                 pathname === link.href
-                                  ? "underline wavy var(--va-orange) .1rem"
+                                  ? "underline var(--va-orange) .1rem"
                                   : "none",
-                              textUnderlineOffset: ".2rem",
+                              textUnderlineOffset: ".3rem",
                             }}
                             onMouseEnter={(e) => {
                               if (pathname !== link.href) {
                                 e.currentTarget.style.textDecoration =
-                                  "underline wavy var(--typography) .1rem";
+                                  "underline var(--typography) .1rem";
                                 e.currentTarget.style.textUnderlineOffset =
-                                  ".2rem";
+                                  ".3rem";
                               }
                             }}
                             onMouseLeave={(e) => {
@@ -209,21 +258,9 @@ const Navbar = () => {
                               }
                             }}
                           >
-                            {link.label}
+                            {getLabel(language, link.label, link.labelEn)}
                           </Link>
                         ))}
-                        {category.id === "user" && (
-                          <button
-                            onClick={handleLogout}
-                            className="px-6 py-2 mx-6 block mt-3 mb-4 text-sm uppercase duration-200 tracking-wider bg-[var(--va-orange)] hover:scale-105 rounded-lg"
-                            style={{
-                              fontFamily: "var(--font-machina-bold)",
-                              color: "var(--background)",
-                            }}
-                          >
-                            Kirjaudu ulos
-                          </button>
-                        )}
                       </div>
                     )}
                   </div>
@@ -256,13 +293,9 @@ const Navbar = () => {
             fontFamily: "var(--font-machina-bold)",
           }}
         >
-          <ToggleSwitch
-            isMobileMenu={true}
-            isEn={isEn}
-            onToggle={handleLanguageToggle}
-          />
+          <ToggleSwitch isMobileMenu={true} />
           <button
-            aria-label="Sulje valikko"
+            aria-label={language === "en" ? "Close menu" : "Sulje valikko"}
             onClick={closeMobileMenu}
             className="p-2"
           >
@@ -270,7 +303,9 @@ const Navbar = () => {
           </button>
         </div>
         <nav className="px-4 py-3 space-y-2 overflow-y-auto h-[calc(100%-5rem)]">
-          {hamburgerLinks.map((link) => (
+          {hamburgerLinks
+            .filter(link => !link.requiresAdmin || isAdmin)
+            .map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -280,15 +315,15 @@ const Navbar = () => {
                 fontFamily: "var(--font-montreal-mono-medium)",
                 textDecoration:
                   pathname === link.href
-                    ? "underline wavy var(--va-orange) .1rem"
+                    ? "underline var(--va-orange) .1rem"
                     : "none",
-                textUnderlineOffset: ".2rem",
+                textUnderlineOffset: ".3rem",
               }}
               onMouseEnter={(e) => {
                 if (pathname !== link.href) {
                   e.currentTarget.style.textDecoration =
-                    "underline wavy var(--typography) .1rem";
-                  e.currentTarget.style.textUnderlineOffset = ".2rem";
+                    "underline var(--typography) .1rem";
+                  e.currentTarget.style.textUnderlineOffset = ".3rem";
                 }
               }}
               onMouseLeave={(e) => {
@@ -298,7 +333,7 @@ const Navbar = () => {
                 }
               }}
             >
-              {link.label}
+              {getLabel(language, link.label, link.labelEn)}
             </Link>
           ))}
         </nav>

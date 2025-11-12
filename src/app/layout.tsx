@@ -1,21 +1,36 @@
-"use client";
 import "./globals.css";
-import Navbar from "../components/NavBar";
-import { usePathname } from "next/navigation";
+import ConditionalNavbar from "../components/ConditionalNavbar";
+import ProtectedLayout from "../components/ProtectedLayout";
+import type { Metadata } from "next";
+import ClientProviders from "./clientProviders";
+
+export const metadata: Metadata = {
+  title: "Vaihtoaktivaattori",
+  description: "Platform for students interested in student exchange.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+    apple: [
+      { url: "/app-icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/app-icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const pathname = usePathname();
-  const isProfilePage = pathname?.startsWith("/profile");
-
+}) {
   return (
     <html lang="fi">
-      <body className={` antialiased`}>
-        {!isProfilePage && <Navbar />}
-        <main className="mx-auto max-w-full">{children}</main>
+      <body className="antialiased">
+        <ClientProviders>
+          <ConditionalNavbar />
+          <ProtectedLayout>
+            <main className="mx-auto max-w-full mb-10">{children}</main>
+          </ProtectedLayout>
+        </ClientProviders>
       </body>
     </html>
   );

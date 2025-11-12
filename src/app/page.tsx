@@ -3,52 +3,157 @@ import Link from "next/link";
 import Image from "next/image";
 import { FiMessageSquare, FiGlobe, FiFileText } from "react-icons/fi";
 import { RiMoneyEuroCircleLine } from "react-icons/ri";
+import { useLanguage } from "@/context/LanguageContext";
+
+// get label based on language
+const getLabel = (language: string, label: string, labelEn: string): string => {
+  return language === "en" ? labelEn : label;
+};
+
+// translations for hero section and cards
+const translations = {
+  heroTitle: {
+    fi: "Tervetuloa Metropolian vaihto­sovellukseen!",
+    en: "Welcome to the Exchange Application!",
+  },
+  heroSubtitle: {
+    fi: "Löydä hakuohjeet, kohdemaat, apurahat ja vinkit yhdestä paikasta.",
+    en: "Find application instructions, destinations, grants, and tips all in one place.",
+  },
+  cards: [    
+    {
+      titleFi: "VAIHTOON HAKEMINEN",
+      titleEn: "APPLY FOR EXCHANGE",
+      descriptionFi: "Tutustu hakuprosessiin ja ohjeisiin askel askeleelta.",
+      descriptionEn:
+        "Learn about the application process and view step-by-step instructions.",
+      href: "/instructions",
+    },
+    {
+      titleFi: "APURAHAT",
+      titleEn: "GRANTS & COSTS",
+      descriptionFi: "Katso apurahat ja mahdolliset kustannukset.",
+      descriptionEn: "Check out grants and potential costs.",
+      href: "/grants",
+    },
+    {
+      titleFi: "KOHDEMAAT",
+      titleEn: "DESTINATIONS",
+      descriptionFi: "Selaa partnerikouluja ja vaihtokohteita.",
+      descriptionEn: "Browse partner universities and exchange destinations.",
+      href: "/destinations",
+    },
+    {
+      titleFi: "AI–CHAT JA FAQ",
+      titleEn: "AI CHAT & FAQ",
+      descriptionFi: "Kysy kysymyksiä AI:lta tai selaa usein kysyttyjä.",
+      descriptionEn: "Ask questions from AI or browse frequently asked questions.",
+      href: "/ai-chat",
+    },
+  ],
+  whyExchange: {
+    fi: "MIKSI LÄHTEÄ VAIHTOON?",
+    en: "WHY GO TO EXCHANGE?",
+  },
+  benefits: [
+    {
+      titleFi: "KANSAINVÄLINEN KOKEMUS",
+      titleEn: "INTERNATIONAL EXPERIENCE",
+      descriptionFi:
+        "Kehitä kulttuurista ymmärrystä ja kansainvälistä näkökulmaa",
+      descriptionEn:
+        "Develop cultural understanding and international perspective",
+    },
+    {
+      titleFi: "AMMATILLINEN KASVU",
+      titleEn: "PROFESSIONAL GROWTH",
+      descriptionFi:
+        "Opi uusia menetelmiä ja laajenna osaamistasi eri näkökulmista",
+      descriptionEn:
+        "Learn new methods and expand your skills from different perspectives",
+    },
+    {
+      titleFi: "URAETU",
+      titleEn: "CAREER ADVANTAGE",
+      descriptionFi:
+        "Erottaudu työmarkkinoilla ja verkostoidu kansainvälisesti",
+      descriptionEn: "Stand out in the job market and network internationally",
+    },
+    {
+      titleFi: "HENKILÖKOHTAINEN KASVU",
+      titleEn: "PERSONAL GROWTH",
+      descriptionFi:
+        "Vahvista itseluottamusta ja sopeutumiskykyä uusissa tilanteissa",
+      descriptionEn: "Strengthen confidence and adaptability in new situations",
+    },
+  ],
+  chatButton: {
+    fi: "CHAT",
+    en: "CHAT",
+  },
+};
 
 export default function Home() {
+  const { language } = useLanguage();
   return (
     <div className="min-h-screen bg-[var(--background)]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[var(--va-orange-50)] pt-16 pb-10 md:mb-16 mb-12 shadow-lg">
-        {/* Liito-orava images */}
-        <div className="absolute inset-0 max-w-400">
-          <Image
-            src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-03.png"
-            alt=""
-            width={140}
-            height={140}
-            className="absolute md:top-2 lg:right-10 top-1 right-0 w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 hover:animate-spin"
-          />
-          <Image
-            src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-07.png"
-            alt=""
-            width={140}
-            height={140}
-            className="absolute lg:left-30 -bottom-2 left-16 w-28 h-28 lg:w-36 lg:h-36 md:w-32 md:h-32 hover:animate-spin"
-          />
-          <Image
-            src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png"
-            alt=""
-            width={100}
-            height={100}
-            className="absolute md:bottom-6 lg:left-10 left-0 bottom-4 w-24 h-24 md:w-24 md:h-24 lg:w-30 lg:h-30 hover:animate-bounce"
-          />
-        </div>
+      <section className="relative overflow-hidden bg-[var(--va-orange-50)] shadow-lg mb-6 max-w-10xl mx-auto">
+        <div className="relative mx-auto flex gap-2 flex-row justify-center">
+          <div className="flex flex-col pl-8 pr-8 lg:pl-10 md:pl-12 md:pt-14 sm:pb-10 lg:max-w-xl xl:max-w-3xl md:max-w-md md:text-left text-center pt-12 pb-14 ">
+            <h1
+              className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl tracking-wider text-[var(--typography)] uppercase pb-8 xl:leading-15 lg:leading-12 leading-10"
+              style={{ fontFamily: "var(--font-machina-bold)" }}
+            >
+              {getLabel(
+                language,
+                translations.heroTitle.fi,
+                translations.heroTitle.en
+              )}
+            </h1>
+            <p
+              className="text-lg md:text-xl xl:text-2xl text-[var(--typography)]"
+              style={{
+                fontFamily: "var(--font-montreal-mono-medium)",
+              }}
+            >
+              {getLabel(
+                language,
+                translations.heroSubtitle.fi,
+                translations.heroSubtitle.en
+              )}
+            </p>
+          </div>
+          <div className="relative flex-1 h-[400px] hidden md:flex xl:max-w-200">
+            <svg
+              viewBox="0 0 550 500"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-full block w-full"
+              preserveAspectRatio="xMidYMid slice"
+            >
+              <defs>
+                <clipPath id="mClip" clipPathUnits="userSpaceOnUse">
+                  <path
+                    d="M1,521.09V1h0v443.36c.19-47,13.21-111.89,39.01-183.56C91.66,117.32,174.98,1,226.11,1
+          c29.66,0,41.97,39.14,37.01,100C298.85,40.78,337.42,1,364.99,1s37.5,39.78,29.88,100
+          C433.73,40.14,474.21,1,503.87,1c51.13,0,50.72,116.32-.94,259.79-51.65,143.48-134.97,259.79-186.1,259.79
+          -36.26,0-46.59-58.52-31.11-143.72-28.89,40.61-57.79,65.78-79.71,65.78s-32.7-25.17-32.35-65.78
+          c-45.86,85.21-98.31,143.72-134.58,143.72-25.5,0-38.18-28.94-38.07-75.76v76.27h0Z"
+                  />
+                </clipPath>
+              </defs>
 
-        <div className="relative z-10 mx-auto max-w-4xl px-6 lg:px-10 text-center py-12 mt-6 mb-6">
-          <h1
-            className="text-2xl md:text-3xl lg:text-4xl tracking-wider text-[var(--typography)] mb-6 uppercase text-shadow-sm"
-            style={{ fontFamily: "var(--font-machina-bold)" }}
-          >
-            Tervetuloa Metropolian vaihto­sovellukseen!
-          </h1>
-          <p
-            className="text-lg md:text-xl text-[var(--typography)] opacity-90 max-w-3xl mx-auto mb-8 animate-fade-in-up animation-delay-200"
-            style={{
-              fontFamily: "var(--font-montreal-mono-medium)",
-            }}
-          >
-            Löydä hakuohjeet, kohdemaat, apurahat ja vinkit yhdestä paikasta.
-          </p>
+              <image
+                href="/Marjaana_Malkamaki_KEKSI_Metropolia_Heta_Tuuri_2022-9278_nettikoko.jpg"
+                x="-80"
+                y="-100"
+                width="620"
+                height="600"
+                preserveAspectRatio="xMidYMid slice"
+                clipPath="url(#mClip)"
+              />
+            </svg>
+          </div>
         </div>
       </section>
       {/* Main content */}
@@ -59,42 +164,43 @@ export default function Home() {
             className="grid grid-cols-1 sm:grid-cols-2 gap-6 uppercase"
             style={{ fontFamily: "var(--font-machina-bold)" }}
           >
-            <Card
-              icon={
-                <FiFileText className="text-[var(--va-orange)]" size={38} />
-              }
-              title="VAIHTOON HAKEMINEN"
-              description="Tutustu hakuprosessiin ja ohjeisiin askel askeleelta"
-              href="/instructions"
-            />
-            <Card
-              icon={
+            {translations.cards.map((card, index) => {
+              const icons = [
+                <FiFileText
+                  key="file"
+                  className="text-[var(--va-orange)]"
+                  size={38}
+                />,
                 <RiMoneyEuroCircleLine
+                  key="money"
                   className="text-[var(--va-orange)]"
                   size={38}
-                />
-              }
-              title="APURAHAT"
-              description="Katso apurahat ja mahdolliset kustannukset"
-              href="/grants"
-            />
-            <Card
-              icon={<FiGlobe className="text-[var(--va-orange)]" size={38} />}
-              title="KOHDEMAAT"
-              description="Selaa partnerikouluja ja vaihtokohteita"
-              href="/destinations"
-            />
-            <Card
-              icon={
+                />,
+                <FiGlobe
+                  key="globe"
+                  className="text-[var(--va-orange)]"
+                  size={38}
+                />,
                 <FiMessageSquare
+                  key="message"
                   className="text-[var(--va-orange)]"
                   size={38}
+                />,
+              ];
+              return (
+                <Card
+                  key={card.href}
+                  icon={icons[index]}
+                  title={getLabel(language, card.titleFi, card.titleEn)}
+                  description={getLabel(
+                    language,
+                    card.descriptionFi,
+                    card.descriptionEn
+                  )}
+                  href={card.href}
                 />
-              }
-              title="AI–CHAT JA FAQ"
-              description="Kysy kysymyksiä AI:lta tai selaa usein kysyttyjä"
-              href="/ai-chat"
-            />
+              );
+            })}
           </div>
         </div>
 
@@ -105,106 +211,52 @@ export default function Home() {
                 className="text-2xl md:text-3xl mb-4 tracking-wider"
                 style={{ fontFamily: "var(--font-machina-bold)" }}
               >
-                MIKSI LÄHTEÄ VAIHTOON?
+                {getLabel(
+                  language,
+                  translations.whyExchange.fi,
+                  translations.whyExchange.en
+                )}
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="text-center p-4">
-                <div className="mx-auto mb-4 flex items-center justify-center">
-                  <Image
-                    src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png"
-                    alt=""
-                    width={80}
-                    height={80}
-                    className="h-30 w-30"
-                  />
+              {translations.benefits.map((benefit, index) => (
+                <div key={index} className="text-center p-4">
+                  <div className="mx-auto mb-4 flex items-center justify-center">
+                    <Image
+                      src={
+                        [
+                          "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png",
+                          "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-03.png",
+                          "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-09.png",
+                          "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-13.png",
+                        ][index]
+                      }
+                      alt=""
+                      width={index === 1 || index === 3 ? 140 : 80}
+                      height={index === 1 || index === 3 ? 140 : 80}
+                      className="h-30 w-30"
+                    />
+                  </div>
+                  <h3
+                    className={`text-lg mb-4 tracking-wide ${
+                      index === 2 ? "lg:mb-11 mb-2" : ""
+                    }`}
+                    style={{ fontFamily: "var(--font-machina-bold)" }}
+                  >
+                    {getLabel(language, benefit.titleFi, benefit.titleEn)}
+                  </h3>
+                  <p
+                    className="text-md"
+                    style={{ fontFamily: "var(--font-montreal-mono)" }}
+                  >
+                    {getLabel(
+                      language,
+                      benefit.descriptionFi,
+                      benefit.descriptionEn
+                    )}
+                  </p>
                 </div>
-                <h3
-                  className="text-lg mb-4 tracking-wide"
-                  style={{ fontFamily: "var(--font-machina-bold)" }}
-                >
-                  KANSAINVÄLINEN KOKEMUS
-                </h3>
-                <p
-                  className="text-md"
-                  style={{ fontFamily: "var(--font-montreal-mono)" }}
-                >
-                  Kehitä kulttuurista ymmärrystä ja kansainvälistä näkökulmaa
-                </p>
-              </div>
-
-              <div className="text-center p-4">
-                <div className=" mx-auto mb-4 flex items-center justify-center">
-                  <Image
-                    src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-03.png"
-                    alt=""
-                    width={140}
-                    height={140}
-                    className="h-30 w-30"
-                  />
-                </div>
-                <h3
-                  className="text-lg mb-4 tracking-wide"
-                  style={{ fontFamily: "var(--font-machina-bold)" }}
-                >
-                  AKATEEMINEN KASVU
-                </h3>
-                <p
-                  className="text-md"
-                  style={{ fontFamily: "var(--font-montreal-mono)" }}
-                >
-                  Opi uusia menetelmiä ja laajenna osaamistasi eri näkökulmista
-                </p>
-              </div>
-
-              <div className="text-center p-4">
-                <div className=" mx-auto mb-4 flex items-center justify-center">
-                  <Image
-                    src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-09.png"
-                    alt=""
-                    width={80}
-                    height={80}
-                    className="h-30 w-30"
-                  />
-                </div>
-                <h3
-                  className="text-lg lg:mb-11 mb-2 tracking-wide"
-                  style={{ fontFamily: "var(--font-machina-bold)" }}
-                >
-                  URAETU
-                </h3>
-                <p
-                  className="text-md"
-                  style={{ fontFamily: "var(--font-montreal-mono)" }}
-                >
-                  Erottaudu työmarkkinoilla ja verkostoidu kansainvälisesti
-                </p>
-              </div>
-
-              <div className="text-center p-4">
-                <div className=" mx-auto mb-4 flex items-center justify-center">
-                  <Image
-                    src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-13.png"
-                    alt=""
-                    width={140}
-                    height={140}
-                    className="h-30 w-30"
-                  />
-                </div>
-                <h3
-                  className="text-lg mb-4 tracking-wide"
-                  style={{ fontFamily: "var(--font-machina-bold)" }}
-                >
-                  HENKILÖKOHTAINEN KASVU
-                </h3>
-                <p
-                  className="text-md"
-                  style={{ fontFamily: "var(--font-montreal-mono)" }}
-                >
-                  Vahvista itseluottamusta ja sopeutumiskykyä uusissa
-                  tilanteissa
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -213,10 +265,14 @@ export default function Home() {
       {/* Vertical chat tab */}
       <a
         href="/ai-chat"
-        className="fixed -right-6 top-3/4 -translate-y-1/2 z-40 origin-center -rotate-90 bg-[var(--va-orange)] text-[var(--background)] px-4 py-3 rounded-t-md shadow hover:brightness-95 text-sm tracking-wider"
+        className="fixed -right-6 bottom-1/10 -translate-y-1/2 z-40 origin-center -rotate-90 bg-[var(--va-orange)] text-[var(--background)] px-4 py-3 rounded-t-md shadow hover:brightness-95 text-sm tracking-wider"
         style={{ fontFamily: "var(--font-machina-bold)" }}
       >
-        CHAT
+        {getLabel(
+          language,
+          translations.chatButton.fi,
+          translations.chatButton.en
+        )}
       </a>
     </div>
   );

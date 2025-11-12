@@ -1,8 +1,14 @@
 "use client";
-import { useProfileData } from "@/hooks/apiHooks";
+import { useProfileData } from "@/hooks/profileHooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FaFileAlt, FaTrash, FaDownload, FaUpload, FaArrowLeft } from "react-icons/fa";
+import {
+  FaFileAlt,
+  FaTrash,
+  FaDownload,
+  FaUpload,
+  FaArrowLeft,
+} from "react-icons/fa";
 
 interface Document {
   id: string;
@@ -129,14 +135,16 @@ export default function DocumentsPage() {
           {documents.length === 0 ? (
             <div className="text-center py-12">
               <FaFileAlt className="text-6xl text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-800 text-base mb-6">Ei dokumentteja vielä</p>
-              
+              <p className="text-[var(--typography)] text-base mb-6">
+                Ei dokumentteja vielä
+              </p>
+
               {/* Upload Section */}
               <div className="mt-8">
-                <p className="text-gray-800 text-base font-medium mb-4">
+                <p className="text-[var(--typography)] text-base font-medium mb-4">
                   Lisää dokumentti tästä:
                 </p>
-                <label className="cursor-pointer bg-[#FFB299] hover:bg-[#FFA07A] text-gray-800 px-6 py-3 rounded-lg inline-flex items-center gap-2 font-medium">
+                <label className="cursor-pointer bg-[#FFB299] hover:bg-[#FFA07A] text-[var(--typography)] px-6 py-3 rounded-lg inline-flex items-center gap-2 font-medium">
                   <FaUpload />
                   {uploading ? "Ladataan..." : "Lisää"}
                   <input
@@ -153,7 +161,7 @@ export default function DocumentsPage() {
             <div>
               {/* Upload Button when documents exist */}
               <div className="mb-6 flex justify-end">
-                <label className="cursor-pointer bg-[#FFB299] hover:bg-[#FFA07A] text-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 font-medium">
+                <label className="cursor-pointer bg-[#FFB299] hover:bg-[#FFA07A] text-[var(--typography)] px-4 py-2 rounded-lg flex items-center gap-2 font-medium">
                   <FaUpload />
                   {uploading ? "Ladataan..." : "Lisää"}
                   <input
@@ -167,40 +175,40 @@ export default function DocumentsPage() {
               </div>
 
               <div className="space-y-3">
-          {documents.map((doc) => (
-            <div
-              key={doc.id}
-              className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center gap-3 flex-1">
-                <FaFileAlt className="text-[#FF5722]" />
-                <div>
-                  <p className="font-medium text-gray-800">{doc.name}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(doc.uploadedAt).toLocaleDateString("fi-FI")}
-                  </p>
-                </div>
-              </div>
+                {documents.map((doc) => (
+                  <div
+                    key={doc.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center gap-3 flex-1">
+                      <FaFileAlt className="text-[#FF5722]" />
+                      <div>
+                        <p className="font-medium text-gray-800">{doc.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(doc.uploadedAt).toLocaleDateString("fi-FI")}
+                        </p>
+                      </div>
+                    </div>
 
-              <div className="flex items-center gap-2">
-                <a
-                  href={doc.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:text-blue-700 p-2"
-                >
-                  <FaDownload />
-                </a>
-                <button
-                  onClick={() => handleRemoveDocument(doc.id)}
-                  disabled={removing === doc.id}
-                  className="text-red-500 hover:text-red-700 disabled:opacity-50 p-2"
-                >
-                  <FaTrash />
-                </button>
-              </div>
-            </div>
-          ))}
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:text-blue-700 p-2"
+                      >
+                        <FaDownload />
+                      </a>
+                      <button
+                        onClick={() => handleRemoveDocument(doc.id)}
+                        disabled={removing === doc.id}
+                        className="text-red-500 hover:text-red-700 disabled:opacity-50 p-2"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
