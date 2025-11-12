@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-<<<<<<< HEAD
-import { useState, useRef } from "react";
-import { FaUpload, FaFileAlt, FaTrash, FaDownload, FaSpinner } from "react-icons/fa";
-=======
 import { useState } from "react";
 import { FaLink, FaFileAlt, FaTrash, FaExternalLinkAlt, FaSpinner, FaInfoCircle } from "react-icons/fa";
->>>>>>> dev-test
 
 interface DocumentUploadProps {
   applicationId: string;
@@ -18,8 +13,6 @@ interface DocumentUploadProps {
   required?: boolean;
 }
 
-<<<<<<< HEAD
-=======
 // Platform instructions component
 const PlatformInstructions = ({ platform }: { platform: string }) => {
   const instructions: Record<string, { title: string; steps: string[] }> = {
@@ -95,7 +88,6 @@ const PlatformInstructions = ({ platform }: { platform: string }) => {
   );
 };
 
->>>>>>> dev-test
 export default function DocumentUpload({
   applicationId,
   documentType,
@@ -104,22 +96,6 @@ export default function DocumentUpload({
   existingDocuments = [],
   required = false
 }: DocumentUploadProps) {
-<<<<<<< HEAD
-  const [uploading, setUploading] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileSelect = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-
-    const file = files[0];
-    await uploadFile(file);
-  };
-
-  const uploadFile = async (file: File) => {
-    try {
-      setUploading(true);
-=======
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   
@@ -167,41 +143,12 @@ export default function DocumentUpload({
 
     try {
       setSubmitting(true);
->>>>>>> dev-test
 
       const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
       if (!apiUrl) {
         throw new Error("API URL not configured");
       }
 
-<<<<<<< HEAD
-      // Step 1: Upload the actual file
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      const uploadResponse = await fetch(`${apiUrl}/profile/applications/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error('Failed to upload file');
-      }
-
-      const uploadResult = await uploadResponse.json();
-
-      // Step 2: Save document metadata to application
-      const documentData = {
-        phase: documentType, // Using documentType as phase
-        documentType,
-        fileName: uploadResult.originalName,
-        fileUrl: uploadResult.fileUrl,
-        fileSize: uploadResult.fileSize,
-        mimeType: uploadResult.mimeType,
-      };
-
-      const metadataResponse = await fetch(`${apiUrl}/profile/applications/documents`, {
-=======
       const documentData = {
         phase: documentType,
         documentType,
@@ -212,7 +159,6 @@ export default function DocumentUpload({
       };
 
       const response = await fetch(`${apiUrl}/profile/applications/documents`, {
->>>>>>> dev-test
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -220,50 +166,15 @@ export default function DocumentUpload({
         body: JSON.stringify(documentData),
       });
 
-<<<<<<< HEAD
-      if (!metadataResponse.ok) {
-        throw new Error('Failed to save document metadata');
-      }
-
-      const savedDocument = await metadataResponse.json();
-=======
       if (!response.ok) {
         throw new Error('Failed to add document');
       }
 
       const savedDocument = await response.json();
->>>>>>> dev-test
 
       if (onDocumentUploaded) {
         onDocumentUploaded(savedDocument);
       }
-<<<<<<< HEAD
-    } catch (error) {
-      console.error("Upload failed:", error);
-      // You might want to show an error toast/notification here
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    handleFileSelect(e.dataTransfer.files);
-  };
-
-  const handleDeleteDocument = async (documentId: string) => {
-=======
 
       // Clear form
       setDocumentName("");
@@ -285,7 +196,6 @@ export default function DocumentUpload({
       return;
     }
 
->>>>>>> dev-test
     try {
       const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
       if (!apiUrl) {
@@ -305,66 +215,6 @@ export default function DocumentUpload({
       }
     } catch (error) {
       console.error("Delete failed:", error);
-<<<<<<< HEAD
-      // You might want to show an error toast/notification here
-    }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  return (
-    <div className="space-y-3">
-      {/* Upload Area */}
-      <div
-        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-          dragOver
-            ? "border-blue-400 bg-blue-50"
-            : required && existingDocuments.length === 0
-            ? "border-red-300 bg-red-50"
-            : "border-gray-300 hover:border-gray-400"
-        }`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        {uploading ? (
-          <div className="flex flex-col items-center space-y-2">
-            <FaSpinner className="text-blue-500 animate-spin" size={24} />
-            <p className="text-gray-600">Ladataan tiedostoa...</p>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center space-y-2">
-            <FaUpload className="text-gray-400" size={24} />
-            <p className="text-gray-600">
-              Vedä tiedosto tähän tai{" "}
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="text-blue-600 hover:text-blue-800 underline"
-              >
-                selitse tiedosto
-              </button>
-            </p>
-            <p className="text-xs text-gray-500">
-              Tuetut tiedostotyypit: PDF, DOC, DOCX, JPG, PNG (maks. 10MB)
-            </p>
-          </div>
-        )}
-        
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-          onChange={(e) => handleFileSelect(e.target.files)}
-        />
-      </div>
-=======
       alert("Dokumentin poistaminen epäonnistui.");
     }
   };
@@ -496,40 +346,10 @@ export default function DocumentUpload({
           </div>
         </div>
       )}
->>>>>>> dev-test
 
       {/* Existing Documents */}
       {existingDocuments.length > 0 && (
         <div className="space-y-2">
-<<<<<<< HEAD
-          <h5 className="text-sm font-medium text-gray-700">Ladatut tiedostot:</h5>
-          {existingDocuments.map((doc) => (
-            <div
-              key={doc.id}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-            >
-              <div className="flex items-center space-x-3">
-                <FaFileAlt className="text-blue-500" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{doc.fileName}</p>
-                  <p className="text-xs text-gray-500">
-                    {formatFileSize(doc.fileSize)} • {new Date(doc.uploadedAt).toLocaleDateString("fi-FI")}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => window.open(doc.fileUrl, "_blank")}
-                  className="p-2 text-blue-600 hover:bg-blue-100 rounded-md transition-colors"
-                  title="Lataa tiedosto"
-                >
-                  <FaDownload size={14} />
-                </button>
-                <button
-                  onClick={() => handleDeleteDocument(doc.id)}
-                  className="p-2 text-red-600 hover:bg-red-100 rounded-md transition-colors"
-                  title="Poista tiedosto"
-=======
           <h5 className="text-sm font-medium text-gray-700">Lisätyt dokumentit:</h5>
           {existingDocuments.map((doc) => (
             <div
@@ -562,7 +382,6 @@ export default function DocumentUpload({
                   onClick={() => handleDeleteDocument(doc.id)}
                   className="p-2 text-red-600 hover:bg-red-100 rounded-md transition-colors"
                   title="Poista dokumentti"
->>>>>>> dev-test
                 >
                   <FaTrash size={14} />
                 </button>
@@ -573,8 +392,4 @@ export default function DocumentUpload({
       )}
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dev-test

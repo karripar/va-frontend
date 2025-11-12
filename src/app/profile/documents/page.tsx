@@ -54,47 +54,6 @@ export default function DocumentsPage() {
 
     setSubmitting(true);
     try {
-<<<<<<< HEAD
-      // 1. Upload file to upload server
-      const formData = new FormData();
-      formData.append("document", file);
-
-      const uploadResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_UPLOAD_API}/profile/document`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error("Upload error:", errorText);
-        throw new Error("Upload failed");
-      }
-
-      const uploadData = await uploadResponse.json();
-
-      // 2. Save document reference to profile
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_AUTH_API}/profile/documents`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: file.name,
-            url: uploadData.url,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        const newDoc = await response.json();
-        setDocuments([...documents, newDoc]);
-      } else {
-        alert("Virhe dokumentin tallennuksessa");
-      }
-=======
       const newDoc = await addDocumentLink({
         name: formData.name,
         url: formData.url,
@@ -104,7 +63,6 @@ export default function DocumentsPage() {
       setDocuments([...documents, newDoc]);
       resetForm();
       alert('Dokumentti lisätty onnistuneesti!');
->>>>>>> dev-test
     } catch (error) {
       console.error("Error adding document:", error);
       alert("Virhe dokumentin lisäämisessä");

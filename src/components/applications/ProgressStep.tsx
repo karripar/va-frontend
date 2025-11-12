@@ -1,12 +1,6 @@
 "use client";
 import { FaCheck, FaClock, FaExclamationTriangle, FaChevronRight } from "react-icons/fa";
-<<<<<<< HEAD
-
-type ApplicationStatus = "not_started" | "in_progress" | "completed" | "pending_review";
-type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
-=======
 import { ApplicationStatus, ApplicationPhase } from "va-hybrid-types";
->>>>>>> dev-test
 
 interface ProgressStepProps {
   phase: ApplicationPhase;
@@ -145,8 +139,4 @@ export default function ProgressStep({
       </div>
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dev-test

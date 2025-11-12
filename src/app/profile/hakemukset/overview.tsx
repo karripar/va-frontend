@@ -1,5 +1,5 @@
 "use client";
-import { useProfileData, useApplicationsData } from "@/hooks/apiHooks";
+import { useProfileData } from "@/hooks/apiHooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { 
@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import ProgressStep from "@/components/applications/ProgressStep";
 import DocumentUpload from "@/components/applications/DocumentUpload";
+import { useApplicationsData } from "@/hooks/applicationsHooks";
 
 type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
 type ApplicationStatus = "not_started" | "in_progress" | "completed" | "pending_review";

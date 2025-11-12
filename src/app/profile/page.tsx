@@ -128,42 +128,16 @@ export default function ProfilePage() {
             </Link>
 
             <Link
-<<<<<<< HEAD
-            href="/profile/hakemukset"
-            className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
-            >
-              <div className="flex justify-between items-center text-gray-800">
-                <span className="font-medium">
-                  Hakemukset ({profile.applications ? Object.keys(profile.applications).length : 0})
-=======
               href="/profile/hakemukset"
               className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
             >
               <div className="flex justify-between items-center text-gray-800">
                 <span className="font-medium">
                   Hakemukset ja kustannusarviointi ({profile.applications ? Object.keys(profile.applications).length : 0})
->>>>>>> dev-test
                 </span>
                 <span>›</span>
               </div>
             </Link>
-<<<<<<< HEAD
-            {/* LinkedIn link */}
-            {profile.linkedinUrl && (
-              <a
-                href={profile.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
-              >
-                <div className="flex justify-between items-center text-[var(--typography)]">
-                  <span className="font-medium">LinkedIn Profile</span>
-                  <span>↗</span>
-                </div>
-              </a>
-            )}
-=======
->>>>>>> dev-test
           </div>
 
           {/* Member since */}
