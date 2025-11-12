@@ -11,7 +11,7 @@ import {
   FaExternalLinkAlt,
   FaSpinner
 } from "react-icons/fa";
-import { ApplicationDocument, ApplicationStageStatus, ApplicationStageWithProgress } from "va-hybrid-types";
+import { ApplicationDocument, ApplicationStageStatus, ApplicationStageWithProgress } from "va-hybrid-types/contentTypes";
 
 interface StageCardProps {
   stage: ApplicationStageWithProgress;

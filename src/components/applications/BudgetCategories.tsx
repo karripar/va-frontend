@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { FaPlane, FaShieldAlt, FaHome, FaShoppingCart, FaPencilAlt } from "react-icons/fa";
 import React from "react";
-import { BudgetCategory } from "va-hybrid-types";
+import { BudgetCategory } from "va-hybrid-types/contentTypes";
 
 interface BudgetCategoryData {
   category: BudgetCategory;

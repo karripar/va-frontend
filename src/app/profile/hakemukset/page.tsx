@@ -12,7 +12,7 @@ import {
   ApplicationDocument, 
   ApplicationPhase, 
   ApplicationStageStatus 
-} from "va-hybrid-types";
+} from "va-hybrid-types/contentTypes";
 
 // Compact inline document link form component
 interface QuickDocumentLinkFormProps {

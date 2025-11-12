@@ -1,6 +1,6 @@
 "use client";
 import { FaCheck, FaClock, FaExclamationTriangle, FaChevronRight } from "react-icons/fa";
-import { ApplicationStatus, ApplicationPhase } from "va-hybrid-types";
+import { ApplicationStatus, ApplicationPhase } from "va-hybrid-types/contentTypes";
 
 interface ProgressStepProps {
   phase: ApplicationPhase;

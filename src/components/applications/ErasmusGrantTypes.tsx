@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { ErasmusPlusGrantType } from "va-hybrid-types";
+import { ErasmusPlusGrantType } from "va-hybrid-types/contentTypes";
 
 interface ErasmusGrantOption {
   type: ErasmusPlusGrantType;
