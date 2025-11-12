@@ -49,12 +49,11 @@ export default function FavoritesPage() {
 
   return (
     <div className="min-h-screen">
-      <ProfileHeader title="Suosikki kohteet" />
+      <ProfileHeader title="Suosikkikohteet" />
       <div className="bg-white min-h-screen">
         <div className="p-6 max-w-2xl mx-auto">
           {favorites.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-800 mb-4 text-base">Ei suosikkeja vielä</p>
               <button
                 onClick={() => router.push("/destinations")}
                 className="px-6 py-2 bg-[#FFB299] hover:bg-[#FFA07A] text-gray-800 rounded-lg font-medium"

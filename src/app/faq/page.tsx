@@ -15,68 +15,83 @@ const faqData: FAQItem[] = [
     id: "1",
     category: "Yleistä",
     question: "Mikä on opiskelijavaihto?",
-    answer: "Opiskelijavaihto on mahdollisuus opiskella lukukauden tai lukuvuoden ulkomaisessa partneriyliopistossa osana tutkinto-opintojasi. Voit suorittaa opintoja, joita voidaan hyväksilukea omaan tutkintoosi.",
-    links: [
-      { title: "Erasmus+ ohjelma", url: "https://erasmus-plus.ec.europa.eu" }
-    ]
+    answer: "Opiskelijavaihto on mahdollisuus opiskella lukukauden tai lukuvuoden ulkomaisessa partneriyliopistossa osana tutkinto-opintojasi. Voit suorittaa pää- tai sivuainettasi tai suorittaa paikallisia kielikursseja. Tärkeintä on, että kurssivalinnat tukevat tutkintoasi ja ne voidaan hyväksilukea.",
   },
   {
     id: "2",
     category: "Hakeminen",
-    question: "Milloin voin hakea vaihtoon?",
-    answer: "Hakuajat vaihtelevat kohdeyliopiston mukaan. Yleensä syksyn vaihtoon haetaan edellisen vuoden loppupuolella (marras-tammikuu) ja kevään vaihtoon kesällä (huhti-kesäkuu). Tarkista tarkat hakuajat oman korkeakoulusi sivuilta.",
+    question: "Milloin kannattaa aloittaa suunnittelu?",
+    answer: "Aloita suunnittelu hyvissä ajoin miettimällä miksi, minne ja milloin haluat lähteä. Hakuprosessit voivat kestää useita kuukausia. Valitse kohdekoulu ja kurssit niin, että ne tukevat Suomessa suoritettuja opintojasi.",
   },
   {
     id: "3",
     category: "Hakeminen",
-    question: "Mitä dokumentteja tarvitsen hakemukseen?",
-    answer: "Tyypillisesti tarvitset:\n• Vapaamuotoinen hakemus\n• Motivaatiokirje\n• Opintosuoritusote (Transcript of Records)\n• Kielitaitotodistus\n• CV (jos vaaditaan)\n\nTarkat vaatimukset riippuvat kohdeyliopistosta.",
+    question: "Mitä hakeminen edellyttää?",
+    answer: "Hakuprosessiin kuuluu yleensä hakulomakkeen täyttäminen ja mahdollinen haastattelu. Motivaatiosi, opintomenestys ja terveydentilasi vaikuttavat valintaan. Opintojesi tulee liittyä tutkintoosi ja niitä tulee voida hyväksilukea. Yliopistoissa vaaditaan usein tietty määrä suoritettuja opintopisteitä.",
   },
   {
     id: "4",
+    category: "Hakeminen",
+    question: "Mitä dokumentteja tarvitsen?",
+    answer: "Tyypillisesti tarvitset:\n• Vapaamuotoinen hakemus\n• Motivaatiokirje\n• Opintosuoritusote (Transcript of Records)\n• Kielitaitotodistus\n• CV (jos vaaditaan)\n\nTarkat vaatimukset riippuvat kohdeyliopistosta.",
+  },
+  {
+    id: "5",
     category: "Apurahat",
     question: "Mitä apurahoja voin saada?",
-    answer: "Yleisimmät apurahat:\n• Erasmus+ -apuraha (EU-maat)\n• Kela opintotuki ulkomaille\n• Korkeakoulusi omat apurahat\n• Ulkopuoliset säätiöapurahat\n\nVoit hakea useita apurahoja yhtä aikaa!",
+    answer: "Yleisimmät apurahat:\n• Erasmus+ -apuraha (EU-maat)\n• Kela opintotuki ulkomaille\n• Korkeakoulusi omat apurahat\n• Ulkopuoliset säätiöapurahat\n\nVoit hakea useita apurahoja yhtä aikaa! Voit saada opintotukea, jos vaihto-opintosi hyväksytään osaksi Suomessa suoritettavia opintojasi.",
     links: [
       { title: "Erasmus+ apuraha", url: "https://erasmus-plus.ec.europa.eu" },
       { title: "Kelan opintotuki", url: "https://www.kela.fi/opintotuki-ulkomailla" }
     ]
   },
   {
-    id: "5",
+    id: "6",
     category: "Apurahat",
-    question: "Kuinka paljon Erasmus-apurahaa saan?",
-    answer: "Erasmus+ -apurahan määrä vaihtelee kohdemaaryhmän mukaan:\n• Ryhmä 1 (kalliimmat maat): ~600-700€/kk\n• Ryhmä 2 (keskihintaiset): ~540€/kk\n• Ryhmä 3 (edullisemmat): ~490€/kk\n\nTarkat summat vahvistaa kotikorkeakoulusi.",
+    question: "Mitä vaihto-opiskelu maksaa?",
+    answer: "Hinnat vaihtelevat vaihdon pituuden ja kohdemaan mukaan. Yhden lukukauden mittainen vaihto voi maksaa jopa 6000 euroa. Osa vaihto-ohjelmista on ilmaisia, osassa on ohjelmamaksuja.\n\nLisäkustannuksia:\n• Lentoliput\n• Vakuutukset\n• Taskuraha ja elinkustannukset\n\nErasmus+ -apurahan määrä:\n• Korkeat elinkustannukset: ~540-600€/kk\n• Keskihintaiset: ~490€/kk\n• Edulliset: ~450€/kk",
   },
   {
-    id: "6",
+    id: "7",
     category: "Dokumentit",
     question: "Mikä on Learning Agreement?",
     answer: "Learning Agreement on sopimus sinun, kotikorkeakoulusi ja kohdeyliopiston välillä. Siinä sovitaan, mitä opintojaksoja suoritat vaihdossa ja miten ne hyväksiluetaan. Dokumentti täytetään ennen vaihtoa ja päivitetään tarvittaessa vaihdon aikana.",
   },
   {
-    id: "7",
+    id: "8",
     category: "Dokumentit",
     question: "Tarvitsenko viisumia?",
     answer: "Riippuu kohdemaasta:\n• EU/ETA-maat: Ei viisumia, henkilöllisyystodistus/passi riittää\n• Muut maat: Todennäköisesti opiskeluviisumi\n\nTarkista kohdemaan vaatimukset hyvissä ajoin, viisumiprosessi voi kestää kuukausia!",
   },
   {
-    id: "8",
+    id: "9",
+    category: "Matkustaminen",
+    question: "Tarvitsenko matkavakuutuksen?",
+    answer: "Kyllä! Tarvitset vaihdon ajaksi asianmukaisen vakuutuksen. Vakuutuksen tulee kattaa:\n• Sairauskulut\n• Tapaturmat\n• Vastuuvakuutus\n• Matkatavaravakuutus (suositus)\n\nMonet korkeakoulut tarjoavat opiskelijoille ryhmävakuutuksen.",
+  },
+  {
+    id: "10",
     category: "Matkustaminen",
     question: "Milloin kannattaa varata lennot?",
     answer: "Suositus:\n• Varaa lennot vasta kun olet saanut virallisen hyväksynnän kohdeyliopistosta\n• 2-3 kuukautta etukäteen yleensä hyvä aika\n• Tarkista lentoyhtiön peruutusehdot\n• Muista matkavakuutus!",
   },
   {
-    id: "9",
-    category: "Matkustaminen",
-    question: "Tarvitsenko matkavakuutuksen?",
-    answer: "Kyllä! Matkavakuutus on pakollinen vaihto-opiskelijoille. Vakuutuksen tulee kattaa:\n• Sairauskulut\n• Tapaturmat\n• Vastuuvakuutus\n• Matkatavaravakuutus (suositus)\n\nMonet korkeakoulut tarjoavat opiskelijoille ryhmävakuutuksen.",
+    id: "11",
+    category: "Yleistä",
+    question: "Voiko vaihtoon lähteä kaverin kanssa?",
+    answer: "Kyllä voi! Voit lähteä vaihtoon kaverin kanssa, mutta todennäköisesti päädytte eri majoituksiin. Vaihto on henkilökohtainen kokemus, joka tarjoaa mahdollisuuden tutustua uusiin ihmisiin ja kulttuureihin.",
   },
   {
-    id: "10",
+    id: "12",
     category: "Yleistä",
-    question: "Voiko vaihtoon hakea, jos keskiarvo on alhainen?",
-    answer: "Kyllä voi! Hakukriteereissä keskiarvo on yleensä vain yksi tekijä. Motivaatiokirje, aktiivinen opiskelu ja sopivat suoritetut opinnot voivat kompensoida. Jotkut kohdeyliopistot eivät vaadi tiettyä keskiarvoa ollenkaan.",
+    question: "Mikä on kielitaitovaatimus?",
+    answer: "Vaadittu kielitaito riippuu vaihto-ohjelmasta ja kohdemaasta. Opintosi voi suorittaa eri kielillä (englanti, saksa, ranska jne.), mutta kielitaito voi vaikuttaa valintoihisi. Monissa kohteissa vaaditaan kielitaitotodistus (esim. TOEFL, IELTS).",
+  },
+  {
+    id: "13",
+    category: "Yleistä",
+    question: "Mitä teen jos tarvitsen tukea vaihdon aikana?",
+    answer: "Vaihdon aikana:\n• Ota yhteyttä vaihto-ohjelman vastuuhenkilöön ongelmatilanteissa\n• Kotikorkeakoulusi kv-palvelut auttavat etänä\n• Kohdeyliopiston tukipalvelut ovat käytettävissäsi\n\nPalatessa takaisin:\n• Keskustele opintoneuvojasi kanssa, miten paluu sujuu\n• Vaihto-opintojen hyväksiluku hoidetaan kotikorkeakoulussa",
   }
 ];
 

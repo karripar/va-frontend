@@ -110,13 +110,13 @@ const QuickDocumentLinkForm = ({ documentType, phase, onDocumentAdded, onCancel 
 const getPhaseTitle = (phase: ApplicationPhase) => {
   switch (phase) {
     case "esihaku":
-      return "1. Esihaku";
+      return "1. Ennen hakemista ja haku";
     case "nomination":
       return "2. Nomination";
     case "apurahat":
-      return "3. Apurahat ja kustannukset";
+      return "3. Apurahat ja kustannusarviointi";
     case "vaihdon_jalkeen":
-      return "4. Vaihdon jälkeiset tehtävät";
+      return "4. Vaihdon aikana ja jälkeen";
   }
 };
 
@@ -131,7 +131,6 @@ export default function HakemuksetPage() {
   const [activePhase, setActivePhase] = useState<ApplicationPhase>("esihaku");
   const [expandedStage, setExpandedStage] = useState<string | null>(null);
   const [activeBudgetTab, setActiveBudgetTab] = useState<"stages" | "budget">("stages");
-  const [budgetAmount, setBudgetAmount] = useState(540);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryBudgets, setCategoryBudgets] = useState<Record<string, number>>({
     matkakulut: 0,
@@ -207,9 +206,15 @@ export default function HakemuksetPage() {
       {/* Description */}
       <div className="bg-white p-6 border-b">
         <div className="max-w-4xl mx-auto">
-          <p className="text-gray-700 text-center">
-            Seuraa vaihtohaun etenemistä eri vaiheissa ja hallitse tarvittavia dokumentteja.
+          <p className="text-gray-700 text-center mb-3">
+            Seuraa Metropolian vaihtohaun etenemistä eri vaiheissa ja hallitse tarvittavia dokumentteja.
           </p>
+          <div className="text-sm text-gray-600 space-y-1 max-w-2xl mx-auto">
+            <p>• Vaihto-opiskelu vaatii vähintään 60 op suoritettuna ennen lähtöä</p>
+            <p>• Vaihdossa suoritetaan 30 op/lukukausi tai 60 op/lukuvuosi</p>
+            <p>• Osallistu pakollisiin orientaatioihin ja hakuinfoihin</p>
+            <p>• Vahvista vaihtopaikka 7 päivän sisällä hyväksynnästä</p>
+          </div>
         </div>
       </div>
 
@@ -256,6 +261,14 @@ export default function HakemuksetPage() {
 
             {activeBudgetTab === "stages" && (
               <div className="space-y-6">
+                <div className="bg-orange-50 border-l-4 border-[#FF5722] p-4 mb-6">
+                  <h4 className="font-semibold text-[#FF5722] mb-2">Apurahat</h4>
+                  <p className="text-sm text-gray-700">
+                    Tässä vaiheessa hoidat käytännön asiat: matka- ja asumisjärjestelyt, vakuutukset, 
+                    terveyteen liittyvät asiat, Learning Agreement, sekä apurahahakemuksen. Muista osallistua 
+                    pakollisiin orientaatioihin!
+                  </p>
+                </div>
                 {filteredStages.map((stage) => (
                   <StageCard
                     key={stage.id}
@@ -275,26 +288,23 @@ export default function HakemuksetPage() {
 
             {activeBudgetTab === "budget" && (
               <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Kustannusarviointi</h3>
-                
-                <div className="mb-6">
-                  <label className="block mb-2 text-sm font-medium text-gray-700">Arvioitu apuraha (€ / kk)</label>
-                  <input
-                    type="range"
-                    min={0}
-                    max={10000}
-                    value={budgetAmount}
-                    onChange={e => setBudgetAmount(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                    style={{
-                      background: `linear-gradient(to right, #8BC34A 0%, #8BC34A ${((budgetAmount) / 10000) * 100}%, #E5E7EB ${((budgetAmount) / 10000) * 100}%, #E5E7EB 100%)`
-                    }}
-                  />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>0€</span>
-                    <span>10000€</span>
-                  </div>
-                  <div className="mt-2 text-center text-2xl font-bold text-[#8BC34A]">{budgetAmount}€ / kk</div>
+                <h3 className="text-lg font-semibold text-[#FF5722] mb-2">Kustannusarviointi</h3>
+                <p className="text-sm text-gray-700 mb-4">
+                  Tee realistinen kustannusarvio vaihtojaksolle. Huomaa että Erasmus+-apuraha ja Metropolian 
+                  apuraha eivät kata kaikkia kuluja - varaudu omavastuuosuuteen. Voit hakea lisää apurahoja 
+                  erilaisista säätiöistä.
+                </p>
+
+                <div className="mb-6 p-4 bg-orange-50 rounded-lg border border-[#FF5722]">
+                  <h4 className="text-sm font-semibold text-[#FF5722] mb-2">Erasmus+ apurahan määrä kohdemaan mukaan:</h4>
+                  <ul className="text-xs text-gray-700 space-y-1">
+                    <li><strong>Korkeat elinkustannukset</strong> (Tanska, Norja, Ranska): ~540 € / kk</li>
+                    <li><strong>Keskimääräiset elinkustannukset</strong> (Saksa, Espanja, Italia): ~490 € / kk</li>
+                    <li><strong>Matalammat elinkustannukset</strong> (Bulgaria, Romania): ~450 € / kk</li>
+                  </ul>
+                  <p className="text-xs text-gray-600 mt-2">
+                    Lisäksi voi hakea vihreän matkustamisen tukea ja osallisuustukea, jos täyttää ehdot.
+                  </p>
                 </div>
 
                 <div className="mb-6">
@@ -346,37 +356,58 @@ export default function HakemuksetPage() {
                     ))}
                   </div>
                 </div>
-
-                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <h4 className="font-semibold text-green-900 mb-3">Yhteenveto</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Arvioitu apuraha / kk:</span>
-                      <span className="font-bold text-green-800">{budgetAmount}€</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Kustannukset yhteensä / kk:</span>
-                      <span className="font-bold text-orange-600">
-                        {Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0)}€
-                      </span>
-                    </div>
-                    <div className="border-t pt-2 mt-2 flex justify-between">
-                      <span className="font-semibold">Erotus:</span>
-                      <span className={`font-bold text-lg ${
-                        budgetAmount - Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0) >= 0 
-                          ? 'text-green-700' 
-                          : 'text-red-600'
-                      }`}>
-                        {budgetAmount - Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0)}€
-                      </span>
-                    </div>
-                  </div>
-                </div>
               </div>
             )}
           </div>
         ) : (
           <div className="space-y-6">
+            {activePhase === "esihaku" && (
+              <div className="bg-orange-50 border-l-4 border-[#FF5722] p-4 mb-6">
+                <h4 className="font-semibold text-[#FF5722] mb-2">Ennen hakemista ja haku</h4>
+                <p className="text-sm text-gray-700 mb-2">
+                  Tutustu vaihtokohteisiin, osallistu alakohtaisiin hakuinfoihin ja täytä Metropolian sisäinen hakemus. 
+                  Varmista että täytät kriteerit: vähintään 60 op suoritettu, opinnot etenevät normaalisti.
+                </p>
+                <ul className="text-xs text-gray-600 list-disc list-inside space-y-1">
+                  <li>Hakuajat: Päähaku 1.12-31.1 (syksy/kevät), Lisähaku 1.9-15.9 (kevät)</li>
+                  <li>Valinnassa painotetaan: opintomenestys, motivaatio, kielitaito, kv-aktiivisuus</li>
+                  <li>Lue vaihtoraportit OMASta ja tutustu U!REKA-allianssin mahdollisuuksiin</li>
+                </ul>
+              </div>
+            )}
+            {activePhase === "nomination" && (
+              <div className="bg-orange-50 border-l-4 border-[#FF5722] p-4 mb-6">
+                <h4 className="font-semibold text-[#FF5722] mb-2">Nomination ja kohdekoulun haku</h4>
+                <p className="text-sm text-gray-700 mb-2">
+                  Kun saat hyväksynnän Metropolian sisäisestä hausta, vahvista paikka 7 päivän sisällä. 
+                  Selvitä kohdekoulun hakuprosessi ja aikataulu - ole oma-aktiivinen!
+                </p>
+                <ul className="text-xs text-gray-600 list-disc list-inside space-y-1">
+                  <li>Tarvittavat liitteet: opintosuoritusote, CV, motivaatiokirje, vakuutustodistus</li>
+                  <li>Kielitodistus: voit tehdä OLS-kielitestin (linkki orientaatiossa)</li>
+                  <li>Osallistu pakollisiin vaihto-orientaatioihin</li>
+                  <li>Kun saat hyväksymiskirjeen, välitä se kv-asiantuntijallesi</li>
+                </ul>
+              </div>
+            )}
+            {activePhase === "vaihdon_jalkeen" && (
+              <div className="bg-orange-50 border-l-4 border-[#FF5722] p-4 mb-6">
+                <h4 className="font-semibold text-[#FF5722] mb-2">Vaihdon aikana ja jälkeen</h4>
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>Vaihdon aikana:</strong> Tee kurssimuutokset Learning Agreementiin kuukauden sisällä. 
+                  Seuraa Metropolian sähköpostia. EU-maassa: tee EU-kansalaisen rekisteröityminen.
+                </p>
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>Vaihdon jälkeen:</strong> Pyydä Letter of Confirmation (21 pv ennen vaihdon päättymistä), 
+                  lataa Transcript of Records, hae hyväksiluku eAhotista, täytä vaihtoraportti ja Erasmus+ kysely.
+                </p>
+                <ul className="text-xs text-gray-600 list-disc list-inside space-y-1">
+                  <li>Määräajat: Syyslukukausi 30.4., kevätlukukausi 30.9. mennessä</li>
+                  <li>Hae Global Talent Open Badge vaihdon jälkeen</li>
+                  <li>Jaa kokemuksesi: kv-infot, Exchange-blogi, Instagram</li>
+                </ul>
+              </div>
+            )}
             {filteredStages.map((stage) => (
               <StageCard
                 key={stage.id}
