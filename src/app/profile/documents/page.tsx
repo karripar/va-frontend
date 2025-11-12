@@ -8,7 +8,7 @@ import { FormField, SubmitButton } from "@/components/profile/FormComponents";
 import { getPlatformIcon } from "@/lib/platformUtils";
 import { useState, useEffect } from "react";
 import { FaFileAlt, FaTrash, FaExternalLinkAlt, FaLink, FaSpinner } from "react-icons/fa";
-import { Document } from "va-hybrid-types";
+import { Document } from "va-hybrid-types/contentTypes";
 
 const PLATFORM_OPTIONS = [
   { value: "google_drive", label: "Google Drive" },
