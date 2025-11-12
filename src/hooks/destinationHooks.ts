@@ -77,7 +77,7 @@ const useDestinationData = (
 
         const url = useMock
           ? "/testDestinations.json"
-          : `${apiUrl}/data/metropolia/destinations?field=${field}&lang=fi`;
+          : `${apiUrl}/destinations/metropolia/destinations?field=${field}&lang=fi`;
 
         const data = await fetchData<DestinationWithCoordinatesResponse>(url, {
           signal: controller.signal,
