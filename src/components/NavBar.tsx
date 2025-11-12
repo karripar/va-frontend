@@ -9,8 +9,21 @@ import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 
+// Type definition for navigation links
+type NavLink = {
+  href: string;
+  label: string;
+  labelEn?: string;
+  requiresAdmin?: boolean;
+};
+
 // navigaation kategoriat
-const navigationCategories = [
+const navigationCategories: {
+  id: string;
+  title: string;
+  titleEn: string;
+  links: NavLink[];
+}[] = [
   {
     id: "exchange",
     title: "Opiskelijavaihto",
@@ -43,7 +56,7 @@ const navigationCategories = [
   },
 ];
 
-const hamburgerLinks = [
+const hamburgerLinks: NavLink[] = [
   { href: "/", label: "Etusivu" },
   { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
   { href: "/destinations", label: "Vaihtokohteet" },
@@ -54,12 +67,10 @@ const hamburgerLinks = [
   { href: "/contact", label: "Ota yhteyttä" },
 ];
 
-// get label based on language
-const getLabel = (language: string, label: string, labelEn: string): string => {
-  return language === "en" ? labelEn : label;
+const getLabel = (language: string, label: string, labelEn?: string): string => {
+  return language === "en" && labelEn ? labelEn : label;
 };
 
-// navigation
 const Navbar = () => {
   const { language } = useLanguage();
   const pathname = usePathname();
@@ -77,7 +88,7 @@ const Navbar = () => {
           return {
             category: category.title,
             page: link.label,
-            pageEn: link.labelEn,
+            pageEn: link.labelEn || link.label,
           };
       }
     }
