@@ -109,7 +109,7 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
-                  Suosikki kohteet ({profile.favorites?.length || 0})
+                  Suosikkikohteet ({profile.favorites?.length || 0})
                 </span>
                 <span>›</span>
               </div>
@@ -121,33 +121,32 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
-                  Dokumentit ({profile.documents?.length || 0})
+                  Omat dokumentit ({profile.documents?.length || 0})
                 </span>
                 <span>›</span>
               </div>
             </Link>
 
-            {/* LinkedIn link */}
-            {profile.linkedinUrl && (
-              <a
-                href={profile.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
-              >
-                <div className="flex justify-between items-center text-[var(--typography)]">
-                  <span className="font-medium">LinkedIn Profile</span>
-                  <span>↗</span>
-                </div>
-              </a>
-            )}
+            <Link
+              href="/profile/hakemukset"
+              className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
+            >
+              <div className="flex justify-between items-center text-gray-800">
+                <span className="font-medium">
+                  Hakemukset ja kustannusarviointi ({profile.applications ? Object.keys(profile.applications).length : 0})
+                </span>
+                <span>›</span>
+              </div>
+            </Link>
           </div>
 
           {/* Member since */}
           <div className="mt-8 text-center text-sm text-[var(--typography)]">
             <p>
-              Member since:{" "}
-              {new Date(profile.registeredAt).toLocaleDateString("fi-FI")}
+              Jäsen alkaen:{" "}
+              {profile.registeredAt 
+                ? new Date(profile.registeredAt).toLocaleDateString("fi-FI")
+                : "Ei saatavilla"}
             </p>
           </div>
         </div>

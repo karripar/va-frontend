@@ -16,21 +16,9 @@ const navigationCategories = [
     title: "Opiskelijavaihto",
     titleEn: "Student Exchange",
     links: [
-      {
-        href: "/instructions",
-        label: "Hakuprosessi ja ohjeet",
-        labelEn: "Application Process",
-      },
-      {
-        href: "/destinations",
-        label: "Vaihtokohteet",
-        labelEn: "Destinations",
-      },
-      {
-        href: "/grants",
-        label: "Apurahat ja kustannukset",
-        labelEn: "Grants & Costs",
-      },
+      { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
+      { href: "/destinations", label: "Vaihtokohteet" },
+      { href: "/profile/hakemukset?tab=budget", label: "Apurahat ja kustannukset" },
     ],
   },
   {
@@ -38,13 +26,10 @@ const navigationCategories = [
     title: "Yhteisö ja tuki",
     titleEn: "Community & Support",
     links: [
-      {
-        href: "/tips",
-        label: "Kokemukset ja vinkit",
-        labelEn: "Experiences & Tips",
-      },
-      { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
-      { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
+      { href: "/tips", label: "Kokemukset ja vinkit" },
+      { href: "/faq", label: "FAQ" },
+      { href: "/ai-chat", label: "AI Chat" },
+      { href: "/contact", label: "Ota yhteyttä" },
     ],
   },
   {
@@ -59,26 +44,14 @@ const navigationCategories = [
 ];
 
 const hamburgerLinks = [
-  { href: "/", label: "Etusivu", labelEn: "Home" },
-  {
-    href: "/instructions",
-    label: "Hakuprosessi ja ohjeet",
-    labelEn: "Application Process",
-  },
-  { href: "/destinations", label: "Vaihtokohteet", labelEn: "Destinations" },
-  {
-    href: "/grants",
-    label: "Apurahat ja kustannukset",
-    labelEn: "Grants & Costs",
-  },
-  {
-    href: "/tips",
-    label: "Kokemukset ja vinkit",
-    labelEn: "Experiences & Tips",
-  },
-  { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
-  { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
-  { href: "/admin", label: "Ylläpito", labelEn: "Admin Panel", requiresAdmin: true },
+  { href: "/", label: "Etusivu" },
+  { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
+  { href: "/destinations", label: "Vaihtokohteet" },
+  { href: "/profile/hakemukset?tab=budget", label: "Apurahat ja kustannukset" },
+  { href: "/tips", label: "Kokemukset ja vinkit" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/ai-chat", label: "AI Chat" },
+  { href: "/contact", label: "Ota yhteyttä" },
 ];
 
 // get label based on language
