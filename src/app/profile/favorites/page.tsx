@@ -2,7 +2,9 @@
 import { useProfileData } from "@/hooks/profileHooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FaTrash, FaArrowLeft } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import LoadingSpinner from "@/components/profile/LoadingSpinner";
 
 export default function FavoritesPage() {
   const { profileData: profile, loading } = useProfileData();
@@ -42,32 +44,16 @@ export default function FavoritesPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p>Ladataan...</p>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
     <div className="min-h-screen">
-      <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
-        <button
-          onClick={() => router.back()}
-          className="absolute left-4 text-white hover:text-gray-200"
-        >
-          <FaArrowLeft size={20} />
-        </button>
-        <h1 className="text-2xl font-bold">Suosikki kohteet</h1>
-      </div>
-
+      <ProfileHeader title="Suosikkikohteet" />
       <div className="bg-white min-h-screen">
         <div className="p-6 max-w-2xl mx-auto">
           {favorites.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-[var(--typography)] mb-4 text-base">
-                Ei suosikkeja vielä
-              </p>
               <button
                 onClick={() => router.push("/destinations")}
                 className="px-6 py-2 bg-[#FFB299] hover:bg-[#FFA07A] text-[var(--typography)] rounded-lg font-medium"
