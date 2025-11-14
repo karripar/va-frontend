@@ -1,8 +1,19 @@
 "use client";
 import { useState } from "react";
-import { FaPlane, FaShieldAlt, FaHome, FaShoppingCart, FaPencilAlt } from "react-icons/fa";
+import { FaPlane, FaShieldAlt, FaHome, FaShoppingCart, FaPencilAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import React from "react";
-import { BudgetCategory } from "va-hybrid-types/contentTypes";
+
+export type BudgetCategory = 
+  | "matkakulut"
+  | "vakuutukset"
+  | "asuminen"
+  | "ruoka_ja_arki"
+  | "opintovalineet";
+
+interface CategoryExpense {
+  amount: number;
+  notes: string;
+}
 
 interface BudgetCategoryData {
   category: BudgetCategory;
@@ -14,11 +25,18 @@ interface BudgetCategoryData {
 }
 
 interface BudgetCategoriesProps {
-  onCategorySelect?: (category: BudgetCategory) => void;
+  onBudgetChange?: (expenses: Record<BudgetCategory, CategoryExpense>) => void;
 }
 
-export default function BudgetCategories({ onCategorySelect }: BudgetCategoriesProps) {
-  const [selectedCategory, setSelectedCategory] = useState<BudgetCategory | null>(null);
+export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesProps) {
+  const [expandedCategory, setExpandedCategory] = useState<BudgetCategory | null>(null);
+  const [expenses, setExpenses] = useState<Record<BudgetCategory, CategoryExpense>>({
+    matkakulut: { amount: 0, notes: "" },
+    vakuutukset: { amount: 0, notes: "" },
+    asuminen: { amount: 0, notes: "" },
+    ruoka_ja_arki: { amount: 0, notes: "" },
+    opintovalineet: { amount: 0, notes: "" },
+  });
 
   const categories: BudgetCategoryData[] = [
     {
@@ -27,7 +45,7 @@ export default function BudgetCategories({ onCategorySelect }: BudgetCategoriesP
       description: "Lennot, junat, bussit, kimppakyytit, viisumi",
       icon: <FaPlane size={24} />,
       iconColor: "text-orange-500",
-      bgColor: "bg-orange-50 hover:bg-orange-100"
+      bgColor: "bg-orange-50"
     },
     {
       category: "vakuutukset",
@@ -35,7 +53,7 @@ export default function BudgetCategories({ onCategorySelect }: BudgetCategoriesP
       description: "Matka- ja opiskelija­vakuutukset",
       icon: <FaShieldAlt size={24} />,
       iconColor: "text-orange-500",
-      bgColor: "bg-orange-50 hover:bg-orange-100"
+      bgColor: "bg-orange-50"
     },
     {
       category: "asuminen",
@@ -43,15 +61,15 @@ export default function BudgetCategories({ onCategorySelect }: BudgetCategoriesP
       description: "Vuokra ja -vakuus, muut asuntoon liittyvät laskut",
       icon: <FaHome size={24} />,
       iconColor: "text-orange-500",
-      bgColor: "bg-orange-50 hover:bg-orange-100"
+      bgColor: "bg-orange-50"
     },
     {
-      category: "ruoka ja arki",
+      category: "ruoka_ja_arki",
       title: "Ruoka ja arki",
       description: "Kaupat ja ravintolat, hygieniä",
       icon: <FaShoppingCart size={24} />,
       iconColor: "text-orange-500",
-      bgColor: "bg-orange-50 hover:bg-orange-100"
+      bgColor: "bg-orange-50"
     },
     {
       category: "opintovalineet",
@@ -59,43 +77,123 @@ export default function BudgetCategories({ onCategorySelect }: BudgetCategoriesP
       description: "Kirjat, materiaalit, tietokone",
       icon: <FaPencilAlt size={24} />,
       iconColor: "text-orange-500",
-      bgColor: "bg-orange-50 hover:bg-orange-100"
+      bgColor: "bg-orange-50"
     }
   ];
 
   const handleCategoryClick = (category: BudgetCategory) => {
-    setSelectedCategory(category);
-    if (onCategorySelect) {
-      onCategorySelect(category);
-    }
+    setExpandedCategory(expandedCategory === category ? null : category);
+  };
+
+  const updateAmount = (category: BudgetCategory, newAmount: number) => {
+    const updatedExpenses = {
+      ...expenses,
+      [category]: { ...expenses[category], amount: Math.max(0, newAmount) }
+    };
+    setExpenses(updatedExpenses);
+    onBudgetChange?.(updatedExpenses);
+  };
+
+  const updateNotes = (category: BudgetCategory, notes: string) => {
+    const updatedExpenses = {
+      ...expenses,
+      [category]: { ...expenses[category], notes }
+    };
+    setExpenses(updatedExpenses);
+    onBudgetChange?.(updatedExpenses);
+  };
+
+  const adjustAmount = (category: BudgetCategory, delta: number) => {
+    const currentAmount = expenses[category].amount;
+    updateAmount(category, currentAmount + delta);
+  };
+
+  const getTotalAmount = () => {
+    return Object.values(expenses).reduce((sum, expense) => sum + expense.amount, 0);
   };
 
   return (
-    <div className="space-y-4 my-2">
-      <h2 className="text-lg font-semibold text-[var(--typography)]">Mahdolliset kustannukset</h2>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-[var(--typography)]">Budjetti</h2>
+        <div className="text-right">
+          <p className="text-sm text-[var(--typography)]">Kokonaissumma</p>
+          <p className="text-2xl font-bold text-[#FF5722]">{getTotalAmount()}€</p>
+        </div>
+      </div>
       
-      <div className="space-y-3 ">
-        {categories.map((cat) => (
-          <button
-            key={cat.category}
-            onClick={() => handleCategoryClick(cat.category)}
-            className={`w-full p-4 rounded-lg transition-all border border-[var(--va-border)]  ${
-              selectedCategory === cat.category 
-                ? "border-orange-500 bg-orange-50" 
-                : " bg-white hover:bg-orange-50"
-            } ${cat.bgColor}`}
-          >
-            <div className="flex items-start space-x-4">
-              <div className={`${cat.iconColor} flex-shrink-0 mt-1`}>
-                {cat.icon}
-              </div>
-              <div className="flex-1 text-left">
-                <h3 className="font-semibold text-[var(--typography)] mb-1">{cat.title}</h3>
-                <p className="text-sm text-[var(--typography)]">{cat.description}</p>
-              </div>
+      <div className="space-y-3">
+        {categories.map((cat) => {
+          const isExpanded = expandedCategory === cat.category;
+          const expense = expenses[cat.category];
+          
+          return (
+            <div key={cat.category} className="bg-white rounded-lg border border-[var(--va-border)] overflow-hidden shadow-sm">
+              <button
+                onClick={() => handleCategoryClick(cat.category)}
+                className={`w-full p-4 transition-all ${isExpanded ? cat.bgColor : 'hover:bg-gray-50'}`}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className={`${cat.iconColor} flex-shrink-0`}>
+                    {cat.icon}
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="font-semibold text-[var(--typography)] mb-1">{cat.title}</h3>
+                    <p className="text-sm text-[var(--typography)]">{cat.description}</p>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="font-bold text-[#FF5722]">{expense.amount}€</span>
+                    {isExpanded ? <FaChevronUp className="text-[var(--typography)]" /> : <FaChevronDown className="text-[var(--typography)]" />}
+                  </div>
+                </div>
+              </button>
+
+              {isExpanded && (
+                <div className="p-4 border-t border-[var(--va-border)] bg-gray-50 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--typography)] mb-2">
+                      Arvioitu summa (€)
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => adjustAmount(cat.category, -50)}
+                        className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium text-[var(--typography)] transition-colors"
+                      >
+                        -50
+                      </button>
+                      <input
+                        type="number"
+                        value={expense.amount}
+                        onChange={(e) => updateAmount(cat.category, parseInt(e.target.value) || 0)}
+                        className="flex-1 px-4 py-2 border border-[var(--va-border)] rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent text-center text-lg font-semibold"
+                        min="0"
+                      />
+                      <button
+                        onClick={() => adjustAmount(cat.category, 50)}
+                        className="px-3 py-2 bg-[#FF5722] hover:bg-[#F4511E] text-white rounded-lg font-medium transition-colors"
+                      >
+                        +50
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--typography)] mb-2">
+                      Muistiinpanot
+                    </label>
+                    <textarea
+                      value={expense.notes}
+                      onChange={(e) => updateNotes(cat.category, e.target.value)}
+                      placeholder="Lisää tarkempia tietoja kustannuksista..."
+                      className="w-full px-4 py-2 border border-[var(--va-border)] rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent resize-none"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          </button>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

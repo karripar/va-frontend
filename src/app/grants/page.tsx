@@ -7,14 +7,28 @@ import ErasmusGrantTypes from "@/components/applications/ErasmusGrantTypes";
 import { useBudgetEstimate } from "@/hooks/budgetArviointiHooks";
 import { useGrantsData } from "@/hooks/grantsManagingHooks";
 
+type BudgetCategory = 
+  | "matkakulut"
+  | "vakuutukset"
+  | "asuminen"
+  | "ruoka_ja_arki"
+  | "opintovalineet";
+
+interface CategoryExpense {
+  amount: number;
+  notes: string;
+}
+
 export default function GrantsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("categories");
   const { grants, loading: grantsLoading, error: grantsError } = useGrantsData();
   const { budget } = useBudgetEstimate();
+  const [budgetExpenses, setBudgetExpenses] = useState<Record<BudgetCategory, CategoryExpense> | null>(null);
 
-  const handleCategorySelect = (category: string) => {
-    console.log("Selected category:", category);
-    
+  const handleBudgetChange = (expenses: Record<BudgetCategory, CategoryExpense>) => {
+    setBudgetExpenses(expenses);
+    // TODO: Save to backend API
+    console.log("Budget updated:", expenses);
   };
 
   const handleCalculate = (amount: number) => {
@@ -23,7 +37,11 @@ export default function GrantsPage() {
 
   const handleGrantSelect = (grantType: string) => {
     console.log("Selected grant type:", grantType);
-    
+  };
+
+  const getTotalBudget = () => {
+    if (!budgetExpenses) return 0;
+    return Object.values(budgetExpenses).reduce((sum, expense) => sum + expense.amount, 0);
   };
 
   if (grantsLoading) {
@@ -49,8 +67,46 @@ export default function GrantsPage() {
   }
 
   return (
-    <div className="min-h-screen my-4 max-w-4xl mx-auto">
-     
+    <div className="min-h-screen bg-gray-50">
+      {/* Orange Header */}
+      <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
+        <Link
+          href="/profile"
+          className="absolute left-4 text-white hover:text-gray-200 transition-colors"
+          aria-label="Takaisin profiiliin"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+            />
+          </svg>
+        </Link>
+        <h1 className="text-2xl font-bold">Apurahat</h1>
+        
+        {/* Chat button on the right */}
+        <button
+          className="absolute right-4 bg-[#FF5722] text-white px-4 py-2 rounded-full hover:bg-[#F4511E] transition-colors"
+          style={{
+            writingMode: 'vertical-rl',
+            textOrientation: 'mixed',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            letterSpacing: '2px'
+          }}
+        >
+          CHAT
+        </button>
+      </div>
+
       {/* View Mode Tabs */}
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="flex">
@@ -59,7 +115,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "categories"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-[var(--typography)] hover:text-[var(--typography)]"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
             Kustannukset
@@ -69,7 +125,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "calculator"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-[var(--typography)] hover:text-[var(--typography)]"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
             Laskuri
@@ -79,7 +135,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "erasmus_types"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-[var(--typography)] hover:text-[var(--typography)]"
+                : "text-gray-600 hover:text-gray-900"
             }`}
           >
             Erasmus+ lisätuet
@@ -91,19 +147,41 @@ export default function GrantsPage() {
       <div className="max-w-4xl mx-auto p-6">
         {viewMode === "categories" && (
           <div>
-            <BudgetCategories onCategorySelect={handleCategorySelect} />
+            <BudgetCategories onBudgetChange={handleBudgetChange} />
             
-            {budget && (
-              <div className="mt-8 p-6 bg-white rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-[var(--typography)] mb-4">
-                  Arvioitu budjettisi
+            {/* Budget Summary */}
+            {budgetExpenses && getTotalBudget() > 0 && (
+              <div className="mt-6 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow border border-orange-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  📈 Budjettisi yhteenveto
                 </h3>
-                <div className="text-3xl font-bold text-[#FF5722]">
-                  {budget.totalEstimate || 0}€
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Arvioitu kokonaiskustannus</p>
+                    <p className="text-3xl font-bold text-[#FF5722]">{getTotalBudget()}€</p>
+                  </div>
+                  {budget && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Arvioitu apuraha</p>
+                      <p className="text-3xl font-bold text-green-600">{budget.totalEstimate || 0}€</p>
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm text-[var(--typography)] mt-2">
-                  Kohde: {budget.destination}
-                </p>
+                {budget && (
+                  <div className="pt-4 border-t border-orange-200">
+                    <p className="text-sm text-gray-700">
+                      {getTotalBudget() > (budget.totalEstimate || 0) ? (
+                        <span className="text-red-600 font-medium">
+                          ⚠️ Budjettisi ylittää arvioidun apurahan {getTotalBudget() - (budget.totalEstimate || 0)}€:lla
+                        </span>
+                      ) : (
+                        <span className="text-green-600 font-medium">
+                          ✅ Apuraha kattaa budjetit ({(budget.totalEstimate || 0) - getTotalBudget()}€ jäljellä)
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -119,19 +197,19 @@ export default function GrantsPage() {
             
             {/* Summary section */}
             {grants && (
-              <div className="mt-8 p-6 bg-white rounded-lg shadow border border-[var(--va-border)]">
-                <h3 className="text-lg font-semibold text-[var(--typography)] mb-4">
+              <div className="mt-8 p-6 bg-white rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Yhteenveto apurahoista
                 </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-[var(--typography)]">Erasmus+ -apurahat</span>
-                    <span className="font-medium text-[var(--typography)]">
+                    <span className="text-gray-600">Erasmus+ -apurahat</span>
+                    <span className="font-medium text-gray-900">
                       {grants.erasmusGrants?.length || 0} kpl
                     </span>
                   </div>
                   <div className="flex justify-between items-center pt-3 border-t">
-                    <span className="font-semibold text-[var(--typography)]">Arvioitu kokonaistuki</span>
+                    <span className="font-semibold text-gray-900">Arvioitu kokonaistuki</span>
                     <span className="text-2xl font-bold text-[#FF5722]">
                       {grants.totalEstimatedSupport || 0}€
                     </span>
@@ -155,15 +233,15 @@ export default function GrantsPage() {
         <div className="mt-6 grid grid-cols-2 gap-3">
           <Link
             href="/profile/hakemukset"
-            className="p-4 bg-white rounded-lg border border-[var(--va-border)] shadow hover:shadow-md transition-shadow text-center"
+            className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center"
           >
-            <span className="text-sm font-medium text-[var(--typography)]">Hakemukset</span>
+            <span className="text-sm font-medium text-gray-900">Hakemukset</span>
           </Link>
           <Link
             href="/profile/documents"
-            className="p-4 bg-white rounded-lg border border-[var(--va-border)] shadow hover:shadow-md transition-shadow text-center"
+            className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center"
           >
-            <span className="text-sm font-medium text-[var(--typography)]">Dokumentit</span>
+            <span className="text-sm font-medium text-gray-900">Dokumentit</span>
           </Link>
         </div>
       </div>
