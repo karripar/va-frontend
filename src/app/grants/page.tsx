@@ -49,46 +49,8 @@ export default function GrantsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Orange Header */}
-      <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
-        <Link
-          href="/profile"
-          className="absolute left-4 text-white hover:text-gray-200 transition-colors"
-          aria-label="Takaisin profiiliin"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
-        </Link>
-        <h1 className="text-2xl font-bold">Apurahat</h1>
-        
-        {/* Chat button on the right */}
-        <button
-          className="absolute right-4 bg-[#FF5722] text-white px-4 py-2 rounded-full hover:bg-[#F4511E] transition-colors"
-          style={{
-            writingMode: 'vertical-rl',
-            textOrientation: 'mixed',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            letterSpacing: '2px'
-          }}
-        >
-          CHAT
-        </button>
-      </div>
-
+    <div className="min-h-screen bg-gray-50 my-2">
+     
       {/* View Mode Tabs */}
       <div className="bg-white border-b sticky top-0 z-10">
         <div className="flex">
@@ -97,7 +59,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "categories"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-gray-600 hover:text-gray-900"
+                : "text-[var(--typography)] hover:text-gray-900"
             }`}
           >
             Kustannukset
@@ -107,7 +69,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "calculator"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-gray-600 hover:text-gray-900"
+                : "text-[var(--typography)] hover:text-gray-900"
             }`}
           >
             Laskuri
@@ -117,7 +79,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "erasmus_types"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-gray-600 hover:text-gray-900"
+                : "text-[var(--typography)] hover:text-gray-900"
             }`}
           >
             Erasmus+ lisätuet
@@ -139,7 +101,7 @@ export default function GrantsPage() {
                 <div className="text-3xl font-bold text-[#FF5722]">
                   {budget.totalEstimate || 0}€
                 </div>
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-[var(--typography)] mt-2">
                   Kohde: {budget.destination}
                 </p>
               </div>
@@ -163,7 +125,7 @@ export default function GrantsPage() {
                 </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Erasmus+ -apurahat</span>
+                    <span className="text-[var(--typography)]">Erasmus+ -apurahat</span>
                     <span className="font-medium text-gray-900">
                       {grants.erasmusGrants?.length || 0} kpl
                     </span>

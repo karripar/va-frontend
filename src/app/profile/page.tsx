@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FiEdit } from "react-icons/fi";
 import LogoutButton from "@/components/ui/LogoutButton";
+import { FaArrowLeft } from "react-icons/fa6";
 
 export default function ProfilePage() {
   const { user: profile, loading } = useAuth();
@@ -42,20 +43,7 @@ export default function ProfilePage() {
           className="absolute left-6 text-white hover:scale-110"
           aria-label="Takaisin etusivulle"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
+          <FaArrowLeft size={20} />
         </Link>
         <h1
           className="tracking-widest sm:text-2xl text-xl"
@@ -133,7 +121,11 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-gray-800">
                 <span className="font-medium">
-                  Hakemukset ja kustannusarviointi ({profile.applications ? Object.keys(profile.applications).length : 0})
+                  Hakemukset ja kustannusarviointi (
+                  {profile.applications
+                    ? Object.keys(profile.applications).length
+                    : 0}
+                  )
                 </span>
                 <span>›</span>
               </div>
@@ -144,7 +136,7 @@ export default function ProfilePage() {
           <div className="mt-8 text-center text-sm text-[var(--typography)]">
             <p>
               Jäsen alkaen:{" "}
-              {profile.registeredAt 
+              {profile.registeredAt
                 ? new Date(profile.registeredAt).toLocaleDateString("fi-FI")
                 : "Ei saatavilla"}
             </p>

@@ -24,7 +24,7 @@ export default function ProfileHeader({ title, showEdit = false, showBack = true
         </button>
       )}
       
-      <h1 className="text-2xl font-bold">{title}</h1>
+      <h1 className="text-2xl tracking-widest p-2" style={{ fontFamily: "var(--font-machina-bold)" }}>{title}</h1>
       
       {showEdit && (
         <Link

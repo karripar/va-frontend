@@ -49,11 +49,11 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
       </div>
 
       <div className="border-t pt-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Arvio apurasta</h3>
+        <h3 className="text-lg font-semibold text-[var(--typography)] mb-4">Arvio apurasta</h3>
 
         {/* Amount Display */}
         <div className="text-center mb-6">
-          <div className="text-4xl font-bold text-gray-900">
+          <div className="text-4xl font-bold text-[var(--typography)]">
             {amount}€ / KK
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
         </div>
 
         {/* Min/Max labels */}
-        <div className="flex justify-between text-sm text-gray-600 mb-6">
+        <div className="flex justify-between text-sm text-[var(--typography)] mb-6">
           <span>{minAmount}€</span>
           <span>{maxAmount}€</span>
         </div>
@@ -82,12 +82,12 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
         {/* Destination and Program */}
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-gray-600">Kohde</span>
-            <span className="font-medium text-gray-900">Italia</span>
+            <span className="text-[var(--typography)]">Kohde</span>
+            <span className="font-medium text-[var(--typography)]">Italia</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-600">Ohjelma</span>
-            <span className="font-medium text-gray-900">{program}</span>
+            <span className="text-[var(--typography)]">Ohjelma</span>
+            <span className="font-medium text-[var(--typography)]">{program}</span>
           </div>
         </div>
 

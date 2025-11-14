@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useDocuments } from "@/hooks/useDocuments";
 import Link from "next/link";
-import { FaTrashCan } from "react-icons/fa6";
+import { FaArrowLeft, FaTrashCan } from "react-icons/fa6";
 
 const DocumentManagement = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -77,20 +77,7 @@ const DocumentManagement = () => {
           className="absolute left-4 sm:left-6 text-white hover:scale-110"
           aria-label={t.backToHome}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
+          <FaArrowLeft size={20} />
         </Link>
         <h1
           className="tracking-widest sm:text-2xl text-lg text-center mx-auto max-w-50 sm:max-w-full"

@@ -9,29 +9,28 @@ import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 
-// Type definition for navigation links
-type NavLink = {
-  href: string;
-  label: string;
-  labelEn?: string;
-  requiresAdmin?: boolean;
-};
-
 // navigaation kategoriat
-const navigationCategories: {
-  id: string;
-  title: string;
-  titleEn: string;
-  links: NavLink[];
-}[] = [
+const navigationCategories = [
   {
     id: "exchange",
     title: "Opiskelijavaihto",
     titleEn: "Student Exchange",
     links: [
-      { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
-      { href: "/destinations", label: "Vaihtokohteet" },
-      { href: "/profile/hakemukset?tab=budget", label: "Apurahat ja kustannukset" },
+      {
+        href: "/instructions",
+        label: "Hakuprosessi ja ohjeet",
+        labelEn: "Application Process",
+      },
+      {
+        href: "/destinations",
+        label: "Vaihtokohteet",
+        labelEn: "Destinations",
+      },
+      {
+        href: "/grants",
+        label: "Apurahat ja kustannukset",
+        labelEn: "Grants & Costs",
+      },
     ],
   },
   {
@@ -39,10 +38,13 @@ const navigationCategories: {
     title: "Yhteisö ja tuki",
     titleEn: "Community & Support",
     links: [
-      { href: "/tips", label: "Kokemukset ja vinkit" },
-      { href: "/faq", label: "FAQ" },
-      { href: "/ai-chat", label: "AI Chat" },
-      { href: "/contact", label: "Ota yhteyttä" },
+      {
+        href: "/tips",
+        label: "Kokemukset ja vinkit",
+        labelEn: "Experiences & Tips",
+      },
+      { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
+      { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
     ],
   },
   {
@@ -56,21 +58,35 @@ const navigationCategories: {
   },
 ];
 
-const hamburgerLinks: NavLink[] = [
-  { href: "/", label: "Etusivu" },
-  { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
-  { href: "/destinations", label: "Vaihtokohteet" },
-  { href: "/profile/hakemukset?tab=budget", label: "Apurahat ja kustannukset" },
-  { href: "/tips", label: "Kokemukset ja vinkit" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/ai-chat", label: "AI Chat" },
-  { href: "/contact", label: "Ota yhteyttä" },
+const hamburgerLinks = [
+  { href: "/", label: "Etusivu", labelEn: "Home" },
+  {
+    href: "/instructions",
+    label: "Hakuprosessi ja ohjeet",
+    labelEn: "Application Process",
+  },
+  { href: "/destinations", label: "Vaihtokohteet", labelEn: "Destinations" },
+  {
+    href: "/grants",
+    label: "Apurahat ja kustannukset",
+    labelEn: "Grants & Costs",
+  },
+  {
+    href: "/tips",
+    label: "Kokemukset ja vinkit",
+    labelEn: "Experiences & Tips",
+  },
+  { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
+  { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
+  { href: "/admin", label: "Ylläpito", labelEn: "Admin Panel", requiresAdmin: true },
 ];
 
-const getLabel = (language: string, label: string, labelEn?: string): string => {
-  return language === "en" && labelEn ? labelEn : label;
+// get label based on language
+const getLabel = (language: string, label: string, labelEn: string): string => {
+  return language === "en" ? labelEn : label;
 };
 
+// navigation
 const Navbar = () => {
   const { language } = useLanguage();
   const pathname = usePathname();
@@ -88,7 +104,7 @@ const Navbar = () => {
           return {
             category: category.title,
             page: link.label,
-            pageEn: link.labelEn || link.label,
+            pageEn: link.labelEn,
           };
       }
     }

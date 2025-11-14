@@ -347,7 +347,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                                       <h4 className="my-4 text-base font-bold text-[var(--va-dark-grey)]">
                                         {t.uploadFile}
                                       </h4>
-                                      <p className="my-2 text-sm text-[var(--va-typography)] px-4">
+                                      <p className="my-2 text-sm text-[var(--typography)] px-4">
                                         {t.acceptedTypes}
                                       </p>
                                       <div className="my-4 w-full sm:px-6">
@@ -365,7 +365,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                                         />
                                         <label
                                           htmlFor={`file-upload-${i}-${displayLabel}`}
-                                          className="flex items-center justify-center w-full py-2 bg-[var(--va-grey-50)] text-[var(--va-typography)] border border-[var(--va-border)] text-sm hover:bg-[var(--va-orange)] hover:text-white transition-colors cursor-pointer rounded-full text-center"
+                                          className="flex items-center justify-center w-full py-2 bg-[var(--va-grey-50)] text-[var(--typography)] border border-[var(--va-border)] text-sm hover:bg-[var(--va-orange)] hover:text-white transition-colors cursor-pointer rounded-full text-center"
                                         >
                                           {t.selectFile}
                                         </label>
