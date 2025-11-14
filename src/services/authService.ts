@@ -1,4 +1,9 @@
-import { ProfileResponse } from "va-hybrid-types/contentTypes";
+interface ProfileResponse {
+  id: string;
+  email: string;
+  name: string;
+  picture?: string;
+}
 
 interface AuthResponse {
   user: ProfileResponse;
