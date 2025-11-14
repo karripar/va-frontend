@@ -71,18 +71,18 @@ export default function BudgetCategories({ onCategorySelect }: BudgetCategoriesP
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-gray-800">Mahdolliset kustannukset</h2>
+    <div className="space-y-4 my-2">
+      <h2 className="text-lg font-semibold text-[var(--typography)]">Mahdolliset kustannukset</h2>
       
-      <div className="space-y-3">
+      <div className="space-y-3 ">
         {categories.map((cat) => (
           <button
             key={cat.category}
             onClick={() => handleCategoryClick(cat.category)}
-            className={`w-full p-4 rounded-lg border-2 transition-all ${
+            className={`w-full p-4 rounded-lg transition-all border border-[var(--va-border)]  ${
               selectedCategory === cat.category 
                 ? "border-orange-500 bg-orange-50" 
-                : "border-transparent bg-white hover:bg-orange-50"
+                : " bg-white hover:bg-orange-50"
             } ${cat.bgColor}`}
           >
             <div className="flex items-start space-x-4">
@@ -90,10 +90,9 @@ export default function BudgetCategories({ onCategorySelect }: BudgetCategoriesP
                 {cat.icon}
               </div>
               <div className="flex-1 text-left">
-                <h3 className="font-semibold text-gray-900 mb-1">{cat.title}</h3>
-                <p className="text-sm text-gray-600">{cat.description}</p>
+                <h3 className="font-semibold text-[var(--typography)] mb-1">{cat.title}</h3>
+                <p className="text-sm text-[var(--typography)]">{cat.description}</p>
               </div>
-              <div className="text-gray-400">›</div>
             </div>
           </button>
         ))}

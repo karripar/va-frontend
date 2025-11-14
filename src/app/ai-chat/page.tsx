@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { FiSend, FiChevronRight } from 'react-icons/fi';
+import { FiSend, FiChevronDown, FiChevronUp, FiBook } from 'react-icons/fi';
+import { FaPlane, FaFileAlt, FaMoneyBillWave } from 'react-icons/fa';
 import {
   sendChatMessage,
   ChatMessage as APIChatMessage,
@@ -8,6 +9,107 @@ import {
 
 type Role = 'bot' | 'user';
 type ChatMessage = { id: string; role: Role; text: string };
+
+interface FAQItem {
+  id: string;
+  category: "Yleistä" | "Hakeminen" | "Apurahat" | "Dokumentit" | "Matkustaminen";
+  question: string;
+  answer: string;
+  links?: { title: string; url: string }[];
+}
+
+const faqData: FAQItem[] = [
+  {
+    id: "1",
+    category: "Yleistä",
+    question: "Mikä on opiskelijavaihto?",
+    answer: "Opiskelijavaihto on mahdollisuus opiskella lukukausi tai -vuosi ulkomaisessa partneriyliopistossa osana tutkinto-opintojasi. \n\n Voit suorittaa pää- tai sivuainettasi tai suorittaa paikallisia kielikursseja. \n\n Tärkeintä on, että kurssivalinnat tukevat tutkintoasi ja ne voidaan hyväksilukea.",
+  },
+  {
+    id: "2",
+    category: "Hakeminen",
+    question: "Milloin kannattaa aloittaa suunnittelu?",
+    answer: "Aloita suunnittelu hyvissä ajoin miettimällä miksi, minne ja milloin haluat lähteä. \n\n Hakuprosessit voivat kestää useita kuukausia. \n\n Valitse kohdekoulu ja kurssit niin, että ne tukevat Suomessa suoritettuja opintojasi.",
+  },
+  {
+    id: "3",
+    category: "Hakeminen",
+    question: "Mitä hakeminen edellyttää?",
+    answer: "Hakuprosessiin kuuluu yleensä hakulomakkeen täyttäminen ja mahdollinen haastattelu. \n\n Motivaatiosi, opintomenestys ja terveydentilasi vaikuttavat valintaan. \n\n Opintojesi tulee liittyä tutkintoosi ja niitä tulee voida hyväksilukea. Yliopistoissa vaaditaan usein tietty määrä suoritettuja opintopisteitä.",
+  },
+  {
+    id: "4",
+    category: "Hakeminen",
+    question: "Mitä dokumentteja tarvitsen?",
+    answer: "Tyypillisesti tarvitset:\n• Vapaamuotoinen hakemus\n• Motivaatiokirje\n• Opintosuoritusote (Transcript of Records)\n• Kielitaitotodistus\n• CV (jos vaaditaan)\n\nTarkat vaatimukset riippuvat kohdeyliopistosta.",
+  },
+  {
+    id: "5",
+    category: "Apurahat",
+    question: "Mitä apurahoja voin saada?",
+    answer: "Yleisimmät apurahat:\n• Erasmus+ -apuraha (EU-maat)\n• Kela opintotuki ulkomaille\n• Korkeakoulusi omat apurahat\n• Ulkopuoliset säätiöapurahat\n\nVoit hakea useita apurahoja yhtä aikaa! \n\nVoit saada opintotukea, jos vaihto-opintosi hyväksytään osaksi Suomessa suoritettavia opintojasi.",
+    links: [
+      { title: "Erasmus+ apuraha", url: "https://erasmus-plus.ec.europa.eu" },
+      { title: "Kelan opintotuki", url: "https://www.kela.fi/opintotuki-ulkomailla" }
+    ]
+  },
+  {
+    id: "6",
+    category: "Apurahat",
+    question: "Mitä vaihto-opiskelu maksaa?",
+    answer: "Kustannukset vaihtelevat vaihdon pituuden ja kohdemaan mukaan. Budjetti suunnittelu kannattaa aloittaa hyvissä ajoin. \n\n Osa vaihto-ohjelmista on ilmaisia, osassa on ohjelmamaksuja.\n\nLisäkustannuksia:\n• Lentoliput\n• Vakuutukset\n• Taskuraha ja elinkustannukset\n\nErasmus+ -apurahan määrä:\n• Korkeat elinkustannukset: ~540-600€/kk\n• Keskihintaiset: ~490€/kk\n• Edulliset: ~450€/kk",
+  },
+  {
+    id: "7",
+    category: "Dokumentit",
+    question: "Mikä on Learning Agreement?",
+    answer: "Learning Agreement on sopimus sinun, kotikorkeakoulusi ja kohdeyliopiston välillä. Siinä sovitaan, mitä opintojaksoja suoritat vaihdossa ja miten ne hyväksiluetaan.\n\n Dokumentti täytetään ennen vaihtoa ja päivitetään tarvittaessa vaihdon aikana.",
+  },
+  {
+    id: "8",
+    category: "Dokumentit",
+    question: "Tarvitsenko viisumia?",
+    answer: "Riippuu kohdemaasta:\n\n• EU/ETA-maat: Ei viisumia, henkilöllisyystodistus/passi riittää\n• Muut maat: Todennäköisesti opiskeluviisumi\n\nTarkista kohdemaan vaatimukset hyvissä ajoin, viisumiprosessi voi kestää kuukausia!",
+  },
+  {
+    id: "9",
+    category: "Matkustaminen",
+    question: "Tarvitsenko matkavakuutuksen?",
+    answer: "Kyllä! Tarvitset vaihdon ajaksi asianmukaisen vakuutuksen. \n\nVakuutuksen tulee kattaa:\n• Sairauskulut\n• Tapaturmat\n• Vastuuvakuutus\n• Matkatavaravakuutus (suositus)\n\nMonet korkeakoulut tarjoavat opiskelijoille ryhmävakuutuksen.",
+  },
+  {
+    id: "10",
+    category: "Matkustaminen",
+    question: "Milloin kannattaa varata lennot?",
+    answer: "Suositus:\n• Varaa lennot vasta kun olet saanut virallisen hyväksynnän kohdeyliopistosta\n• 2-3 kuukautta etukäteen yleensä hyvä aika\n• Tarkista lentoyhtiön peruutusehdot\n• Muista matkavakuutus!",
+  },
+  {
+    id: "11",
+    category: "Yleistä",
+    question: "Voiko vaihtoon lähteä kaverin kanssa?",
+    answer: "Kyllä voi! Voit lähteä vaihtoon kaverin kanssa, mutta todennäköisesti päädytte eri majoituksiin. \n\nVaihto on henkilökohtainen kokemus, joka tarjoaa mahdollisuuden tutustua uusiin ihmisiin ja kulttuureihin.",
+  },
+  {
+    id: "12",
+    category: "Yleistä",
+    question: "Mikä on kielitaitovaatimus?",
+    answer: "Vaadittu kielitaito riippuu vaihto-ohjelmasta ja kohdemaasta.\n\n Opintosi voi suorittaa eri kielillä (englanti, saksa, ranska jne.), mutta kielitaito voi vaikuttaa valintoihisi. \n\nMonissa kohteissa vaaditaan kielitaitotodistus (esim. TOEFL, IELTS).",
+  },
+  {
+    id: "13",
+    category: "Yleistä",
+    question: "Mitä teen jos tarvitsen tukea vaihdon aikana?",
+    answer: "Vaihdon aikana:\n• Ota yhteyttä vaihto-ohjelman vastuuhenkilöön ongelmatilanteissa\n• Kotikorkeakoulusi kv-palvelut auttavat etänä\n• Kohdeyliopiston tukipalvelut ovat käytettävissäsi\n\nPalatessa takaisin:\n• Keskustele opintoneuvojasi kanssa, miten paluu sujuu\n• Vaihto-opintojen hyväksiluku hoidetaan kotikorkeakoulussa",
+  }
+];
+
+const categoryIcons = {
+  "Yleistä": FiBook,
+  "Hakeminen": FaFileAlt,
+  "Apurahat": FaMoneyBillWave,
+  "Dokumentit": FaFileAlt,
+  "Matkustaminen": FaPlane
+};
 
 export default function AIChatPage() {
   const [msg, setMsg] = useState('');
@@ -21,6 +123,14 @@ export default function AIChatPage() {
   const listRef = useRef<HTMLDivElement | null>(null);
   const [typing, setTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedFaqId, setExpandedFaqId] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("Kaikki");
+
+  const categories = ["Kaikki", ...Array.from(new Set(faqData.map(item => item.category)))];
+
+  const filteredFAQs = faqData.filter(item => {
+    return selectedCategory === "Kaikki" || item.category === selectedCategory;
+  });
 
   // Auto scroll to bottom when messages change
   useEffect(() => {
@@ -155,38 +265,100 @@ export default function AIChatPage() {
           </form>
         </div>
 
-        {/* FAQ heading */}
-        <div className="mb-6 mt-12">
+        {/* FAQ Section */}
+        <div className="mt-12">
           <h2
-            className="text-lg"
-            style={{ fontFamily: 'var(--font-machina-regular)' }}
+            className="text-2xl mb-6"
+            style={{ fontFamily: 'var(--font-machina-bold)', color: 'var(--va-orange)' }}
           >
-            Usein kysyttyjä kysymyksiä ja vastauksia
+            Usein kysytyt kysymykset
           </h2>
+
+          {/* Category Filters */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 rounded-full font-medium transition-colors text-sm ${
+                  selectedCategory === category
+                    ? "bg-[var(--va-orange)] text-white"
+                    : "bg-white text-[var(--typography)] border border-[var(--va-border)] hover:border-[var(--va-orange)]"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {/* FAQ Items */}
+          <div className="space-y-3">
+            {filteredFAQs.map((item) => {
+              const Icon = categoryIcons[item.category];
+              const isExpanded = expandedFaqId === item.id;
+
+              return (
+                <div key={item.id} className="bg-white rounded-lg shadow-sm border border-[var(--va-border)] overflow-hidden">
+                  <button
+                    onClick={() => setExpandedFaqId(isExpanded ? null : item.id)}
+                    className="w-full px-6 py-4 flex items-start gap-4"
+                  >
+                    <Icon className="text-[var(--va-orange)] mt-1 flex-shrink-0" />
+                    <div className="flex-1 text-left">
+                      <h3 className="font-semibold text-[var(--typography)] mb-1">{item.question}</h3>
+                      <span className="text-xs text-[var(--typography)]">{item.category}</span>
+                    </div>
+                    {isExpanded ? (
+                      <FiChevronUp className="text-[var(--typography)] mt-1 flex-shrink-0" />
+                    ) : (
+                      <FiChevronDown className="text-[var(--typography)] mt-1 flex-shrink-0" />
+                    )}
+                  </button>
+
+                  {isExpanded && (
+                    <div className="px-6 pb-4 pt-4 border-t">
+                      <p className="text-[var(--typography)] whitespace-pre-line mb-3">{item.answer}</p>
+                      {item.links && item.links.length > 0 && (
+                        <div className="mt-3">
+                          <p className="text-sm font-semibold text-[var(--typography)] mb-2"> Hyödyllisiä linkkejä:</p>
+                          <div className="space-y-1">
+                            {item.links.map((link, idx) => (
+                              <a
+                                key={idx}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block text-sm text-[var(--va-orange)] hover:underline"
+                              >
+                                → {link.title}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* FAQ list */}
-        <div className="space-y-4">
-          <FAQItem title="Miten haen apurahaa?" />
-          <FAQItem title="Eri vaihto-ohjelmat?" />
+        {/* Contact Card */}
+        <div className="mt-8 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+          <h3 className="font-bold text-[var(--typography)] mb-2">Etkö löytänyt vastausta?</h3>
+          <p className="text-[var(--typography)] mb-4">
+            Kysy kysymyksesi AI-chatilta ylhäällä tai ota yhteyttä kansainvälisiin palveluihin.
+          </p>
+          <a
+            href="/contact"
+            className="inline-block px-4 py-2 bg-white text-[var(--typography)] rounded-lg border hover:bg-gray-50"
+          >
+            Ota yhteyttä
+          </a>
         </div>
       </main>
     </div>
-  );
-}
-
-function FAQItem({ title }: { title: string }) {
-  return (
-    <button
-      className="w-full text-left rounded-lg px-4 py-3 shadow-sm hover:shadow transition flex items-center justify-between"
-      style={{
-        backgroundColor: 'var(--va-orange-50)',
-        color: 'var(--typography)',
-      }}
-    >
-      <span className="font-medium">{title}</span>
-      <FiChevronRight />
-    </button>
   );
 }
 
@@ -197,7 +369,7 @@ function MessageBubble({ role, text }: { role: Role; text: string }) {
     return (
       <div className="ml-auto flex justify-end">
         <div
-          className={`${base}`}
+          className={`${base} border border-[var(--va-border)] shadow-sm`}
           style={{
             backgroundColor: 'var(--va-grey-50)',
             color: 'var(--typography)',
@@ -210,10 +382,10 @@ function MessageBubble({ role, text }: { role: Role; text: string }) {
   }
   return (
     <div
-      className={`${base}`}
+      className={`${base} border border-[var(--va-border)] shadow-sm`}
       style={{
-        backgroundColor: 'var(--va-dark-grey)',
-        color: 'var(--background)',
+        backgroundColor: 'var(--background)',
+        color: 'var(--typography)',
       }}
     >
       {text}

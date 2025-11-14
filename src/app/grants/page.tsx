@@ -49,7 +49,7 @@ export default function GrantsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 my-2">
+    <div className="min-h-screen my-4 max-w-4xl mx-auto">
      
       {/* View Mode Tabs */}
       <div className="bg-white border-b sticky top-0 z-10">
@@ -59,7 +59,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "categories"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-[var(--typography)] hover:text-gray-900"
+                : "text-[var(--typography)] hover:text-[var(--typography)]"
             }`}
           >
             Kustannukset
@@ -69,7 +69,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "calculator"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-[var(--typography)] hover:text-gray-900"
+                : "text-[var(--typography)] hover:text-[var(--typography)]"
             }`}
           >
             Laskuri
@@ -79,7 +79,7 @@ export default function GrantsPage() {
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
               viewMode === "erasmus_types"
                 ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                : "text-[var(--typography)] hover:text-gray-900"
+                : "text-[var(--typography)] hover:text-[var(--typography)]"
             }`}
           >
             Erasmus+ lisätuet
@@ -95,7 +95,7 @@ export default function GrantsPage() {
             
             {budget && (
               <div className="mt-8 p-6 bg-white rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold text-[var(--typography)] mb-4">
                   Arvioitu budjettisi
                 </h3>
                 <div className="text-3xl font-bold text-[#FF5722]">
@@ -119,19 +119,19 @@ export default function GrantsPage() {
             
             {/* Summary section */}
             {grants && (
-              <div className="mt-8 p-6 bg-white rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="mt-8 p-6 bg-white rounded-lg shadow border border-[var(--va-border)]">
+                <h3 className="text-lg font-semibold text-[var(--typography)] mb-4">
                   Yhteenveto apurahoista
                 </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-[var(--typography)]">Erasmus+ -apurahat</span>
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-[var(--typography)]">
                       {grants.erasmusGrants?.length || 0} kpl
                     </span>
                   </div>
                   <div className="flex justify-between items-center pt-3 border-t">
-                    <span className="font-semibold text-gray-900">Arvioitu kokonaistuki</span>
+                    <span className="font-semibold text-[var(--typography)]">Arvioitu kokonaistuki</span>
                     <span className="text-2xl font-bold text-[#FF5722]">
                       {grants.totalEstimatedSupport || 0}€
                     </span>
@@ -155,15 +155,15 @@ export default function GrantsPage() {
         <div className="mt-6 grid grid-cols-2 gap-3">
           <Link
             href="/profile/hakemukset"
-            className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center"
+            className="p-4 bg-white rounded-lg border border-[var(--va-border)] shadow hover:shadow-md transition-shadow text-center"
           >
-            <span className="text-sm font-medium text-gray-900">Hakemukset</span>
+            <span className="text-sm font-medium text-[var(--typography)]">Hakemukset</span>
           </Link>
           <Link
             href="/profile/documents"
-            className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center"
+            className="p-4 bg-white rounded-lg border border-[var(--va-border)] shadow hover:shadow-md transition-shadow text-center"
           >
-            <span className="text-sm font-medium text-gray-900">Dokumentit</span>
+            <span className="text-sm font-medium text-[var(--typography)]">Dokumentit</span>
           </Link>
         </div>
       </div>
