@@ -34,6 +34,9 @@ yarn-error.log*
 .env*
 !.env.sample
 
+# markdown files
+*.md
+
 # vercel
 .vercel
 

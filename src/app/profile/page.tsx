@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FiEdit } from "react-icons/fi";
 import LogoutButton from "@/components/ui/LogoutButton";
+import { FaArrowLeft } from "react-icons/fa6";
 
 export default function ProfilePage() {
   const { user: profile, loading } = useAuth();
@@ -42,20 +43,7 @@ export default function ProfilePage() {
           className="absolute left-6 text-white hover:scale-110"
           aria-label="Takaisin etusivulle"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-            />
-          </svg>
+          <FaArrowLeft size={20} />
         </Link>
         <h1
           className="tracking-widest sm:text-2xl text-xl"
@@ -97,7 +85,7 @@ export default function ProfilePage() {
             {/* Welcome text */}
             <p className="text-gray-800 text-center text-base mb-2 font-normal mt-4">
               Tervetuloa profiiliisi, täällä voit selata tallentamiasi
-              vaihtokohteitä sekä dokumentteja.
+              vaihtokohteitä ja seurata hakemustesi etenemistä vaiheittain.
             </p>
           </div>
 
@@ -109,7 +97,7 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
-                  Suosikki kohteet ({profile.favorites?.length || 0})
+                  Suosikkikohteet ({profile.favorites?.length || 0})
                 </span>
                 <span>›</span>
               </div>
@@ -121,33 +109,36 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
-                  Dokumentit ({profile.documents?.length || 0})
+                  Omat dokumentit ({profile.documents?.length || 0})
                 </span>
                 <span>›</span>
               </div>
             </Link>
 
-            {/* LinkedIn link */}
-            {profile.linkedinUrl && (
-              <a
-                href={profile.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
-              >
-                <div className="flex justify-between items-center text-[var(--typography)]">
-                  <span className="font-medium">LinkedIn Profile</span>
-                  <span>↗</span>
-                </div>
-              </a>
-            )}
+            <Link
+              href="/profile/hakemukset"
+              className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
+            >
+              <div className="flex justify-between items-center text-gray-800">
+                <span className="font-medium">
+                  Hakemukset ja kustannusarviointi (
+                  {profile.applications
+                    ? Object.keys(profile.applications).length
+                    : 0}
+                  )
+                </span>
+                <span>›</span>
+              </div>
+            </Link>
           </div>
 
           {/* Member since */}
           <div className="mt-8 text-center text-sm text-[var(--typography)]">
             <p>
-              Member since:{" "}
-              {new Date(profile.registeredAt).toLocaleDateString("fi-FI")}
+              Jäsen alkaen:{" "}
+              {profile.registeredAt
+                ? new Date(profile.registeredAt).toLocaleDateString("fi-FI")
+                : "Ei saatavilla"}
             </p>
           </div>
         </div>

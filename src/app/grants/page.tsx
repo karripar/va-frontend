@@ -1,331 +1,251 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { FiSearch, FiExternalLink, FiChevronDown } from "react-icons/fi";
+import BudgetCategories from "@/components/applications/BudgetCategories";
+import GrantCalculator from "@/components/applications/GrantCalculator";
+import ErasmusGrantTypes from "@/components/applications/ErasmusGrantTypes";
+import { useBudgetEstimate } from "@/hooks/budgetArviointiHooks";
+import { useGrantsData } from "@/hooks/grantsManagingHooks";
 
-export default function GrantsPage() {
-  const [program, setProgram] = useState("Erasmus+");
-  const [open, setOpen] = useState<string | null>(null);
+type BudgetCategory = 
+  | "matkakulut"
+  | "vakuutukset"
+  | "asuminen"
+  | "ruoka_ja_arki"
+  | "opintovalineet";
 
-  return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--typography)]">
-      <main className="mx-auto max-w-[800px]">
-        <section className="px-6 sm:px-10 lg:px-14 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl mx-auto">
-            {/* Search destinations */}
-            <label className="flex h-12 items-center gap-2 rounded-full border border-[var(--va-border)] bg-white px-4 shadow-sm">
-              <FiSearch className="text-[var(--typography)]" />
-              <input
-                type="text"
-                placeholder="Etsi kohteita"
-                className="w-full bg-transparent outline-none text-sm"
-              />
-            </label>
-
-            {/* Program select */}
-            <div className="relative">
-              <label className="sr-only" htmlFor="program-select">
-                Vaihto-ohjelmat
-              </label>
-              <select
-                id="program-select"
-                value={program}
-                onChange={(e) => setProgram(e.target.value)}
-                className="w-full h-12 rounded-full border border-[var(--va-border)] bg-[var(--va-mint-50)] pl-4 pr-10 text-sm font-medium shadow-sm focus-ring appearance-none"
-                aria-label="Valitse vaihto-ohjelma"
-              >
-                <option className="bg-[var(--background)]" value="Erasmus+">
-                  Erasmus+
-                </option>
-                <option className="bg-[var(--background)]" value="Nordplus">
-                  Nordplus
-                </option>
-                <option
-                  className="bg-[var(--background)]"
-                  value="Bilateral Agreements"
-                >
-                  Bilateral Agreements
-                </option>
-                <option
-                  className="bg-[var(--background)]"
-                  value="Other exchange destinations"
-                >
-                  Other exchange destinations
-                </option>
-              </select>
-              <FiChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--typography)]" />
-            </div>
-          </div>
-
-          {/* Grant estimator card */}
-          <h2
-            className="mt-10 mb-6 text-2xl"
-            style={{ fontFamily: "var(--font-machina-regular)" }}
-          >
-            Arvio apurasta
-          </h2>
-          <div className="mt-6 max-w-5xl mx-auto">
-            <div className="rounded-2xl border border-[var(--va-border)] bg-white shadow-sm p-6 md:p-8">
-              {/* Numbers */}
-              <div className="text-center text-2xl font-extrabold">
-                540€ / KK
-              </div>
-              {/* Progress */}
-              <div className="mt-5 flex items-center gap-4">
-                <div className="relative h-4 flex-1 rounded-full bg-neutral-200">
-                  <div
-                    className="absolute left-0 top-0 h-4 rounded-full bg-[var(--va-mint)]"
-                    style={{ width: "54%" }}
-                  />
-                </div>
-                <div className="text-sm text-[var(--typography)]">1000€</div>
-              </div>
-              {/* Meta info */}
-              <div className="mt-8 grid grid-cols-2 text-md max-w-80 text-[var(--typography)]">
-                <div>Kohde</div>
-                <div>Italia</div>
-                <div>Ohjelma</div>
-                <div>{program}</div>
-              </div>
-
-              {/* CTA */}
-              <div className="mt-12">
-                <Link
-                  href="#"
-                  className="inline-flex items-center gap-2 rounded-full bg-[var(--va-orange)] text-white px-10 md:py-3 text-base font-bold shadow hover:brightness-95 focus-ring justify-center py-1"
-                >
-                  <p
-                    className=" uppercase pt-1"
-                    style={{ fontFamily: "var(--font-machina-bold)" }}
-                  >
-                    Hae apurahaa
-                  </p>
-                  <FiExternalLink size={16} />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Erasmus+ lisätuet */}
-          <div className="mt-10 max-w-5xl mx-auto">
-            <h3
-              className="mb-6 text-xl"
-              style={{ fontFamily: "var(--font-machina-regular)" }}
-            >
-              Erasmus+ lisätuet
-            </h3>
-            <div className="flex flex-col gap-6">
-              <ExtraCard
-                title="Erasmus+ matkatuki"
-                open={open === "travel"}
-                onToggle={() => setOpen(open === "travel" ? null : "travel")}
-                kind="travel"
-              />
-              <ExtraCard
-                title="Vihreän matkustamisen tuki"
-                open={open === "green"}
-                onToggle={() => setOpen(open === "green" ? null : "green")}
-                kind="green"
-              />
-              <ExtraCard
-                title="Osallistumistuki"
-                open={open === "participation"}
-                onToggle={() =>
-                  setOpen(open === "participation" ? null : "participation")
-                }
-                kind="participation"
-              />
-            </div>
-          </div>
-
-          {/* spacing at bottom */}
-          <div className="h-8" />
-        </section>
-      </main>
-
-      {/* Vertical chat tab */}
-      <a
-        href="/ai-chat"
-        className="fixed -right-6 top-3/4 -translate-y-1/2 z-40 origin-center -rotate-90 bg-[var(--va-orange)] text-[var(--background)] px-4 py-3 rounded-t-md shadow hover:brightness-95 text-sm tracking-wider"
-        style={{ fontFamily: "var(--font-machina-bold)" }}
-      >
-        CHAT
-      </a>
-    </div>
-  );
+interface CategoryExpense {
+  amount: number;
+  notes: string;
 }
 
-type ExtraKind = "travel" | "green" | "participation";
+export default function GrantsPage() {
+  const [viewMode, setViewMode] = useState<ViewMode>("categories");
+  const { grants, loading: grantsLoading, error: grantsError } = useGrantsData();
+  const { budget } = useBudgetEstimate();
+  const [budgetExpenses, setBudgetExpenses] = useState<Record<BudgetCategory, CategoryExpense> | null>(null);
 
-function ExtraCard({
-  title,
-  open,
-  onToggle,
-  kind,
-}: {
-  title: string;
-  open: boolean;
-  onToggle: () => void;
-  kind: ExtraKind;
-}) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [measured, setMeasured] = useState(0);
+  const handleBudgetChange = (expenses: Record<BudgetCategory, CategoryExpense>) => {
+    setBudgetExpenses(expenses);
+    // TODO: Save to backend API
+    console.log("Budget updated:", expenses);
+  };
 
-  // Measure content height for smooth max-height transitions
-  useEffect(() => {
-    const measure = () => {
-      if (contentRef.current) {
-        setMeasured(contentRef.current.scrollHeight);
-      }
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [open]);
+  const handleCalculate = (amount: number) => {
+    console.log("Calculated amount:", amount);
+  };
+
+  const handleGrantSelect = (grantType: string) => {
+    console.log("Selected grant type:", grantType);
+  };
+
+  const getTotalBudget = () => {
+    if (!budgetExpenses) return 0;
+    return Object.values(budgetExpenses).reduce((sum, expense) => sum + expense.amount, 0);
+  };
+
+  if (grantsLoading) {
+    return (
+      <div className="flex flex-col items-center p-4 mt-8">
+        <p>Ladataan apurahoja...</p>
+      </div>
+    );
+  }
+
+  if (grantsError) {
+    return (
+      <div className="flex flex-col items-center p-4 mt-8">
+        <p className="text-red-500">Virhe: {grantsError}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Yritä uudelleen
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="rounded-2xl border border-[var(--va-border)] bg-white shadow-sm overflow-hidden">
-      <button
-        className="w-full flex items-center justify-between px-5 py-3 text-left bg-[var(--va-orange-50)]"
-        onClick={onToggle}
-        aria-expanded={open}
-        aria-controls={`extra-content-${kind}`}
-      >
-        <span className="font-semibold">{title}</span>
-        <FiChevronDown
-          className={`shrink-0 transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          }`}
-          aria-hidden
-        />
-      </button>
-
-      {/* Animated content container */}
-      <div
-        id={`extra-content-${kind}`}
-        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-        style={{ maxHeight: open ? measured : 0 }}
-        aria-hidden={!open}
-      >
-        <div
-          ref={contentRef}
-          className="p-5 text-sm text-[var(--typography)] space-y-3"
+    <div className="min-h-screen bg-gray-50">
+      {/* Orange Header */}
+      <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
+        <Link
+          href="/profile"
+          className="absolute left-4 text-white hover:text-gray-200 transition-colors"
+          aria-label="Takaisin profiiliin"
         >
-          {kind === "travel" && (
-            <>
-              <p>
-                Olet oikeutettu kertaluonteiseen{" "}
-                <strong>matka-apurahaan</strong>, joka lasketaan Helsingin ja
-                kohdemaan etäisyyden mukaisesti. Tuki on tarkoitettu kattamaan
-                koko meno–paluumatkan.
-              </p>
-              <p>
-                Apurahan yhteyteen lisätään yleensä{" "}
-                <strong>matkatavapäivä</strong>, jolta maksetaan päivärahan
-                suuruinen apuraha. Etäisyyden laskemiseen käytetään Euroopan
-                komission työkalua: Distance Calculator | Erasmus+ (europa.eu).
-              </p>
-              <div className="mt-3">
-                <div className="font-semibold mb-1">Matka‑apurahan määrä:</div>
-                <ul className="grid grid-cols-1 gap-1 font-mono text-[14px]">
-                  <li>10–90 km — 28 €</li>
-                  <li>100–499 km — 211 €</li>
-                  <li>500–1999 km — 309 €</li>
-                  <li>2000–2999 km — 395 €</li>
-                  <li>3000–3999 km — 580 €</li>
-                  <li>4000–7999 km — 1188 €</li>
-                  <li>8000 km → 1735 €</li>
-                </ul>
-              </div>
-            </>
-          )}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+            />
+          </svg>
+        </Link>
+        <h1 className="text-2xl font-bold">Apurahat</h1>
+        
+        {/* Chat button on the right */}
+        <button
+          className="absolute right-4 bg-[#FF5722] text-white px-4 py-2 rounded-full hover:bg-[#F4511E] transition-colors"
+          style={{
+            writingMode: 'vertical-rl',
+            textOrientation: 'mixed',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            letterSpacing: '2px'
+          }}
+        >
+          CHAT
+        </button>
+      </div>
 
-          {kind === "green" && (
-            <>
-              <p>
-                Olet oikeutettu kertaluonteiseen{" "}
-                <strong>matka-apurahaan</strong>, joka lasketaan Helsingin ja
-                kohdemaan etäisyyden mukaisesti. Tuki on tarkoitettu kattamaan
-                koko meno–paluumatkan.
-              </p>
-              <p>
-                Jos matkustat <strong>vähäpäästöisillä kulkuneuvoilla</strong>{" "}
-                (esim. bussi, juna, kimppakyyti), voit saada korotetun
-                matka-apurahan sekä <strong>enintään kuusi matkapäivää</strong>,
-                joista maksetaan apurahaa. Vihreän matkustamisen avustus
-                maksetaan toteutumisen mukaan tositteiden perusteella.
-              </p>
-              <p>
-                Sinun tulee täyttää{" "}
-                <strong>vihreän matkustamisen vakuuslomake</strong>.
-              </p>
-              <div className="mt-3">
-                <div className="font-semibold mb-1">
-                  Vihreän matkustamisen tuen määrä:
+      {/* View Mode Tabs */}
+      <div className="bg-white border-b sticky top-0 z-10">
+        <div className="flex">
+          <button
+            onClick={() => setViewMode("categories")}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              viewMode === "categories"
+                ? "text-[#FF5722] border-b-2 border-[#FF5722]"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Kustannukset
+          </button>
+          <button
+            onClick={() => setViewMode("calculator")}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              viewMode === "calculator"
+                ? "text-[#FF5722] border-b-2 border-[#FF5722]"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Laskuri
+          </button>
+          <button
+            onClick={() => setViewMode("erasmus_types")}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+              viewMode === "erasmus_types"
+                ? "text-[#FF5722] border-b-2 border-[#FF5722]"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            Erasmus+ lisätuet
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto p-6">
+        {viewMode === "categories" && (
+          <div>
+            <BudgetCategories onBudgetChange={handleBudgetChange} />
+            
+            {/* Budget Summary */}
+            {budgetExpenses && getTotalBudget() > 0 && (
+              <div className="mt-6 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow border border-orange-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  📈 Budjettisi yhteenveto
+                </h3>
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Arvioitu kokonaiskustannus</p>
+                    <p className="text-3xl font-bold text-[#FF5722]">{getTotalBudget()}€</p>
+                  </div>
+                  {budget && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Arvioitu apuraha</p>
+                      <p className="text-3xl font-bold text-green-600">{budget.totalEstimate || 0}€</p>
+                    </div>
+                  )}
                 </div>
-                <ul className="grid grid-cols-1 gap-1 font-mono text-[14px]">
-                  <li>10–90 km — 56 €</li>
-                  <li>100–499 km — 285 €</li>
-                  <li>500–1999 km — 417 €</li>
-                  <li>2000–2999 km — 535 €</li>
-                  <li>3000–3999 km — 785 €</li>
-                  <li>4000–7999 km — 1188 €</li>
-                  <li>8000 km → 1735 €</li>
-                </ul>
+                {budget && (
+                  <div className="pt-4 border-t border-orange-200">
+                    <p className="text-sm text-gray-700">
+                      {getTotalBudget() > (budget.totalEstimate || 0) ? (
+                        <span className="text-red-600 font-medium">
+                          ⚠️ Budjettisi ylittää arvioidun apurahan {getTotalBudget() - (budget.totalEstimate || 0)}€:lla
+                        </span>
+                      ) : (
+                        <span className="text-green-600 font-medium">
+                          ✅ Apuraha kattaa budjetit ({(budget.totalEstimate || 0) - getTotalBudget()}€ jäljellä)
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
-            </>
-          )}
+            )}
+          </div>
+        )}
 
-          {kind === "participation" && (
-            <>
-              <p>
-                Osallistumistuki on <strong>lisäapuraha</strong>, joka on
-                tarkoitettu opiskelijalle, jolla on muita vähemmän
-                mahdollisuuksia lähteä Erasmus+‑vaihtoon.
-              </p>
-              <p className="font-semibold">
-                Voit olla oikeutettu tukeen, jos kuulut johonkin seuraavista
-                ryhmistä:
-              </p>
-              <ul className="list-disc pl-5 space-y-1">
-                <li>
-                  Perheelliset opiskelijat (alakouluikäinen lapsi/lapsia
-                  huollettavana) — virkatodistus
-                </li>
-                <li>
-                  Omaishoitajat — kunnan kanssa tehty sopimus omaishoidosta
-                </li>
-                <li>Opiskelijat, joilla on EU:n vammaiskortti</li>
-                <li>
-                  Vakavista ja kroonisista terveysongelmista kärsivät (vähintään
-                  keskivaikea toimintakykyvaje)
-                </li>
-                <li>
-                  Kansainvälistä suojelua saaneet opiskelijat (pakolaiset,
-                  turvapaikanhakijat, oleskelulupa saatu suojeluperustein —
-                  oleskelulupa tai pakolaisen matkustusasiakirja)
-                </li>
-              </ul>
-              <p>
-                Hae osallistumistukea erillisellä{" "}
-                <strong>vakuuslomakkeella</strong>.
-              </p>
-              <p>
-                Todellisiin kuluihin perustuva tuki voi{" "}
-                <strong>kattaa jopa 100 % ylimääräisistä kustannuksista</strong>
-                , joita vaihto aiheuttaa, kuten: esteettömän asumiseen,
-                liikkumiseen, opiskeluun liittyviin erityisjärjestelyihin
-                (oppimateriaalit, apuvälineet), avustajien ja valmentajien
-                elinkustannuksiin.
-              </p>
-              <p>
-                Lisätietoa esteettömän vaihdon suuntaamisesta löydät
-                Opetushallituksen sivuilta ja omalta kv‑asiantuntijaltasi.
-              </p>
-            </>
-          )}
+        {viewMode === "calculator" && (
+          <GrantCalculator onCalculate={handleCalculate} />
+        )}
+
+        {viewMode === "erasmus_types" && (
+          <div>
+            <ErasmusGrantTypes onSelectGrant={handleGrantSelect} />
+            
+            {/* Summary section */}
+            {grants && (
+              <div className="mt-8 p-6 bg-white rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Yhteenveto apurahoista
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Erasmus+ -apurahat</span>
+                    <span className="font-medium text-gray-900">
+                      {grants.erasmusGrants?.length || 0} kpl
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center pt-3 border-t">
+                    <span className="font-semibold text-gray-900">Arvioitu kokonaistuki</span>
+                    <span className="text-2xl font-bold text-[#FF5722]">
+                      {grants.totalEstimatedSupport || 0}€
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Info Box */}
+        <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <h4 className="font-semibold text-blue-900 mb-2">Vinkki</h4>
+          <p className="text-sm text-blue-800">
+            Kannattaa hakea useita apurahoja samanaikaisesti. Voit yhdistää Erasmus+ -apurahan,
+            Kela-tuen ja muita säätiöiden apurahoja maksimoidaksesi taloudellisen tukesi.
+          </p>
+        </div>
+
+        {/* Quick Links */}
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <Link
+            href="/profile/hakemukset"
+            className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center"
+          >
+            <span className="text-sm font-medium text-gray-900">Hakemukset</span>
+          </Link>
+          <Link
+            href="/profile/documents"
+            className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center"
+          >
+            <span className="text-sm font-medium text-gray-900">Dokumentit</span>
+          </Link>
         </div>
       </div>
     </div>
   );
+  type ViewMode = "categories" | "calculator" | "erasmus_types";
 }
