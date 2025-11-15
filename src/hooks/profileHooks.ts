@@ -37,7 +37,7 @@ const useProfileData = () => {
           return;
         }
 
-        const endpoint = `${apiUrl}/users/profile`;
+        const endpoint = `${apiUrl}/profile`;
 
         const response = await fetch(endpoint, {
           method: "GET",
@@ -92,7 +92,7 @@ const useUpdateProfile = () => {
         throw new Error("Auth API URL not configured");
       }
 
-      const response = await fetch(`${authApiUrl}/users/profile`, {
+      const response = await fetch(`${authApiUrl}/profile`, {
         method: "PUT",
         headers: {
           Authorization: "Bearer " + localStorage.getItem("authToken") || "",
@@ -138,7 +138,7 @@ const useAuthAPI = () => {
       setError(null);
 
       const response = await fetch(
-        "http://localhost:3001/api/v1/users/profile",
+        "http://localhost:3001/api/profile",
         {
           method: "GET",
           headers: {

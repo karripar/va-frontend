@@ -25,7 +25,7 @@ const useApplicationsData = () => {
         setLoading(true);
         setError(null);
 
-        const endpoint = `${apiUrl}/profile/applications`;
+        const endpoint = `${apiUrl}/applications`;
 
         const data = await fetchData<ApplicationsProgresses>(
           endpoint,
@@ -75,7 +75,7 @@ const useApplicationStages = () => {
         setError(null);
 
         const data = await fetchData<{ stages: ApplicationStageWithProgress[] }>(
-          `${apiUrl}/profile/applications/stages`,
+          `${apiUrl}/applications/stages`,
           { signal: controller.signal }
         );
 
