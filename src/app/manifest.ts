@@ -1,5 +1,4 @@
 import type { MetadataRoute } from "next";
-import { ProfileResponse, DestinationResponse } from "va-hybrid-types/contentTypes";
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
