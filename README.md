@@ -20,7 +20,7 @@ User interface for exploring and managing international exchange opportunities.
 - Backend repository is available [here](https://github.com/karripar/va-backend)
 
 **Hybrid Types Repository**<br>
-- The va-hybrid-types repository and installable module used for TypeScript typing is found [here](https://github.com/karripar/va-backend)
+- The va-hybrid-types repository and installable module used for TypeScript typing is found [here](https://github.com/karripar/va-hybrid-types)
 
 **Installation**<br>
 1. Clone The repository in your desired directory.
