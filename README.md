@@ -29,6 +29,7 @@ User interface for exploring and managing international exchange opportunities.
 4. Install the required node_modules with the command `npm install`
 5. Fill in the required environment variables with the instructions in the following paragraph.
 6. Enter `npm run dev` once the backend is up and running. 
+7. All available commands are found in the `package.json` file.
 
 ## Environment Variables
 
