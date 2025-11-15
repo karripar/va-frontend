@@ -20,7 +20,7 @@ const useBudgetEstimate = () => {
 
       const query = destination ? `?destination=${destination}` : '';
       const data = await fetchData<BudgetEstimateData>(
-        `${apiUrl}/profile/grants/budget/estimate${query}`
+        `${apiUrl}/budgets/estimate${query}`
       );
 
       setBudget(data);
@@ -42,7 +42,7 @@ const useBudgetEstimate = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/profile/grants/budget/estimate`, {
+      const response = await fetch(`${apiUrl}/budgets/estimate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       const response = await fetch(
-        authAPI + "/users/profile",
+        authAPI + "/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
