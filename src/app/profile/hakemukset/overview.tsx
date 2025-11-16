@@ -2,19 +2,15 @@
 import { useProfileData } from "@/hooks/apiHooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { 
-  FaArrowLeft, 
-  FaCheckCircle, 
-  FaExclamationTriangle,
-  FaInfoCircle,
-  FaExternalLinkAlt
+import {FaArrowLeft, FaCheckCircle, FaExclamationTriangle, FaInfoCircle, FaExternalLinkAlt
 } from "react-icons/fa";
 import ProgressStep from "@/components/applications/ProgressStep";
 import DocumentUpload from "@/components/applications/DocumentUpload";
 import { useApplicationsData } from "@/hooks/applicationsHooks";
+import{ApplicationPhase, ApplicationStatus}from "va-hybrid-types/contentTypes";
 
-type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
-type ApplicationStatus = "not_started" | "in_progress" | "completed" | "pending_review";
+//type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
+//type ApplicationStatus = "not_started" | "in_progress" | "completed" | "pending_review";
 
 export default function HakemuksetOverviewPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

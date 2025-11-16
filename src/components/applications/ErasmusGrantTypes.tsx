@@ -46,7 +46,7 @@ export default function ErasmusGrantTypes({ onSelectGrant }: ErasmusGrantTypesPr
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Erasmus+ lisätuet</h3>
+      <h3 className="text-lg font-semibold text-[var(--typography)]">Erasmus+ lisätuet</h3>
       
       <div className="space-y-3">
         {grantTypes.map((grant) => (
@@ -61,10 +61,10 @@ export default function ErasmusGrantTypes({ onSelectGrant }: ErasmusGrantTypesPr
           >
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h4 className="font-medium text-gray-900 mb-1">{grant.title}</h4>
-                <p className="text-sm text-gray-700">{grant.description}</p>
+                <h4 className="font-medium text-[var(--typography)] mb-1">{grant.title}</h4>
+                <p className="text-sm text-[var(--typography)]">{grant.description}</p>
               </div>
-              <span className="text-gray-700 ml-4">›</span>
+              <span className="text-[var(--typography)] ml-4">›</span>
             </div>
           </button>
         ))}

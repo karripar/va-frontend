@@ -1,128 +1,262 @@
 "use client";
 import { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { FaPlus, FaMinus, FaTimes, FaDivide, FaEquals, FaHistory } from "react-icons/fa";
 
 interface GrantCalculatorProps {
-  onCalculate?: (amount: number) => void;
+  onCalculate?: (result: number) => void;
 }
 
+type Operation = "add" | "subtract" | "multiply" | "divide" | null;
+
 export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
-  const [amount, setAmount] = useState(540);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [currentValue, setCurrentValue] = useState<string>("0");
+  const [previousValue, setPreviousValue] = useState<string>("");
+  const [operation, setOperation] = useState<Operation>(null);
+  const [history, setHistory] = useState<string[]>([]);
 
-  const minAmount = 0;
-  const maxAmount = 10000;
-  const program = "Erasmus+";
-
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newAmount = parseInt(e.target.value);
-    setAmount(newAmount);
-    if (onCalculate) {
-      onCalculate(newAmount);
+  const handleNumberClick = (num: string) => {
+    if (currentValue === "0" && num !== ".") {
+      setCurrentValue(num);
+    } else if (currentValue.includes(".") && num === ".") {
+      return;
+    } else if (currentValue.length < 12) {
+      setCurrentValue(currentValue + num);
     }
   };
 
+  const handleOperationClick = (op: Operation) => {
+    if (previousValue && operation && currentValue) {
+      calculate();
+    }
+    setPreviousValue(currentValue);
+    setCurrentValue("0");
+    setOperation(op);
+  };
+
+  const calculate = () => {
+    if (!previousValue || !operation) return;
+
+    const prev = parseFloat(previousValue);
+    const current = parseFloat(currentValue);
+    let result = 0;
+
+    switch (operation) {
+      case "add":
+        result = prev + current;
+        break;
+      case "subtract":
+        result = prev - current;
+        break;
+      case "multiply":
+        result = prev * current;
+        break;
+      case "divide":
+        result = current !== 0 ? prev / current : 0;
+        break;
+    }
+
+    const operationSymbol = {
+      add: "+",
+      subtract: "-",
+      multiply: "×",
+      divide: "÷"
+    }[operation || "add"];
+
+    const calculation = `${prev} ${operationSymbol} ${current} = ${result.toFixed(2)}`;
+    setHistory([calculation, ...history.slice(0, 4)]);
+    setCurrentValue(result.toFixed(2));
+    setPreviousValue("");
+    setOperation(null);
+    onCalculate?.(result);
+  };
+
+  const clear = () => {
+    setCurrentValue("0");
+    setPreviousValue("");
+    setOperation(null);
+  };
+
+  const clearHistory = () => {
+    setHistory([]);
+  };
+
+  const backspace = () => {
+    if (currentValue.length > 1) {
+      setCurrentValue(currentValue.slice(0, -1));
+    } else {
+      setCurrentValue("0");
+    }
+  };
+
+  const getOperationColor = (op: Operation) => {
+    return operation === op ? "bg-[#FF5722] text-white" : "bg-orange-100 text-[#FF5722] hover:bg-orange-200";
+  };
+
+  const numberButtons = [
+    "7", "8", "9",
+    "4", "5", "6",
+    "1", "2", "3",
+    "0", ".", "00"
+  ];
+
   return (
-    <div className="bg-white rounded-lg p-6 space-y-6">
-      <div>
-        <p className="text-gray-700 mb-4">
-          Hae arvio apurahasta vaihto-ohjelman tai kohteen perusteella
+    <div className="space-y-6">
+      {/* Info Header */}
+      <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg border border-orange-200">
+        <h3 className="font-semibold text-[var(--typography)] mb-1 flex items-center gap-2">
+          💰 Budjetti Laskin
+        </h3>
+        <p className="text-sm text-[var(--typography)]">
+          Laske apurahaa, kustannuksia ja budjettiasi kätevästi!
         </p>
-
-        {/* Search Box */}
-        <div className="relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Etsi kohteita"
-            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#8BC34A] focus:outline-none"
-          />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        </div>
-
-        {/* Vaihto-ohjelmat dropdown */}
-        <button className="w-full mt-3 px-4 py-3 bg-[#8BC34A] text-white rounded-lg hover:bg-[#7CB342] transition-colors flex items-center justify-between">
-          <span>Vaihto-ohjelmat</span>
-          <span>›</span>
-        </button>
       </div>
 
-      <div className="border-t pt-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Arvio apurasta</h3>
-
-        {/* Amount Display */}
-        <div className="text-center mb-6">
-          <div className="text-4xl font-bold text-gray-900">
-            {amount}€ / KK
+      {/* Calculator Display */}
+      <div className="bg-white rounded-lg shadow-lg p-6 border border-[var(--va-border)]">
+        <div className="mb-4">
+          {previousValue && (
+            <div className="text-right text-sm text-[var(--typography)] mb-1">
+              {previousValue} {operation && { add: "+", subtract: "-", multiply: "×", divide: "÷" }[operation]}
+            </div>
+          )}
+          <div className="text-right">
+            <input
+              type="text"
+              value={currentValue}
+              readOnly
+              className="w-full text-4xl font-bold text-[#FF5722] bg-transparent text-right border-none focus:outline-none"
+            />
+            <div className="text-sm text-[var(--typography)] mt-1">€ EUR</div>
           </div>
         </div>
 
-        {/* Slider */}
-        <div className="relative mb-2">
-          <input
-            type="range"
-            min={minAmount}
-            max={maxAmount}
-            value={amount}
-            onChange={handleSliderChange}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-green"
-            style={{
-              background: `linear-gradient(to right, #8BC34A 0%, #8BC34A ${((amount - minAmount) / (maxAmount - minAmount)) * 100}%, #E5E7EB ${((amount - minAmount) / (maxAmount - minAmount)) * 100}%, #E5E7EB 100%)`
-            }}
-          />
-        </div>
+        {/* Calculator Buttons */}
+        <div className="grid grid-cols-4 gap-2">
+          {/* Clear and Backspace */}
+          <button
+            onClick={clear}
+            className="col-span-2 py-4 bg-red-100 text-red-600 rounded-lg font-semibold hover:bg-red-200 transition-colors"
+          >
+            TYHJENNÄ
+          </button>
+          <button
+            onClick={backspace}
+            className="py-4 bg-gray-100 text-[var(--typography)] rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+          >
+            ←
+          </button>
+          <button
+            onClick={() => handleOperationClick("divide")}
+            className={`py-4 rounded-lg font-bold text-xl transition-colors flex items-center justify-center ${getOperationColor("divide")}`}
+          >
+            <FaDivide />
+          </button>
 
-        {/* Min/Max labels */}
-        <div className="flex justify-between text-sm text-gray-600 mb-6">
-          <span>{minAmount}€</span>
-          <span>{maxAmount}€</span>
-        </div>
+          {/* Number Pad */}
+          {numberButtons.slice(0, 3).map((num) => (
+            <button
+              key={num}
+              onClick={() => handleNumberClick(num)}
+              className="py-4 bg-gray-50 text-[var(--typography)] rounded-lg font-semibold text-xl hover:bg-gray-100 transition-colors"
+            >
+              {num}
+            </button>
+          ))}
+          <button
+            onClick={() => handleOperationClick("multiply")}
+            className={`py-4 rounded-lg font-bold text-xl transition-colors flex items-center justify-center ${getOperationColor("multiply")}`}
+          >
+            <FaTimes />
+          </button>
 
-        {/* Destination and Program */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Kohde</span>
-            <span className="font-medium text-gray-900">Italia</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Ohjelma</span>
-            <span className="font-medium text-gray-900">{program}</span>
-          </div>
-        </div>
+          {numberButtons.slice(3, 6).map((num) => (
+            <button
+              key={num}
+              onClick={() => handleNumberClick(num)}
+              className="py-4 bg-gray-50 text-[var(--typography)] rounded-lg font-semibold text-xl hover:bg-gray-100 transition-colors"
+            >
+              {num}
+            </button>
+          ))}
+          <button
+            onClick={() => handleOperationClick("subtract")}
+            className={`py-4 rounded-lg font-bold text-xl transition-colors flex items-center justify-center ${getOperationColor("subtract")}`}
+          >
+            <FaMinus />
+          </button>
 
-        {/* Apply Button */}
-        <button className="w-full mt-6 px-6 py-3 bg-[#FF5722] text-white rounded-lg hover:bg-[#F4511E] transition-colors font-medium flex items-center justify-center space-x-2">
-          <span>HAE APURAHAA</span>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-          </svg>
-        </button>
+          {numberButtons.slice(6, 9).map((num) => (
+            <button
+              key={num}
+              onClick={() => handleNumberClick(num)}
+              className="py-4 bg-gray-50 text-[var(--typography)] rounded-lg font-semibold text-xl hover:bg-gray-100 transition-colors"
+            >
+              {num}
+            </button>
+          ))}
+          <button
+            onClick={() => handleOperationClick("add")}
+            className={`py-4 rounded-lg font-bold text-xl transition-colors flex items-center justify-center ${getOperationColor("add")}`}
+          >
+            <FaPlus />
+          </button>
+
+          {/* Bottom Row */}
+          {numberButtons.slice(9).map((num) => (
+            <button
+              key={num}
+              onClick={() => handleNumberClick(num)}
+              className="py-4 bg-gray-50 text-[var(--typography)] rounded-lg font-semibold text-xl hover:bg-gray-100 transition-colors"
+            >
+              {num}
+            </button>
+          ))}
+          <button
+            onClick={calculate}
+            className="py-4 bg-[#FF5722] text-white rounded-lg font-bold text-xl hover:bg-[#F4511E] transition-colors flex items-center justify-center"
+          >
+            <FaEquals />
+          </button>
+        </div>
       </div>
 
-      {/* Custom slider styles */}
-      <style jsx>{`
-        .slider-green::-webkit-slider-thumb {
-          appearance: none;
-          width: 20px;
-          height: 20px;
-          background: #8BC34A;
-          border-radius: 50%;
-          cursor: pointer;
-          border: 3px solid white;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+      {/* History Section */}
+      {history.length > 0 && (
+        <div className="bg-white rounded-lg shadow p-4 border border-[var(--va-border)]">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-semibold text-[var(--typography)] flex items-center gap-2">
+              <FaHistory className="text-orange-500" />
+              Historia
+            </h4>
+            <button
+              onClick={clearHistory}
+              className="text-sm text-red-500 hover:text-red-700 transition-colors"
+            >
+              Tyhjennä
+            </button>
+          </div>
+          <div className="space-y-2">
+            {history.map((calc, index) => (
+              <div
+                key={index}
+                className="text-sm text-[var(--typography)] bg-gray-50 p-2 rounded font-mono"
+              >
+                {calc}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-        .slider-green::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
-          background: #8BC34A;
-          border-radius: 50%;
-          cursor: pointer;
-          border: 3px solid white;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-      `}</style>
+      {/* Quick Tips */}
+      <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+        <h4 className="font-semibold text-blue-900 mb-2">💡 Vinkkejä</h4>
+        <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+          <li>Käytä laskinta budjettisi suunnitteluun</li>
+          <li>Laske kuukausittaisia kuluja ja vertaa apurahaan</li>
+          <li>Tallenna tärkeät laskelmat muistiinpanoihin</li>
+        </ul>
+      </div>
     </div>
   );
 }

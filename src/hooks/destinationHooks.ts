@@ -1,7 +1,7 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
-import { DestinationWithCoordinatesResponse, ProfileResponse } from "va-hybrid-types/contentTypes";
+import { DestinationWithCoordinatesResponse, ProfileResponse } from "va-hybrid-types/";
 
 // Temporary types until they are added to va-hybrid-types
 interface ApplicationsResponse {
@@ -191,7 +191,7 @@ const useApplicationsData = () => {
         setLoading(true);
         setError(null);
 
-        const endpoint = `${apiUrl}/profile/applications`;
+        const endpoint = `${apiUrl}/applications`;
 
         const data = await fetchData<ApplicationsResponse>(
           endpoint,
@@ -242,7 +242,7 @@ const useApplicationDocuments = () => {
       formData.append('applicationId', applicationId);
       formData.append('documentType', documentType);
 
-      const response = await fetch(`${apiUrl}/profile/applications/documents`, {
+      const response = await fetch(`${apiUrl}/applications/documents`, {
         method: 'POST',
         body: formData,
       });
@@ -274,7 +274,7 @@ const useApplicationDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/profile/applications/documents/${documentId}`, {
+      const response = await fetch(`${apiUrl}/applications/documents/${documentId}`, {
         method: 'DELETE',
       });
 
@@ -303,7 +303,7 @@ const useApplicationDocuments = () => {
       }
 
       const data = await fetchData<ApplicationDocument[]>(
-        `${apiUrl}/profile/applications/${applicationId}/documents`
+        `${apiUrl}/applications/${applicationId}/documents`
       );
 
       setDocuments(data);

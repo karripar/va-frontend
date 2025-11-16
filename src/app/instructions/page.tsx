@@ -140,7 +140,7 @@ export default function Instructions() {
 
         <div className="bg-[var(--va-grey-50)] rounded-md px-4 py-2">
           <Image src="/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png" alt="" width={140} height={140} className="w-40 h-40 lg:w-50 lg:h-50 hover:animate-spin mx-auto" />
-          <section className="text-center text-md text-[var(--va-typography)] m-auto">
+          <section className="text-center text-md text-[var(--typography)] m-auto">
             <p className="mb-6 leading-7 py-2 px-4" style={{ fontFamily: "var(--font-montreal-mono-medium)" }}>
               {getLabel(language, footerIntroFi, footerIntroEn)}
             </p>
