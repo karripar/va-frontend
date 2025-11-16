@@ -3,6 +3,7 @@ import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
 import { DestinationWithCoordinatesResponse, ProfileResponse } from "va-hybrid-types/contentTypes";
 
+// test comment added for webhook demo
 // Temporary types until they are added to va-hybrid-types
 interface ApplicationsResponse {
   esihaku?: {
