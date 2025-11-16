@@ -20,7 +20,7 @@ const translations = {
     fi: "Löydä hakuohjeet, kohdemaat, apurahat ja vinkit yhdestä paikasta.",
     en: "Find application instructions, destinations, grants, and tips all in one place.",
   },
-  cards: [    
+  cards: [
     {
       titleFi: "VAIHTOON HAKEMINEN",
       titleEn: "APPLY FOR EXCHANGE",
@@ -47,7 +47,8 @@ const translations = {
       titleFi: "AI–CHAT JA FAQ",
       titleEn: "AI CHAT & FAQ",
       descriptionFi: "Kysy kysymyksiä AI:lta tai selaa usein kysyttyjä.",
-      descriptionEn: "Ask questions from AI or browse frequently asked questions.",
+      descriptionEn:
+        "Ask questions from AI or browse frequently asked questions.",
       href: "/ai-chat",
     },
   ],
@@ -232,9 +233,13 @@ export default function Home() {
                         ][index]
                       }
                       alt=""
+                      priority
                       width={index === 1 || index === 3 ? 140 : 80}
                       height={index === 1 || index === 3 ? 140 : 80}
                       className="h-30 w-30"
+                      style={{
+                        width: "auto",
+                      }}
                     />
                   </div>
                   <h3

@@ -88,6 +88,11 @@ export default function LoginPage() {
             src="/images/liito-oravat/Toteutunut merkki.png"
             width={140}
             height={140}
+            priority
+            style={{
+              width: "auto",
+              height: "auto",
+            }}
           />
           <h1
             className="md:text-2xl text-xl tracking-wider text-[var(--typography)] my-6"

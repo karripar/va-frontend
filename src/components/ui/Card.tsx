@@ -42,13 +42,6 @@ export const Stepper = ({ steps }: StepperProps) => {
   const { updateLink, loading: updating } = useUpdateInstructionLink();
   const { language } = useLanguage();
 
-  // Debug: log links to see what we're getting from backend
-  useEffect(() => {
-    if (links.length > 0) {
-      console.log("Instruction links from backend:", links);
-    }
-  }, [links]);
-
   const getLabel = (
     language: string,
     fi?: string,
@@ -208,6 +201,7 @@ export const Stepper = ({ steps }: StepperProps) => {
               {/*if admin toggle visibility of a step*/}
               {isAdmin && (
                 <button
+                  name="Toggle Step Visibility"
                   onClick={() => handleToggleVisibility(i)}
                   className="hover:text-[var(--va-orange)] transition-colors cursor-pointer flex justify-end w-full"
                   aria-label={visibleSteps[i] ? t.hideStep : t.showStep}
@@ -280,14 +274,13 @@ export const Stepper = ({ steps }: StepperProps) => {
                                   <span className="inline-flex items-center gap-2 px-2 break-words">
                                     {displayLabel}
                                     <div className="flex flex-row justify-between gap-1">
-
-                                    {isFile && <FiFile size={16} />}
-                                    {isExternal && (
-                                      <FiExternalLink
-                                        size={20}
-                                        className="pb-1"
-                                      />
-                                    )}
+                                      {isFile && <FiFile size={16} />}
+                                      {isExternal && (
+                                        <FiExternalLink
+                                          size={20}
+                                          className="pb-1"
+                                        />
+                                      )}
                                     </div>
                                   </span>
                                 </a>

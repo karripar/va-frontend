@@ -13,7 +13,8 @@ type AuthContextType = {
   handleAutoLogin: () => Promise<void>;
 };
 
-const authAPI = process.env.NEXT_PUBLIC_AUTH_API || "http://localhost:3001/api/v1";
+const authAPI =
+  process.env.NEXT_PUBLIC_AUTH_API || "http://localhost:3001/api/v1";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -33,11 +34,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       authService.removeToken();
       setUser(null);
     } catch (e) {
-      console.log((e as Error).message);
+      console.error((e as Error).message);
     }
   };
 
-  // Check if user is authenticated by fetching profile
+  // Check if user is authenticated by fetchlog profile
   const handleAutoLogin = async () => {
     try {
       setLoading(true);
@@ -50,24 +51,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         return;
       }
 
-      const response = await fetch(
-        authAPI + "/users/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${authAPI}/users/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
-      } else {
-        console.log("Auto-login failed: no valid token");
+      } else if (response.status === 401) {
+        authService.removeToken();
+        setUser(null);
       }
     } catch (error) {
-      console.error("Auto-login failed:", error);
+      console.error("Network error during auto-login:", error);
+      authService.removeToken();
+      setUser(null);
     } finally {
       setLoading(false);
     }

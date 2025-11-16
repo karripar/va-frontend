@@ -53,7 +53,12 @@ const navigationCategories = [
     titleEn: "User Settings",
     links: [
       { href: "/profile", label: "Profiili", labelEn: "Profile" },
-      { href: "/admin", label: "Ylläpito", labelEn: "Admin Panel", requiresAdmin: true },
+      {
+        href: "/admin",
+        label: "Ylläpito",
+        labelEn: "Admin Panel",
+        requiresAdmin: true,
+      },
     ],
   },
 ];
@@ -78,7 +83,12 @@ const hamburgerLinks = [
   },
   { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
   { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
-  { href: "/admin", label: "Ylläpito", labelEn: "Admin Panel", requiresAdmin: true },
+  {
+    href: "/admin",
+    label: "Ylläpito",
+    labelEn: "Admin Panel",
+    requiresAdmin: true,
+  },
 ];
 
 // get label based on language
@@ -225,42 +235,42 @@ const Navbar = () => {
                 {/* category content */}
                 {activeCategory === category.id && (
                   <div className="absolute shadow-lg left-1/2 transform -translate-x-1/2 top-full w-60 lg:w-80 bg-[var(--background)] border border-[var(--va-border)] rounded-b-lg">
-                        {category.links && (
+                    {category.links && (
                       <div>
                         {category.links
-                          .filter(link => !link.requiresAdmin || isAdmin)
+                          .filter((link) => !link.requiresAdmin || isAdmin)
                           .map((link) => (
                             <Link
-                            key={link.href}
-                            href={link.href}
-                            className="block px-6 py-3 m-1 text-md duration-200 tracking-wide "
-                            style={{
-                              fontFamily: "var(--font-montreal-mono)",
-                              textDecoration:
-                                pathname === link.href
-                                  ? "underline var(--va-orange) .1rem"
-                                  : "none",
-                              textUnderlineOffset: ".3rem",
-                            }}
-                            onMouseEnter={(e) => {
-                              if (pathname !== link.href) {
-                                e.currentTarget.style.textDecoration =
-                                  "underline var(--typography) .1rem";
-                                e.currentTarget.style.textUnderlineOffset =
-                                  ".3rem";
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (pathname !== link.href) {
-                                e.currentTarget.style.color =
-                                  "var(--typography)";
-                                e.currentTarget.style.textDecoration = "none";
-                              }
-                            }}
-                          >
-                            {getLabel(language, link.label, link.labelEn)}
-                          </Link>
-                        ))}
+                              key={link.href}
+                              href={link.href}
+                              className="block px-6 py-3 m-1 text-md duration-200 tracking-wide "
+                              style={{
+                                fontFamily: "var(--font-montreal-mono)",
+                                textDecoration:
+                                  pathname === link.href
+                                    ? "underline var(--va-orange) .1rem"
+                                    : "none",
+                                textUnderlineOffset: ".3rem",
+                              }}
+                              onMouseEnter={(e) => {
+                                if (pathname !== link.href) {
+                                  e.currentTarget.style.textDecoration =
+                                    "underline var(--typography) .1rem";
+                                  e.currentTarget.style.textUnderlineOffset =
+                                    ".3rem";
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (pathname !== link.href) {
+                                  e.currentTarget.style.color =
+                                    "var(--typography)";
+                                  e.currentTarget.style.textDecoration = "none";
+                                }
+                              }}
+                            >
+                              {getLabel(language, link.label, link.labelEn)}
+                            </Link>
+                          ))}
                       </div>
                     )}
                   </div>
@@ -299,43 +309,43 @@ const Navbar = () => {
             onClick={closeMobileMenu}
             className="p-2"
           >
-            <FiX className="cursor-pointer" size={26} />
+            <FiX className="cursor-pointer" size={24} />
           </button>
         </div>
         <nav className="px-4 py-3 space-y-2 overflow-y-auto h-[calc(100%-5rem)]">
           {hamburgerLinks
-            .filter(link => !link.requiresAdmin || isAdmin)
+            .filter((link) => !link.requiresAdmin || isAdmin)
             .map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={closeMobileMenu}
-              className={`block px-3 py-3 text-md tracking-wide border-b border-b-[var(--va-border)]`}
-              style={{
-                fontFamily: "var(--font-montreal-mono-medium)",
-                textDecoration:
-                  pathname === link.href
-                    ? "underline var(--va-orange) .1rem"
-                    : "none",
-                textUnderlineOffset: ".3rem",
-              }}
-              onMouseEnter={(e) => {
-                if (pathname !== link.href) {
-                  e.currentTarget.style.textDecoration =
-                    "underline var(--typography) .1rem";
-                  e.currentTarget.style.textUnderlineOffset = ".3rem";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (pathname !== link.href) {
-                  e.currentTarget.style.color = "var(--typography)";
-                  e.currentTarget.style.textDecoration = "none";
-                }
-              }}
-            >
-              {getLabel(language, link.label, link.labelEn)}
-            </Link>
-          ))}
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={closeMobileMenu}
+                className={`block px-3 py-3 text-md tracking-wide border-b border-b-[var(--va-border)]`}
+                style={{
+                  fontFamily: "var(--font-montreal-mono-medium)",
+                  textDecoration:
+                    pathname === link.href
+                      ? "underline var(--va-orange) .1rem"
+                      : "none",
+                  textUnderlineOffset: ".3rem",
+                }}
+                onMouseEnter={(e) => {
+                  if (pathname !== link.href) {
+                    e.currentTarget.style.textDecoration =
+                      "underline var(--typography) .1rem";
+                    e.currentTarget.style.textUnderlineOffset = ".3rem";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (pathname !== link.href) {
+                    e.currentTarget.style.color = "var(--typography)";
+                    e.currentTarget.style.textDecoration = "none";
+                  }
+                }}
+              >
+                {getLabel(language, link.label, link.labelEn)}
+              </Link>
+            ))}
         </nav>
       </aside>
     </>

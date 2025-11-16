@@ -100,8 +100,6 @@ const useProfileData = (userId?: string) => {
           ? `${apiUrl}/profile/${userId}` 
           : `${apiUrl}/profile`;
 
-        console.log("Fetching profile from:", endpoint);
-
         const data = await fetchData<ProfileResponse>(
           endpoint,
           { signal: controller.signal }
