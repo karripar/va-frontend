@@ -1,7 +1,7 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
-import { DestinationWithCoordinatesResponse, ProfileResponse } from "va-hybrid-types/";
+import { DestinationWithCoordinatesResponse, ProfileResponse } from "va-hybrid-types/contentTypes";
 
 // Temporary types until they are added to va-hybrid-types
 interface ApplicationsResponse {
