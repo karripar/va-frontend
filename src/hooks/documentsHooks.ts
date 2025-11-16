@@ -52,7 +52,7 @@ const useApplicationDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/profile/applications/documents`, {
+      const response = await fetch(`${apiUrl}/applications/documents`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const useApplicationDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/profile/applications/documents/${documentId}`, {
+      const response = await fetch(`${apiUrl}/applications/documents/${documentId}`, {
         method: 'DELETE',
       });
 
@@ -123,7 +123,7 @@ const useApplicationDocuments = () => {
       }
 
       const data = await fetchData<ApplicationDocument[]>(
-        `${apiUrl}/profile/applications/${applicationId}/documents`
+        `${apiUrl}/applications/${applicationId}/documents`
       );
 
       setDocuments(data);

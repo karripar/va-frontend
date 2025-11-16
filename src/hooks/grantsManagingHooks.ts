@@ -26,7 +26,7 @@ const useGrantsData = () => {
         setError(null);
 
         const data = await fetchData<GrantsSummary>(
-          `${apiUrl}/profile/grants/summary`,
+          `${apiUrl}/grants/summary`,
           { signal: controller.signal }
         );
 
@@ -58,7 +58,7 @@ const useGrantsData = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/profile/grants/erasmus/apply`, {
+      const response = await fetch(`${apiUrl}/grants/erasmus/apply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ const useGrantsData = () => {
       
       // Refreshing the grants data
       const updatedGrants = await fetchData<GrantsSummary>(
-        `${apiUrl}/profile/grants/summary`
+        `${apiUrl}/grants/summary`
       );
       setGrants(updatedGrants);
       

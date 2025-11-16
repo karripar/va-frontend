@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+*.md
 
 # debug
 npm-debug.log*
@@ -36,6 +37,7 @@ yarn-error.log*
 
 # markdown files
 *.md
+!README.md
 
 # vercel
 .vercel

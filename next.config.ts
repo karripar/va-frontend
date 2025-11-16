@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
+import withPWA from "next-pwa";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
-    unoptimized: true, // allows all external images without restriction
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -16,12 +16,26 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   async rewrites() {
     return [
+      { source: "/vaihtokohteet", destination: "/destinations" },
+    ];
+  },
+  async headers() {
+    return [
       {
-        source: "/vaihtokohteet",
-        destination: "/destinations",
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
       },
+      // remove custom /sw.js headers for now
     ];
   },
 };
 
-export default nextConfig;
+export default withPWA({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+})(nextConfig);

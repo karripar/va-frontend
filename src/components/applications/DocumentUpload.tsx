@@ -158,7 +158,7 @@ export default function DocumentUpload({
         notes: notes || undefined,
       };
 
-      const response = await fetch(`${apiUrl}/profile/applications/documents`, {
+      const response = await fetch(`${apiUrl}/applications/documents`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ export default function DocumentUpload({
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/profile/applications/documents/${documentId}`, {
+      const response = await fetch(`${apiUrl}/applications/documents/${documentId}`, {
         method: 'DELETE',
       });
 

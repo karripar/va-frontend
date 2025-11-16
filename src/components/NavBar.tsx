@@ -27,7 +27,7 @@ const navigationCategories = [
         labelEn: "Destinations",
       },
       {
-        href: "/grants",
+        href: "/profile/hakemukset?tab=budget",
         label: "Apurahat ja kustannukset",
         labelEn: "Grants & Costs",
       },
@@ -72,7 +72,7 @@ const hamburgerLinks = [
   },
   { href: "/destinations", label: "Vaihtokohteet", labelEn: "Destinations" },
   {
-    href: "/grants",
+    href: "/profile/hakemukset?tab=budget",
     label: "Apurahat ja kustannukset",
     labelEn: "Grants & Costs",
   },
