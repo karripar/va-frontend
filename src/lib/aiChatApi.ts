@@ -29,10 +29,10 @@ export async function sendChatMessage(
   onError: (error: Error) => void
 ): Promise<void> {
   const apiUrl =
-    process.env.NEXT_PUBLIC_CHAT_API || 'http://localhost:3004/api/chat';
+    process.env.NEXT_PUBLIC_CHAT_API || 'http://localhost:3001/api/v1/ai/chat';
 
   try {
-    const response = await fetch(`${apiUrl}/turn_response`, {
+    const response = await fetch(`${apiUrl}/turn`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
