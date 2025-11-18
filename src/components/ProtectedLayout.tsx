@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { ADMIN_LEVEL_ID } from "@/config/roles";
 
+
 // Login page is the only one that don't require authentication
 const PUBLIC_PAGES = ["/login"];
 
