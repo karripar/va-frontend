@@ -5,12 +5,14 @@ import { useLanguage } from "@/context/LanguageContext";
 import useAdminActions from "@/hooks/adminHooks";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa6";
+import Image from "next/image";
 
 interface Admin {
   _id: string;
   userName?: string;
   title?: string;
   email: string;
+  avatarUrl?: string;
 }
 
 interface GetAdminsResponse {
@@ -82,7 +84,7 @@ const AdminBoard = () => {
     };
 
     fetchAdmins();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -183,14 +185,32 @@ const AdminBoard = () => {
         {/* Admin list */}
         <div>
           <h3 className="text-lg font-semibold mt-6">{t.currentAdmins}</h3>
+
           {admins.length > 0 ? (
             <ul className="mt-2 border rounded divide-y">
               {admins.map((admin) => (
-                <li key={admin._id} className="p-2 flex justify-between">
-                  <span>{admin.userName || admin.email}</span>
-                  <span className="text-[var(--typography)] text-sm">
-                    {admin.email}
-                  </span>
+                <li
+                  key={admin._id}
+                  className="p-3 flex items-center justify-between gap-4"
+                >
+                  {/* Left side: name + email stacked */}
+                  <div className="flex flex-col">
+                    <span className="font-medium">
+                      {admin.userName || admin.email}
+                    </span>
+                    <span className="text-[var(--typography)] text-sm break-all">
+                      {admin.email}
+                    </span>
+                  </div>
+
+                  {/* Avatar */}
+                  <Image
+                    src={admin.avatarUrl || "/images/default-avatar.png"}
+                    alt={`${admin.userName || admin.email}'s profile`}
+                    width={48}
+                    height={48}
+                    className="rounded-full object-cover aspect-square"
+                  />
                 </li>
               ))}
             </ul>
