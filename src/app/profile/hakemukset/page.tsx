@@ -9,7 +9,6 @@ import ProfileHeader from "@/components/profile/ProfileHeader";
 import StageCard from "@/components/applications/StageCard";
 import BudgetCategories from "@/components/applications/BudgetCategories";
 import GrantCalculator from "@/components/applications/GrantCalculator";
-import ErasmusGrantTypes from "@/components/applications/ErasmusGrantTypes";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
@@ -147,7 +146,6 @@ export default function HakemuksetPage() {
   const [expandedStage, setExpandedStage] = useState<string | null>(null);
   const [activeBudgetTab, setActiveBudgetTab] = useState<"stages" | "budget">("stages");
   const [budgetExpenses, setBudgetExpenses] = useState<Record<BudgetCategory, CategoryExpense> | null>(null);
-  const [budgetViewMode, setBudgetViewMode] = useState<"categories" | "calculator" | "erasmus_types">("categories");
 
   const [activeDocumentForm, setActiveDocumentForm] = useState<{ stageId: string; docIndex: number } | null>(null);
   const [stageDocuments, setStageDocuments] = useState<Record<string, ApplicationDocument[]>>({});
@@ -158,6 +156,9 @@ export default function HakemuksetPage() {
     if (tab === 'budget') {
       setActivePhase("apurahat");
       setActiveBudgetTab("budget");
+    } else if (tab === 'apurahat') {
+      setActivePhase("apurahat");
+      setActiveBudgetTab("stages");
     }
   }, [searchParams]);
 
@@ -169,10 +170,6 @@ export default function HakemuksetPage() {
 
   const handleCalculate = (amount: number) => {
     console.log("Calculated amount:", amount);
-  };
-
-  const handleGrantSelect = (grantType: string) => {
-    console.log("Selected grant type:", grantType);
   };
 
   const getTotalBudget = () => {
@@ -315,123 +312,64 @@ export default function HakemuksetPage() {
 
             {activeBudgetTab === "budget" && (
               <div>
-                {/* Sub-tabs for budget section */}
-                <div className="bg-white border-b mb-6">
-                  <div className="flex">
-                    <button
-                      onClick={() => setBudgetViewMode("categories")}
-                      className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                        budgetViewMode === "categories"
-                          ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                          : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      Kustannukset ja Laskuri
-                    </button>
-                    <button
-                      onClick={() => setBudgetViewMode("erasmus_types")}
-                      className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-                        budgetViewMode === "erasmus_types"
-                          ? "text-[#FF5722] border-b-2 border-[#FF5722]"
-                          : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      Erasmus+ lisätuet
-                    </button>
-                  </div>
+                {/* Info banner */}
+                <div className="mb-6 p-4 bg-orange-50 rounded-lg border border-[#FF5722]">
+                  <h4 className="text-sm font-semibold text-[#FF5722] mb-2">💡 Budjetti Laskin</h4>
+                  <p className="text-xs text-gray-700 mb-2">
+                    Laske apurahaa, kustannuksia ja budjettias kätevästi! Huomaa että Erasmus+-apuraha ja Metropolian 
+                    apuraha eivät kata kaikkia kuluja - varaudu omavastuuosuuteen.
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Lisäksi voi hakea vihreän matkustamisen tukea ja osallisuustukea, jos täyttät ehdot.
+                  </p>
                 </div>
 
-                {budgetViewMode === "categories" && (
-                  <div>
-                    {/* Info banner */}
-                    <div className="mb-6 p-4 bg-orange-50 rounded-lg border border-[#FF5722]">
-                      <h4 className="text-sm font-semibold text-[#FF5722] mb-2">💡 Budjetti Laskin</h4>
-                      <p className="text-xs text-gray-700 mb-2">
-                        Laske apurahaa, kustannuksia ja budjettias kätevästi! Huomaa että Erasmus+-apuraha ja Metropolian 
-                        apuraha eivät kata kaikkia kuluja - varaudu omavastuuosuuteen.
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        Lisäksi voi hakea vihreän matkustamisen tukea ja osallisuustukea, jos täyttät ehdot.
-                      </p>
-                    </div>
+                {/* Budget Categories Component */}
+                <div className="mb-6">
+                  <BudgetCategories onBudgetChange={handleBudgetChange} />
+                </div>
 
-                    {/* Budget Categories Component */}
-                    <div className="mb-6">
-                      <BudgetCategories onBudgetChange={handleBudgetChange} />
+                {/* Budget Summary */}
+                {budgetExpenses && getTotalBudget() > 0 && (
+                  <div className="mb-6 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow border border-orange-200">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      📈 Budjettisi yhteenveto
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Arvioitu kokonaiskustannus</p>
+                        <p className="text-3xl font-bold text-[#FF5722]">{getTotalBudget()}€</p>
+                      </div>
+                      {budget && (
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Arvioitu apuraha</p>
+                          <p className="text-3xl font-bold text-green-600">{budget.totalEstimate || 0}€</p>
+                        </div>
+                      )}
                     </div>
-
-                    {/* Budget Summary */}
-                    {budgetExpenses && getTotalBudget() > 0 && (
-                      <div className="mb-6 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow border border-orange-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          📈 Budjettisi yhteenveto
-                        </h3>
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <p className="text-sm text-gray-600 mb-1">Arvioitu kokonaiskustannus</p>
-                            <p className="text-3xl font-bold text-[#FF5722]">{getTotalBudget()}€</p>
-                          </div>
-                          {budget && (
-                            <div>
-                              <p className="text-sm text-gray-600 mb-1">Arvioitu apuraha</p>
-                              <p className="text-3xl font-bold text-green-600">{budget.totalEstimate || 0}€</p>
-                            </div>
+                    {budget && (
+                      <div className="pt-4 border-t border-orange-200">
+                        <p className="text-sm text-gray-700">
+                          {getTotalBudget() > (budget.totalEstimate || 0) ? (
+                            <span className="text-red-600 font-medium">
+                              ⚠️ Budjettisi ylittää arvioidun apurahan {getTotalBudget() - (budget.totalEstimate || 0)}€:lla
+                            </span>
+                          ) : (
+                            <span className="text-green-600 font-medium">
+                              ✅ Apuraha kattaa budjetit ({(budget.totalEstimate || 0) - getTotalBudget()}€ jäljellä)
+                            </span>
                           )}
-                        </div>
-                        {budget && (
-                          <div className="pt-4 border-t border-orange-200">
-                            <p className="text-sm text-gray-700">
-                              {getTotalBudget() > (budget.totalEstimate || 0) ? (
-                                <span className="text-red-600 font-medium">
-                                  ⚠️ Budjettisi ylittää arvioidun apurahan {getTotalBudget() - (budget.totalEstimate || 0)}€:lla
-                                </span>
-                              ) : (
-                                <span className="text-green-600 font-medium">
-                                  ✅ Apuraha kattaa budjetit ({(budget.totalEstimate || 0) - getTotalBudget()}€ jäljellä)
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Grant Calculator Component */}
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4">🧮 Laskin</h3>
-                      <GrantCalculator onCalculate={handleCalculate} />
-                    </div>
-                  </div>
-                )}
-
-                {budgetViewMode === "erasmus_types" && (
-                  <div>
-                    <ErasmusGrantTypes onSelectGrant={handleGrantSelect} />
-                    
-                    {/* Summary section */}
-                    {grants && (
-                      <div className="mt-8 p-6 bg-white rounded-lg shadow">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                          Yhteenveto apurahoista
-                        </h3>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Erasmus+ -apurahat</span>
-                            <span className="font-medium text-gray-900">
-                              {grants.erasmusGrants?.length || 0} kpl
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center pt-3 border-t">
-                            <span className="font-semibold text-gray-900">Arvioitu kokonaistuki</span>
-                            <span className="text-2xl font-bold text-[#FF5722]">
-                              {grants.totalEstimatedSupport || 0}€
-                            </span>
-                          </div>
-                        </div>
+                        </p>
                       </div>
                     )}
                   </div>
                 )}
+
+                {/* Grant Calculator Component */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">🧮 Laskin</h3>
+                  <GrantCalculator onCalculate={handleCalculate} />
+                </div>
               </div>
             )}
           </div>

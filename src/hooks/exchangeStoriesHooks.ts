@@ -3,8 +3,8 @@ import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
 import {ExchangeStory, StoriesResponse, StoryFilters } from "va-hybrid-types/contentTypes";
 
-
-
+// Re-export types for use in other components
+export type { StoryFilters, ExchangeStory };
 
 export const useExchangeStories = (filters?: StoryFilters) => {
   const [stories, setStories] = useState<ExchangeStory[]>([]);
