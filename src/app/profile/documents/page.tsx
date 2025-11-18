@@ -1,5 +1,5 @@
 "use client";
-import { useProfileData } from "@/hooks/apiHooks";
+import { useProfileData } from "@/hooks/profileHooks";
 import { useProfileDocuments } from "@/hooks/documentsHooks";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import LoadingSpinner from "@/components/profile/LoadingSpinner";

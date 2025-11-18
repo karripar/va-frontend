@@ -34,7 +34,7 @@ const translations = {
       titleEn: "GRANTS & COSTS",
       descriptionFi: "Katso apurahat ja mahdolliset kustannukset.",
       descriptionEn: "Check out grants and potential costs.",
-      href: "/grants",
+      href: "/profile/hakemukset?tab=apurahat",
     },
     {
       titleFi: "KOHDEMAAT",

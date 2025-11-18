@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes";
 import { useLanguage } from "@/context/LanguageContext";
 
-
 // simple cache that survives re-renders but not page reloads
 const destinationCache: Record<string, DestinationWithCoordinatesResponse> = {};
 
@@ -68,11 +67,9 @@ const useDestinationData = (
     return () => {
       controller.abort();
     };
-  }, [field, useMock]);
+  }, [field, useMock, language]);
 
   return { destinationArray, loading, error };
 };
-
-
 
 export { useDestinationData };
