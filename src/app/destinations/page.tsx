@@ -17,6 +17,8 @@ const DestinationsPage = () => {
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
   const { isAuthenticated, user } = useAuth();
 
+  console.log("user:", user);
+
   const [selectedField, setSelectedField] = useState<
     "tech" | "health" | "culture" | "business"
   >("tech");
