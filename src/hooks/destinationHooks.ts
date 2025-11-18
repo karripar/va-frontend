@@ -2,6 +2,7 @@
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
 import { DestinationWithCoordinatesResponse, ProfileResponse } from "va-hybrid-types/contentTypes";
+import { useLanguage } from "@/context/LanguageContext";
 
 // test comment added for webhook demo, part 2
 // Temporary types until they are added to va-hybrid-types
@@ -52,6 +53,7 @@ const useDestinationData = (
     useState<DestinationWithCoordinatesResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { language } = useLanguage();
 
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
@@ -78,7 +80,7 @@ const useDestinationData = (
 
         const url = useMock
           ? "/testDestinations.json"
-          : `${apiUrl}/destinations/metropolia/destinations?field=${field}&lang=fi`;
+          : `${apiUrl}/destinations/metropolia/destinations?field=${field}&lang=${language}`;
 
         const data = await fetchData<DestinationWithCoordinatesResponse>(url, {
           signal: controller.signal,
