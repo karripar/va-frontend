@@ -2,7 +2,7 @@
 "use client";
 import { useApplicationDocuments } from "@/hooks/documentsHooks";
 import { useApplicationsData, useApplicationStages } from "@/hooks/applicationsHooks";
-import { useProfileData } from "@/hooks/apiHooks";
+import { useProfileData } from "@/hooks/profileHooks";
 import { useBudgetEstimate } from "@/hooks/budgetArviointiHooks";
 import { useGrantsData } from "@/hooks/grantsManagingHooks";
 import ProfileHeader from "@/components/profile/ProfileHeader";

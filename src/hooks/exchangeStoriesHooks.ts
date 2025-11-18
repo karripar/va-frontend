@@ -1,56 +1,10 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
+import {ExchangeStory, StoriesResponse, StoryFilters } from "va-hybrid-types/contentTypes";
 
-// TODO: Move to va-hybrid-types/contentTypes
-interface ExchangeStory {
-  id: string;
-  userId: string;
-  userName: string;
-  userAvatar?: string;
-  destination: string;
-  country: string;
-  university: string;
-  duration: number;
-  exchangeDate: string;
-  title: string;
-  summary: string;
-  highlights: string[];
-  challenges?: string[];
-  tips: string[];
-  coverPhoto: string;
-  photos?: string[];
-  ratings: {
-    overall: number;
-    culture: number;
-    academics: number;
-    social: number;
-    costOfLiving: number;
-  };
-  likes: number;
-  saves: number;
-  status: "draft" | "published" | "archived";
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
 
-interface StoriesResponse {
-  stories: ExchangeStory[];
-  total: number;
-  hasMore: boolean;
-}
 
-interface StoryFilters {
-  country?: string;
-  university?: string;
-  tags?: string[];
-  minRating?: number;
-  search?: string;
-  sort?: "recent" | "popular" | "rating";
-}
-
-export type { ExchangeStory, StoryFilters };
 
 export const useExchangeStories = (filters?: StoryFilters) => {
   const [stories, setStories] = useState<ExchangeStory[]>([]);

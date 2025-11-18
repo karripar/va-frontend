@@ -1,5 +1,5 @@
 "use client";
-import fetchData from "@/lib/fetchData"; // remember to use this utility for fetches, not raw fetch. It handles json and errors. Shortens code in the hooks.6
+import fetchData from "@/lib/fetchData"; 
 import { useEffect, useState } from "react";
 import { ProfileResponse } from "va-hybrid-types/contentTypes";
 
@@ -137,8 +137,13 @@ const useAuthAPI = () => {
       setLoading(true);
       setError(null);
 
+      const authApiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      if (!authApiUrl) {
+        throw new Error("Auth API URL not configured");
+      }
+
       const response = await fetch(
-        "http://localhost:3001/api/profile",
+        `${authApiUrl}/profile`,
         {
           method: "GET",
           headers: {
