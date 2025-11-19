@@ -4,6 +4,7 @@ import React from "react";
 
 vi.mock("@/config/roles", () => ({
   ADMIN_LEVEL_ID: 2,
+  ELEVATED_LEVEL_ID: 3,
 }));
 
 const mockPush = vi.fn();

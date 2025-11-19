@@ -32,7 +32,7 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // redirect to login if we're not loading, not authenticated, and not on a login page
     if (!loading && !isAuthenticated && !isPublicPage) {
-      router.replace("/login");
+      router.push("/login");
     }
 
     // redirect to home if non-admin user tries to access admin routes (user_level_id 2 is admin, 3 is elevated admin)
@@ -42,7 +42,7 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({
       isAdminRoute &&
       !adminLevels.includes(Number(user?.user_level_id))
     ) {
-      router.replace("/");
+      router.push("/");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, isAuthenticated, loading, isPublicPage, pathname]);
