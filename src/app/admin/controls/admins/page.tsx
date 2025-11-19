@@ -62,7 +62,7 @@ const AdminBoard = () => {
       notice:
         "Adding a new admin will grant them administrative privileges. They may alter content and add other admins. Double-check the email before proceeding.",
       notice2:
-        "Email needs to be in shorter username format. Example: 'mattimei@metropolia.fi' (Matti Meikäläinen)",
+        "Email needs to be in the shorter username format. Example: 'mattimei@metropolia.fi' (Matti Meikäläinen)",
       enterEmail: "Enter user email",
       confirmEmail: "Confirm user email",
       addAsAdmin: "Add as Admin",

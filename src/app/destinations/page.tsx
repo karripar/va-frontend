@@ -5,7 +5,7 @@ import DestinationList from "@/components/exchange-destinations/DestinationList"
 import { useLanguage } from "@/context/LanguageContext";
 import DestinationAdminPanel from "@/components/exchange-destinations/destinationAdminPanel";
 import { useAuth } from "@/hooks/useAuth";
-import { ADMIN_LEVEL_ID } from "@/config/roles";
+import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID } from "@/config/roles";
 
 const DestinationMap = React.lazy(() => import("@/components/exchange-destinations/DestinationMap"));
 
@@ -17,7 +17,7 @@ const DestinationsPage = () => {
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
   const { isAuthenticated, user } = useAuth();
 
-  console.log("user:", user);
+  const adminLevels = [Number(ADMIN_LEVEL_ID), Number(ELEVATED_LEVEL_ID)];
 
   const [selectedField, setSelectedField] = useState<
     "tech" | "health" | "culture" | "business"
@@ -86,7 +86,7 @@ const DestinationsPage = () => {
       </h1>
   
       {/** Admin board for changing scraping URLs (always visible for admins) */}
-      {isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID) && (
+      {isAuthenticated && adminLevels.includes(Number(user?.user_level_id)) && (
         <DestinationAdminPanel fetchError={error} />
       )}
   
@@ -124,7 +124,7 @@ const DestinationsPage = () => {
       )}
   
       {/** Optional message for admins when data fetch failed */}
-      {error && isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID) && (
+      {error && isAuthenticated && user && adminLevels.includes(Number(user.user_level_id)) && (
         <div className="p-4 text-center text-red-500">
           {translations[language].couldNotLoad} {error} <br />
           {translations[language].youCanStillModify}
