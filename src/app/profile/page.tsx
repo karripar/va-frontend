@@ -33,7 +33,6 @@ export default function ProfilePage() {
     );
   }
 
-  console.log("Profile data:", profile);
   // Rendering profile data
   return (
     <div className="min-h-screen">
