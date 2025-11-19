@@ -103,7 +103,8 @@ const Navbar = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user } = useAuth();
-  const isAdmin = user?.user_level_id === 2;
+  const adminLevels = [2, 3];
+  const isAdmin = user && adminLevels.includes(Number(user.user_level_id));
 
   // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {

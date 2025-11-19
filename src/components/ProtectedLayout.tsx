@@ -2,7 +2,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { ADMIN_LEVEL_ID } from "@/config/roles";
+import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID} from "@/config/roles";
 
 
 // Login page is the only one that don't require authentication
@@ -10,9 +10,11 @@ const PUBLIC_PAGES = ["/login"];
 
 const ADMIN_PREFIX = "/admin";
 
-if (!ADMIN_LEVEL_ID) {
+const adminLevels = [Number(ADMIN_LEVEL_ID), Number(ELEVATED_LEVEL_ID)];
+
+if (!ADMIN_LEVEL_ID || !ELEVATED_LEVEL_ID) {
   console.warn(
-    "NEXT_PUBLIC_ADMIN_LEVEL_ID is not defined in environment variables"
+    "NEXT_PUBLIC_ADMIN_LEVEL_ID is not set in config/roles.ts"
   );
 }
 
@@ -30,17 +32,17 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // redirect to login if we're not loading, not authenticated, and not on a login page
     if (!loading && !isAuthenticated && !isPublicPage) {
-      router.push("/login");
+      router.replace("/login");
     }
 
-    // redirect to home if non-admin user tries to access admin routes (user_level_id 2 is admin)
+    // redirect to home if non-admin user tries to access admin routes (user_level_id 2 is admin, 3 is elevated admin)
     if (
       !loading &&
       isAuthenticated &&
       isAdminRoute &&
-      user?.user_level_id !== Number(ADMIN_LEVEL_ID)
+      !adminLevels.includes(Number(user?.user_level_id))
     ) {
-      router.push("/");
+      router.replace("/");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, isAuthenticated, loading, isPublicPage, pathname]);
