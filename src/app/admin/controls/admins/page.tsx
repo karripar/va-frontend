@@ -73,6 +73,7 @@ const AdminBoard = () => {
         const response = (await getAdmins()) as GetAdminsResponse | undefined;
         if (response && Array.isArray(response.admins)) {
           setAdmins(response.admins);
+          console.log("Fetched admins:", response.admins);
         } else {
           console.warn("Unexpected admin response format:", response);
           setAdmins([]);
