@@ -6,13 +6,16 @@ import useAdminActions from "@/hooks/adminHooks";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa6";
 import Image from "next/image";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Admin {
   _id: string;
   userName?: string;
+  user_level_id: number;
   title?: string;
   email: string;
   avatarUrl?: string;
+  showActions?: boolean;
 }
 
 interface GetAdminsResponse {
@@ -25,8 +28,10 @@ const AdminBoard = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [admins, setAdmins] = useState<Admin[]>([]);
+  const { user, isAuthenticated } = useAuth();
 
-  const { promoteToAdmin, getAdmins, loading } = useAdminActions();
+  const { promoteToAdmin, getAdmins, demoteFromAdmin, elevateAdmin, loading } =
+    useAdminActions();
   const { language } = useLanguage();
 
   const translations: Record<string, Record<string, string>> = {
@@ -45,6 +50,13 @@ const AdminBoard = () => {
       emailMismatch: "Emails do not match.",
       success: "User promoted to admin successfully!",
       fail: "Failed to promote user. Check the email. You may not promote an existing admin or yourself.",
+      demote: "Demote",
+      actions: "Actions",
+      elevate: "Elevate",
+      confirmElevate:
+        "Are you sure you want to elevate this admin's privileges? They will gain the highest privileges that cannot be undone.",
+      confirmDemote:
+        "Are you sure you want to demote this admin to a regular user?",
     },
     fi: {
       addAdmin: "Ylläpitäjien hallinta",
@@ -61,6 +73,12 @@ const AdminBoard = () => {
       emailMismatch: "Sähköpostit eivät täsmää.",
       success: "Käyttäjä lisättiin ylläpitäjäksi onnistuneesti!",
       fail: "Käyttäjän lisääminen epäonnistui. Tarkista sähköposti. Et voi lisätä ylläpitäjäksi jo olemassa olevaa ylläpitäjää tai itseäsi.",
+      demote: "Poista ylläpitäjän oikeudet",
+      actions: "Toiminnot",
+      elevate: "Korota oikeuksia",
+      confirmElevate:
+        "Haluatko varmasti korottaa tämän ylläpitäjän oikeuksia? He saavat korkeimmat oikeudet joita ei voi perua.",
+      confirmDemote: "Haluatko varmasti poistaa tämän ylläpitäjän oikeudet?",
     },
   };
 
@@ -128,6 +146,51 @@ const AdminBoard = () => {
     }
   };
 
+  const handleDemote = async (adminId: string) => {
+    setMessage(null);
+    setError(null);
+
+    const confirmDemote = window.confirm(t.confirmDemote);
+    if (!confirmDemote) return;
+    try {
+      const response = await demoteFromAdmin(adminId);
+      if (response?.message) {
+        setMessage("Admin demoted successfully.");
+        // Refresh admin list
+        const updated = (await getAdmins()) as GetAdminsResponse | undefined;
+        if (updated && Array.isArray(updated.admins)) {
+          setAdmins(updated.admins);
+        }
+      } else {
+        setError(response?.error || "Failed to demote admin.");
+      }
+    } catch {
+      setError("Failed to demote admin.");
+    }
+  };
+
+  const handleElevate = async (adminId: string) => {
+    setMessage(null);
+    setError(null);
+    const confirmElevate = window.confirm(t.confirmElevate);
+    if (!confirmElevate) return;
+    try {
+      const response = await elevateAdmin(adminId);
+      if (response?.message) {
+        setMessage("Admin privileges elevated successfully.");
+        // Refresh admin list
+        const updated = (await getAdmins()) as GetAdminsResponse | undefined;
+        if (updated && Array.isArray(updated.admins)) {
+          setAdmins(updated.admins);
+        }
+      } else {
+        setError(response?.error || "Failed to elevate admin.");
+      }
+    } catch {
+      setError("Failed to elevate admin.");
+    }
+  };
+
   return (
     <>
       {/* Header */}
@@ -190,28 +253,71 @@ const AdminBoard = () => {
           {admins.length > 0 ? (
             <ul className="mt-2 border rounded divide-y">
               {admins.map((admin) => (
-                <li
-                  key={admin._id}
-                  className="p-3 flex items-center justify-between gap-4"
-                >
-                  {/* Left side: name + email stacked */}
-                  <div className="flex flex-col">
-                    <span className="font-medium">
-                      {admin.userName || admin.email}
-                    </span>
-                    <span className="text-[var(--typography)] text-sm break-all">
-                      {admin.email}
-                    </span>
+                <li key={admin._id} className="p-3 flex items-center gap-4">
+                  {/* Left section: avatar + user info */}
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <Image
+                      src={admin.avatarUrl || "/images/default-avatar.png"}
+                      alt={`${admin.userName || admin.email}'s profile`}
+                      width={48}
+                      height={48}
+                      className="rounded-full object-cover aspect-square shrink-0"
+                    />
+
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-medium truncate">
+                        {admin.userName || admin.email}
+                      </span>
+                      <span className="text-[var(--typography)] text-sm break-all">
+                        {admin.email}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Avatar */}
-                  <Image
-                    src={admin.avatarUrl || "/images/default-avatar.png"}
-                    alt={`${admin.userName || admin.email}'s profile`}
-                    width={48}
-                    height={48}
-                    className="rounded-full object-cover aspect-square"
-                  />
+                  {/* Action dropdown */}
+                  {isAuthenticated &&
+                    user &&
+                    user._id !== admin._id && // Cannot act on self
+                    admin.user_level_id !== 3 && // Cannot act on other super admins
+                    Number(user.user_level_id) === 3 && (
+                      <div className="relative ml-auto shrink-0">
+                        <button
+                          className="bg-gray-200 px-2 py-1 rounded hover:bg-gray-300 text-sm"
+                          onClick={() =>
+                            setAdmins((prev) =>
+                              prev.map((a) =>
+                                a._id === admin._id
+                                  ? { ...a, showActions: !a.showActions }
+                                  : a
+                              )
+                            )
+                          }
+                        >
+                          {t.actions}
+                        </button>
+
+                        {admin.showActions && (
+                          <div className="absolute right-0 mt-1 w-36 bg-white border rounded shadow-md z-10 flex flex-col">
+                            {admin.user_level_id === 2 && (
+                              <button
+                                onClick={() => handleElevate(admin._id)}
+                                disabled={loading}
+                                className="px-3 py-1 text-sm hover:bg-blue-100 text-blue-700"
+                              >
+                                {t.elevate}
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDemote(admin._id)}
+                              disabled={loading}
+                              className="px-3 py-1 text-sm hover:bg-red-100 text-red-700"
+                            >
+                              {t.demote}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                 </li>
               ))}
             </ul>
