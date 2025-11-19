@@ -15,7 +15,7 @@ interface MakeAdminResponse {
 }
 
 interface AdminListResponse {
-  admins: { id: string; email: string; userName: string }[];
+  admins: { _id: string; email: string; userName: string; user_level_id: number}[];
 }
 
 const useAdminActions = () => {
