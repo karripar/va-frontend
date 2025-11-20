@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import { DefaultIcon } from "../../../leafletConfig";
 import MapSearchbar from "./MapSearchbar";
 import { useLanguage } from "@/context/LanguageContext";
+import FavoriteButton from "../ui/FavoriteButton";
 
 interface DestinationMapProps {
   data: DestinationWithCoordinatesResponse;
@@ -23,7 +24,6 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
   const { language } = useLanguage();
 
   const defaultCenter: [number, number] = [60.1699, 24.9384]; // Helsinki fallback
-
 
   // Clear program filter when searching
   useEffect(() => {
@@ -131,38 +131,44 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
         </div>
 
         {selectedCountry && (
-        <div className="fixed top-1/6 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-6">
-          <button
-            onClick={() => setSelectedCountry(null)}
-            className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-600"
-          >
-            ✕
-          </button>
+          <div className="fixed top-1/6 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-6">
+            <button
+              onClick={() => setSelectedCountry(null)}
+              className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-600"
+            >
+              ✕
+            </button>
 
-          <h2 className="text-2xl font-bold mb-6 text-center">
-            {selectedCountry.country}
-          </h2>
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              {selectedCountry.country}
+            </h2>
 
-          <ul className="space-y-4">
-            {selectedCountry.universities.map((uni, index) => (
-              <li key={index} className="border-b pb-4">
-                <h3 className="font-semibold">{uni.title}</h3>
-                <p className="">{uni.program}</p>
-                {uni.link && (
-                  <a
-                    href={uni.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mt-2 px-4 py-2 bg-[#FF5000] text-white rounded-lg shadow hover:bg-[#e04e00]"
-                  >
-                    Vieraile verkkosivulla
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+            <ul className="space-y-4">
+              {selectedCountry.universities.map((uni, index) => (
+                <li key={index} className="border-b pb-4">
+                  <section className="my-2 px-1">
+                    <h3 className="font-semibold">{uni.title}</h3>
+                    <p className="">{uni.program}</p>
+                    <FavoriteButton
+                      destinationName={uni.title}
+                      className="my-3"
+                    />
+                  </section>
+                  {uni.link && (
+                    <a
+                      href={uni.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block mt-2 px-4 py-2 bg-[#FF5000] text-white rounded-lg shadow hover:bg-[#e04e00]"
+                    >
+                      Vieraile verkkosivulla
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

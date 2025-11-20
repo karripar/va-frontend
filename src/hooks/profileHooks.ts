@@ -1,10 +1,11 @@
 "use client";
-import fetchData from "@/lib/fetchData"; 
+import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
 import { ProfileResponse } from "va-hybrid-types/contentTypes";
 
 /**
  * Hook to fetch profile data from the user API
+ * Always fetches current authenticated user's profile
  */
 const useProfileData = () => {
   const [profileData, setProfileData] = useState<ProfileResponse | null>(null);
@@ -30,28 +31,13 @@ const useProfileData = () => {
         setLoading(true);
         setError(null);
 
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          setError("No auth token found");
-          setLoading(false);
-          return;
-        }
+        // Use the actual backend API
+        const endpoint = `${apiUrl}/users/profile`;
 
-        const endpoint = `${apiUrl}/profile`;
-
-        const response = await fetch(endpoint, {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + token,
-            "Content-Type": "application/json",
-          },
+        const data = await fetchData<ProfileResponse>(endpoint, {
+          signal: controller.signal,
         });
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch profile: ${response.status}`);
-        }
-
-        const data = (await response.json()) as ProfileResponse;
         setProfileData(data);
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {
@@ -142,16 +128,13 @@ const useAuthAPI = () => {
         throw new Error("Auth API URL not configured");
       }
 
-      const response = await fetch(
-        `${authApiUrl}/profile`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("authToken") || "",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${authApiUrl}/users/profile`, {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("authToken") || "",
+          "Content-Type": "application/json",
+        },
+      });
 
       // check the authentication status
       if (response.ok) {
@@ -176,4 +159,4 @@ const useAuthAPI = () => {
   };
 };
 
-export { useProfileData, useUpdateProfile, useAuthAPI };
+export { useProfileData, useAuthAPI, useUpdateProfile };

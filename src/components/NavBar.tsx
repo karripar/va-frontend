@@ -238,40 +238,45 @@ const Navbar = () => {
                   <div className="absolute shadow-lg left-1/2 transform -translate-x-1/2 top-full w-60 lg:w-80 bg-[var(--background)] border border-[var(--va-border)] rounded-b-lg">
                     {category.links && (
                       <div>
-                        {category.links
-                          .filter((link) => !link.requiresAdmin || isAdmin)
-                          .map((link) => (
-                            <Link
-                              key={link.href}
-                              href={link.href}
-                              className="block px-6 py-3 m-1 text-md duration-200 tracking-wide "
-                              style={{
-                                fontFamily: "var(--font-montreal-mono)",
-                                textDecoration:
-                                  pathname === link.href
-                                    ? "underline var(--va-orange) .1rem"
-                                    : "none",
-                                textUnderlineOffset: ".3rem",
-                              }}
-                              onMouseEnter={(e) => {
-                                if (pathname !== link.href) {
-                                  e.currentTarget.style.textDecoration =
-                                    "underline var(--typography) .1rem";
-                                  e.currentTarget.style.textUnderlineOffset =
-                                    ".3rem";
-                                }
-                              }}
-                              onMouseLeave={(e) => {
-                                if (pathname !== link.href) {
-                                  e.currentTarget.style.color =
-                                    "var(--typography)";
-                                  e.currentTarget.style.textDecoration = "none";
-                                }
-                              }}
-                            >
-                              {getLabel(language, link.label, link.labelEn)}
-                            </Link>
-                          ))}
+                        {category.links.filter(
+                          (link) => !link.requiresAdmin || isAdmin
+                        ).length > 0
+                          ? category.links
+                              .filter((link) => !link.requiresAdmin || isAdmin)
+                              .map((link) => (
+                                <Link
+                                  key={link.href}
+                                  href={link.href}
+                                  className="block px-6 py-3 m-1 text-md duration-200 tracking-wide "
+                                  style={{
+                                    fontFamily: "var(--font-montreal-mono)",
+                                    textDecoration:
+                                      pathname === link.href
+                                        ? "underline var(--va-orange) .1rem"
+                                        : "none",
+                                    textUnderlineOffset: ".3rem",
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    if (pathname !== link.href) {
+                                      e.currentTarget.style.textDecoration =
+                                        "underline var(--typography) .1rem";
+                                      e.currentTarget.style.textUnderlineOffset =
+                                        ".3rem";
+                                    }
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    if (pathname !== link.href) {
+                                      e.currentTarget.style.color =
+                                        "var(--typography)";
+                                      e.currentTarget.style.textDecoration =
+                                        "none";
+                                    }
+                                  }}
+                                >
+                                  {getLabel(language, link.label, link.labelEn)}
+                                </Link>
+                              ))
+                          : null}
                       </div>
                     )}
                   </div>
