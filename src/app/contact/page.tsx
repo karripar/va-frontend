@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminContacts } from "@/hooks/contactHooks";
-import { ADMIN_LEVEL_ID } from "@/config/roles";
+import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID} from "@/config/roles";
 import { translations } from "@/lib/translations/contactInformation";
 import ContactList from "@/components/contact-information/ContactList";
 import ContactForm from "@/components/contact-information/ContactForm"
@@ -20,8 +20,9 @@ const ContactPage: React.FC = () => {
   const [newContact, setNewContact] = useState({ name: "", title: "", email: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null); 
   const t = translations[language] || translations.fi;
+  const adminLevels = [ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID];
   const isAdmin =
-    isAuthenticated && !authLoading && user?.user_level_id === ADMIN_LEVEL_ID;
+    isAuthenticated && !authLoading && user && adminLevels.includes(Number(user.user_level_id));
 
   // Fetch contacts once on mount
   useEffect(() => {
@@ -73,7 +74,7 @@ const ContactPage: React.FC = () => {
 
       <ContactList
         contacts={contacts}
-        isAdmin={isAdmin}
+        isAdmin={isAdmin || false}
         onRemove={handleRemoveContact}
         t={t}
       />
