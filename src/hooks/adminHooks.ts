@@ -15,7 +15,7 @@ interface MakeAdminResponse {
 }
 
 interface AdminListResponse {
-  admins: { id: string; email: string; userName: string }[];
+  admins: { _id: string; email: string; userName: string; user_level_id: number}[];
 }
 
 const useAdminActions = () => {
@@ -98,9 +98,77 @@ const useAdminActions = () => {
     }
   };
 
+  /** Demote to regular user */
+  const demoteFromAdmin = async (adminId: string) => {
+    setLoading(true);
+    setError(null);
+
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No auth token found");
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await fetchData<MakeAdminResponse>(
+        `${API_URL}/admin/remove-admin/${encodeURIComponent(adminId)}`, 
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );  
+      if (response.error) setError(response.error);
+      return response;
+    } catch (err: unknown) {
+      console.error("Error demoting admin to user:", err);
+      setError("Failed to demote admin to user");
+      throw err;
+    } finally {
+      setLoading(false);
+    } 
+  };
+
+  const elevateAdmin = async (adminId: string) => {
+    setLoading(true);
+    setError(null);
+
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No auth token found");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetchData<MakeAdminResponse>(
+        `${API_URL}/admin/elevate-admin/${encodeURIComponent(adminId)}`,  
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );  
+      if (response.error) setError(response.error);
+      return response;
+    } catch (err: unknown) {
+      console.error("Error elevating admin:", err);
+      setError("Failed to elevate admin");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     promoteToAdmin,
     getAdmins,
+    demoteFromAdmin,
+    elevateAdmin,
     loading,
     error,
   };

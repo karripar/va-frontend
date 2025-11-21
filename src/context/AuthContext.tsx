@@ -11,6 +11,8 @@ type AuthContextType = {
   handleLogin: (user: ProfileResponse) => void;
   handleLogout: () => void;
   handleAutoLogin: () => Promise<void>;
+  updateUser: (updatedUser: Partial<ProfileResponse>) => void;
+  refreshProfile: () => Promise<void>;
 };
 
 const authAPI =
@@ -26,6 +28,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleLogin = (userData: ProfileResponse) => {
     setUser(userData);
+  };
+
+  const updateUser = (updatedUser: Partial<ProfileResponse>) => {
+    setUser((prevUser) => {
+      if (!prevUser) return prevUser;
+      return { ...prevUser, ...updatedUser };
+    });
+  };
+
+  // Refresh profile from server
+  const refreshProfile = async () => {
+    try {
+      const token = authService.getToken();
+      if (!token) return;
+
+      const response = await fetch(authAPI + "/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      }
+    } catch (error) {
+      console.error("Error refreshing profile:", error);
+    }
   };
 
   // logout
@@ -51,26 +82,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         return;
       }
 
-      const response = await fetch(
-        authAPI + "/users/profile",
-        {
+      try {
+        const response = await fetch(authAPI + "/users/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
-      );
+        });
 
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-      } else if (response.status === 401) {
-        authService.removeToken();
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else if (response.status === 401) {
+          authService.removeToken();
+          setUser(null);
+        }
+      } catch (fetchError) {
+        console.error("Failed to fetch user profile:", fetchError);
         setUser(null);
       }
     } catch (error) {
-      console.error("Network error during auto-login:", error);
-      authService.removeToken();
+      console.error("Error during auto-login:", error);
       setUser(null);
     } finally {
       setLoading(false);
@@ -92,6 +124,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         handleLogin,
         handleLogout,
         handleAutoLogin,
+        updateUser,
+        refreshProfile,
       }}
     >
       {children}

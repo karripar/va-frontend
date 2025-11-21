@@ -3,14 +3,22 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import useAdminActions from "@/hooks/adminHooks";
+import useSearchActions from "@/hooks/searchHooks";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa6";
+import { ProfileResponse } from "va-hybrid-types/contentTypes";
+import SearchUsers from "@/components/admin/SearchUsers";
+import AdminList from "@/components/admin/AdminList";
+import AddAdminForm from "@/components/admin/addAdminForm";
 
 interface Admin {
   _id: string;
   userName?: string;
+  user_level_id: number;
   title?: string;
   email: string;
+  avatarUrl?: string;
+  showActions?: boolean;
 }
 
 interface GetAdminsResponse {
@@ -18,23 +26,45 @@ interface GetAdminsResponse {
 }
 
 const AdminBoard = () => {
-  const [email, setEmail] = useState("");
-  const [confirmEmail, setConfirmEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [admins, setAdmins] = useState<Admin[]>([]);
 
-  const { promoteToAdmin, getAdmins, loading } = useAdminActions();
+  const { promoteToAdmin, getAdmins, demoteFromAdmin, elevateAdmin, loading } =
+    useAdminActions();
+  const { searchUsersByEmail, usersLoading } = useSearchActions();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<ProfileResponse[]>([]);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const { language } = useLanguage();
 
-  const translations: Record<string, Record<string, string>> = {
+  const translations: Record<
+    string,
+    {
+      currentAdmins: string;
+      noAdmins: string;
+      actions: string;
+      elevate: string;
+      demote: string;
+      enterEmail: string;
+      confirmEmail: string;
+      adding: string;
+      addAsAdmin: string;
+      emptyFields: string;
+      emailMismatch: string;
+      success: string;
+      fail: string;
+      [key: string]: string;
+    }
+  > = {
     en: {
       addAdmin: "Admin Management",
       notice:
         "Adding a new admin will grant them administrative privileges. They may alter content and add other admins. Double-check the email before proceeding.",
+      notice2:
+        "Email needs to be in the shorter username format. Example: 'mattimei@metropolia.fi' (Matti Meikäläinen)",
       enterEmail: "Enter user email",
       confirmEmail: "Confirm user email",
-      enterTitle: "Enter user title",
       addAsAdmin: "Add as Admin",
       adding: "Adding...",
       currentAdmins: "Current Admins",
@@ -43,14 +73,26 @@ const AdminBoard = () => {
       emailMismatch: "Emails do not match.",
       success: "User promoted to admin successfully!",
       fail: "Failed to promote user. Check the email. You may not promote an existing admin or yourself.",
+      demote: "Demote",
+      actions: "Actions",
+      elevate: "Elevate",
+      confirmElevate:
+        "Are you sure you want to elevate this admin's privileges? They will gain the highest privileges that cannot be undone.",
+      confirmDemote:
+        "Are you sure you want to demote this admin to a regular user?",
+      backToHome: "Back to Admin Home",
+      searchUsers: "Search Users",
+      noUsers: "No users found.",
+      addUserAsAdmin: "Add as Admin",
     },
     fi: {
       addAdmin: "Ylläpitäjien hallinta",
       notice:
         "Uuden ylläpitäjän lisääminen antaa heille hallinnolliset oikeudet. He voivat muokata sisältöä ja lisätä muita ylläpitäjiä. Tarkista sähköposti huolellisesti ennen jatkamista.",
+      notice2:
+        "Sähköpostin tulee olla lyhyemmässä käyttäjänimi-muodossa. Esim. 'mattimei@metropolia.fi' (Matti Meikäläinen)",
       enterEmail: "Syötä käyttäjän sähköposti",
       confirmEmail: "Vahvista käyttäjän sähköposti",
-      enterTitle: "Syötä yhteyshenkilön titteli",
       addAsAdmin: "Lisää ylläpitäjäksi",
       adding: "Lisätään...",
       currentAdmins: "Nykyiset ylläpitäjät",
@@ -59,10 +101,35 @@ const AdminBoard = () => {
       emailMismatch: "Sähköpostit eivät täsmää.",
       success: "Käyttäjä lisättiin ylläpitäjäksi onnistuneesti!",
       fail: "Käyttäjän lisääminen epäonnistui. Tarkista sähköposti. Et voi lisätä ylläpitäjäksi jo olemassa olevaa ylläpitäjää tai itseäsi.",
+      demote: "Poista ylläpitäjän oikeudet",
+      actions: "Toiminnot",
+      elevate: "Korota oikeuksia",
+      confirmElevate:
+        "Haluatko varmasti korottaa tämän ylläpitäjän oikeuksia? He saavat korkeimmat oikeudet joita ei voi perua.",
+      confirmDemote: "Haluatko varmasti poistaa tämän ylläpitäjän oikeudet?",
+      backToHome: "Takaisin ylläpitäjien etusivulle",
+      searchUsers: "Hae käyttäjiä",
+      noUsers: "Käyttäjiä ei löytynyt.",
+      addUserAsAdmin: "Lisää ylläpitäjäksi",
     },
   };
 
-  const t = translations[language];
+  const t: {
+    currentAdmins: string;
+    noAdmins: string;
+    actions: string;
+    elevate: string;
+    demote: string;
+    enterEmail: string;
+    confirmEmail: string;
+    adding: string;
+    addAsAdmin: string;
+    emptyFields: string;
+    emailMismatch: string;
+    success: string;
+    fail: string;
+    [key: string]: string;
+  } = translations[language];
 
   // Load admins on mount
   useEffect(() => {
@@ -72,56 +139,76 @@ const AdminBoard = () => {
         if (response && Array.isArray(response.admins)) {
           setAdmins(response.admins);
         } else {
-          console.warn("Unexpected admin response format:", response);
           setAdmins([]);
         }
       } catch (err) {
-        console.error("Error fetching admins:", err);
         setError(t.fail);
       }
     };
-
     fetchAdmins();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage(null);
-    setError(null);
+  // Debounced search
+  const searchWithDebounce = (() => {
+    let timeoutId: NodeJS.Timeout;
+    return (query: string) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(async () => {
+        if (query.trim()) {
+          try {
+            console.log("Searching for users with query:", query);
+            const results = await searchUsersByEmail(query.trim());
+            setSearchResults(results || []);
+          } catch (err) {
+            setSearchError("Error searching users.");
+            setSearchResults([]);
+          }
+        } else {
+          setSearchResults([]);
+        }
+      }, 1000);
+    };
+  })();
 
-    if (!email.trim() || !confirmEmail.trim()) {
-      setError(t.emptyFields);
-      return;
-    }
+  useEffect(() => {
+    searchWithDebounce(searchQuery);
+  }, [searchQuery]);
 
-    if (email.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) {
-      setError(t.emailMismatch);
-      return;
-    }
-
-    const confirmAdd = window.confirm(
-      `Are you sure you want to promote ${email.trim()} to admin?`
-    );
-    if (!confirmAdd) return;
-
+  const handleDemote = async (adminId: string) => {
+    const confirmDemote = window.confirm(t.confirmDemote);
+    if (!confirmDemote) return;
     try {
-      const response = await promoteToAdmin(email.trim());
+      const response = await demoteFromAdmin(adminId);
       if (response?.message) {
-        setMessage(t.success);
-        setEmail("");
-        setConfirmEmail("");
-
-        // Refresh admin list
+        setMessage("Admin demoted successfully.");
         const updated = (await getAdmins()) as GetAdminsResponse | undefined;
         if (updated && Array.isArray(updated.admins)) {
           setAdmins(updated.admins);
         }
       } else {
-        setError(response?.error || t.fail);
+        setError(response?.error || "Failed to demote admin.");
       }
     } catch {
-      setError(t.fail);
+      setError("Failed to demote admin.");
+    }
+  };
+
+  const handleElevate = async (adminId: string) => {
+    const confirmElevate = window.confirm(t.confirmElevate);
+    if (!confirmElevate) return;
+    try {
+      const response = await elevateAdmin(adminId);
+      if (response?.message) {
+        setMessage("Admin privileges elevated successfully.");
+        const updated = (await getAdmins()) as GetAdminsResponse | undefined;
+        if (updated && Array.isArray(updated.admins)) {
+          setAdmins(updated.admins);
+        }
+      } else {
+        setError(response?.error || "Failed to elevate admin.");
+      }
+    } catch {
+      setError("Failed to elevate admin.");
     }
   };
 
@@ -146,58 +233,28 @@ const AdminBoard = () => {
 
       <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg space-y-6 my-4">
         <p className="text-md text-[var(--typography)]">{t.notice}</p>
+        <p className="text-md text-[var(--typography)]">{t.notice2}</p>
 
-        {/* Add new admin form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <input
-            type="email"
-            placeholder={t.enterEmail}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border p-2 rounded"
-            required
-          />
-          <input
-            type="email"
-            placeholder={t.confirmEmail}
-            value={confirmEmail}
-            onChange={(e) => setConfirmEmail(e.target.value)}
-            className="border p-2 rounded"
-            required
-          />
+        {/* Manual Add Admin */}
+        <AddAdminForm
+          promoteToAdmin={promoteToAdmin}
+          getAdmins={getAdmins}
+          setAdmins={setAdmins}
+          loading={loading}
+          t={t}
+        />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-[#FF5000] text-white py-2 rounded disabled:bg-[var(--va-grey-50)] hover:disabled:cursor-not-allowed hover:bg-[#e04e00] transition"
-          >
-            {loading ? t.adding : t.addAsAdmin}
-          </button>
-        </form>
-
-        {message && (
-          <p className="text-green-600 text-sm font-medium">{message}</p>
-        )}
-        {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
+        <SearchUsers title={t.searchUsers} noUsersText={t.noUsers} />
 
         {/* Admin list */}
-        <div>
-          <h3 className="text-lg font-semibold mt-6">{t.currentAdmins}</h3>
-          {admins.length > 0 ? (
-            <ul className="mt-2 border rounded divide-y">
-              {admins.map((admin) => (
-                <li key={admin._id} className="p-2 flex justify-between">
-                  <span>{admin.userName || admin.email}</span>
-                  <span className="text-[var(--typography)] text-sm">
-                    {admin.email}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-[var(--typography)] mt-2">{t.noAdmins}</p>
-          )}
-        </div>
+        <AdminList
+          admins={admins}
+          setAdmins={setAdmins}
+          onDemote={handleDemote}
+          onElevate={handleElevate}
+          loading={loading}
+          t={t}
+        />
       </div>
     </>
   );

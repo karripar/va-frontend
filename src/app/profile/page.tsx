@@ -67,10 +67,10 @@ export default function ProfilePage() {
             {/* Avatar */}
             {profile.avatarUrl && (
               <Image
-                src={profile.avatarUrl}
+                src={profile.avatarUrl || "/images/default-avatar.png"}
                 alt={`${profile.userName}'s avatar`}
-                width={96}
-                height={96}
+                width={48}
+                height={48}
                 className="w-24 h-24 rounded-full mb-4"
               />
             )}
