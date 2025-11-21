@@ -8,12 +8,12 @@ import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID} from "@/config/roles";
 // Login page is the only one that don't require authentication
 const PUBLIC_PAGES = [
   "/login", 
-  "/content/docs/apidoc", 
-  "/auth/docs/apidoc", 
-  "/upload/docs/apidoc",
-  "/content/docs/typedoc",
-  "/auth/docs/typedoc",
-  "/upload/docs/typedoc"
+  "/content/docs/apidoc/index.html", 
+  "/auth/docs/apidoc/index.html", 
+  "/upload/docs/apidoc/index.html",
+  "/content/docs/typedoc/index.html",
+  "/auth/docs/typedoc/index.html",
+  "/upload/docs/typedoc/index.html"
 ];
 
 const ADMIN_PREFIX = "/admin";
