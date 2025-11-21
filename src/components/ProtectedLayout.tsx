@@ -6,7 +6,15 @@ import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID} from "@/config/roles";
 
 
 // Login page is the only one that don't require authentication
-const PUBLIC_PAGES = ["/login"];
+const PUBLIC_PAGES = [
+  "/login", 
+  "/content/docs/apidoc", 
+  "/auth/docs/apidoc", 
+  "/upload/docs/apidoc",
+  "/content/docs/typedoc",
+  "/auth/docs/typedoc",
+  "/upload/docs/typedoc"
+];
 
 const ADMIN_PREFIX = "/admin";
 
@@ -26,7 +34,7 @@ const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({
   const router = useRouter();
   const pathname = usePathname();
 
-  const isPublicPage = PUBLIC_PAGES.includes(pathname);
+  const isPublicPage = PUBLIC_PAGES.some((page) => pathname.startsWith(page));
   const isAdminRoute = pathname.startsWith(ADMIN_PREFIX);
 
   useEffect(() => {
