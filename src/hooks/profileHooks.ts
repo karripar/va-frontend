@@ -34,9 +34,17 @@ const useProfileData = () => {
         // Use the actual backend API
         const endpoint = `${apiUrl}/users/profile`;
 
-        const data = await fetchData<ProfileResponse>(endpoint, {
+        /*const data = await fetchData<ProfileResponse>(endpoint, {
           signal: controller.signal,
         });
+        */
+       const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : "";
+       const data = await fetchData<ProfileResponse>(endpoint, {
+        signal: controller.signal,
+        headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+       });
 
         setProfileData(data);
       } catch (err: unknown) {
