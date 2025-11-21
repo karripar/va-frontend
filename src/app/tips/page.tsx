@@ -1,14 +1,23 @@
 "use client";
 import { useState } from "react";
-import { useExchangeStories, useFeaturedStories, StoryFilters } from "@/hooks/exchangeStoriesHooks";
-import StoryCard from "@/components/exchange-stories/StoryCard";
+import { useExchangeStories, useFeaturedStories, StoryFilters, ExchangeStory } from "@/hooks/exchangeStoriesHooks";
+import StoryMindMap from "@/components/exchange-stories/StoryMindMap";
+import StoryModal from "@/components/exchange-stories/StoryModal";
 import StoryFiltersComponent from "@/components/exchange-stories/StoryFilters";
-import { FaSpinner, FaStar } from "react-icons/fa";
+import StoryAdminPanel from "@/components/exchange-stories/StoryAdminPanel";
+import { FaSpinner, FaStar, FaMap, FaList } from "react-icons/fa";
+import { useAuth } from "@/hooks/useAuth";
+import { ADMIN_LEVEL_ID } from "@/config/roles";
 
 export default function TipsPage() {
+  const { user, isAuthenticated } = useAuth();
   const [filters, setFilters] = useState<StoryFilters>({});
+  const [viewMode, setViewMode] = useState<"mindmap" | "list">("mindmap");
+  const [selectedStory, setSelectedStory] = useState<ExchangeStory | null>(null);
   const { stories, loading, error } = useExchangeStories(filters);
   const { stories: featured, loading: featuredLoading } = useFeaturedStories();
+
+  const isAdmin = isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID);
 
   const handleFilterChange = (newFilters: StoryFilters) => {
     setFilters(newFilters);
@@ -27,25 +36,43 @@ export default function TipsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Featured Stories */}
-        {!featuredLoading && featured.length > 0 && (
-          <div className="mb-12">
-            <div className="flex items-center gap-2 mb-6">
-              <FaStar className="text-yellow-500 text-2xl" />
-              <h2 className="text-2xl font-bold text-gray-900">Suositellut tarinat</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featured.slice(0, 3).map((story) => (
-                <StoryCard key={story.id} story={story} />
-              ))}
-            </div>
+        {/* Admin Panel */}
+        {isAdmin && <StoryAdminPanel />}
+
+        {/* View Mode Toggle */}
+        <div className="flex justify-end mb-6">
+          <div className="bg-white rounded-lg shadow p-1 flex gap-1">
+            <button
+              onClick={() => setViewMode("mindmap")}
+              className={`px-4 py-2 rounded flex items-center gap-2 transition-colors ${
+                viewMode === "mindmap"
+                  ? "bg-[#FF5722] text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <FaMap />
+              Mind Map
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={`px-4 py-2 rounded flex items-center gap-2 transition-colors ${
+                viewMode === "list"
+                  ? "bg-[#FF5722] text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <FaList />
+              List View
+            </button>
           </div>
+        </div>
+
+        {/* Filters & only in list view */}
+        {viewMode === "list" && (
+          <StoryFiltersComponent onFilterChange={handleFilterChange} />
         )}
 
-        {/* Filters */}
-        <StoryFiltersComponent onFilterChange={handleFilterChange} />
-
-        {/* Stories Grid */}
+        {/* Content */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <FaSpinner className="animate-spin text-4xl text-[#FF5722]" />
@@ -62,20 +89,66 @@ export default function TipsPage() {
           </div>
         ) : stories.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-600 text-lg mb-4">Ei tarinoita hakuehdoilla</p>
-            <button
-              onClick={() => setFilters({})}
-              className="text-[#FF5722] font-semibold hover:underline"
-            >
-              Tyhjennä suodattimet
-            </button>
+            <p className="text-gray-600 text-lg mb-4">Ei tarinoita</p>
+            {viewMode === "list" && (
+              <button
+                onClick={() => setFilters({})}
+                className="text-[#FF5722] font-semibold hover:underline"
+              >
+                Tyhjennä suodattimet
+              </button>
+            )}
+          </div>
+        ) : viewMode === "mindmap" ? (
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
+              Explore stories by country and city
+            </h3>
+            <StoryMindMap stories={stories} onStorySelect={setSelectedStory} />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {stories.map((story) => (
-              <StoryCard key={story.id} story={story} />
-            ))}
-          </div>
+          <>
+            {!featuredLoading && featured.length > 0 && (
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <FaStar className="text-yellow-500 text-xl" />
+                  <h3 className="text-xl font-bold text-gray-900">Featured</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {featured.slice(0, 3).map((story) => (
+                    <button
+                      key={story.id}
+                      onClick={() => setSelectedStory(story)}
+                      className="bg-white rounded-lg shadow hover:shadow-lg transition-all p-4 text-left"
+                    >
+                      <h4 className="font-bold text-gray-900 mb-1">{story.title}</h4>
+                      <p className="text-sm text-gray-600">{story.city}, {story.country}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {stories.map((story) => (
+                <button
+                  key={story.id}
+                  onClick={() => setSelectedStory(story)}
+                  className="bg-white rounded-lg shadow hover:shadow-lg transition-all p-4 text-left"
+                >
+                  <h4 className="font-bold text-gray-900 mb-1">{story.title}</h4>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {story.city}, {story.country}
+                  </p>
+                  <p className="text-sm text-gray-700 line-clamp-2">{story.summary}</p>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Story Modal */}
+        {selectedStory && (
+          <StoryModal story={selectedStory} onClose={() => setSelectedStory(null)} />
         )}
       </div>
     </div>
