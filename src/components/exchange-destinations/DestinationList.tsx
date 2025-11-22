@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes";
 import { useLanguage } from "@/context/LanguageContext";
+import FavoriteButton from "@/components/ui/FavoriteButton";
 
 interface DestinationListProps {
   data: DestinationWithCoordinatesResponse;
@@ -114,19 +115,28 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
                             key={`${uni.title}-${uni.country}-${index}`}
                             className="p-3 border-b last:border-b-0 hover:bg-white hover:shadow transition"
                           >
-                            <h3 className="text-gray-800 font-medium">
-                              {uni.title}
-                            </h3>
-                            {uni.link && (
-                              <a
-                                href={uni.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[#FF5000] text-sm hover:underline"
-                              >
-                                {translations[language]?.visitWebsite || "Visit Website"}
-                              </a>
-                            )}
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex-1">
+                                <h3 className="text-[var(--typography)] font-medium">
+                                  {uni.title}
+                                </h3>
+                                {uni.link && (
+                                  <a
+                                    href={uni.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm hover:underline"
+                                    style={{ color: 'var(--va-orange)' }}
+                                  >
+                                    {translations[language]?.visitWebsite || "Visit Website"}
+                                  </a>
+                                )}
+                              </div>
+                              <FavoriteButton 
+                                destinationName={uni.title}
+                                className="p-3 mt-1"
+                              />
+                            </div>
                           </li>
                         ))}
                       </ul>

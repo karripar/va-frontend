@@ -9,23 +9,33 @@ interface ProfileHeaderProps {
   backPath?: string;
 }
 
-export default function ProfileHeader({ title, showEdit = false, showBack = true, backPath }: ProfileHeaderProps) {
+export default function ProfileHeader({
+  title,
+  showEdit = false,
+  showBack = true,
+  backPath,
+}: ProfileHeaderProps) {
   const router = useRouter();
-  
+
   return (
     <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
       {showBack && (
         <button
-          onClick={() => backPath ? router.push(backPath) : router.back()}
-          className="absolute left-4 text-white hover:text-gray-200 transition-colors"
+          onClick={() => (backPath ? router.push(backPath) : router.back())}
+          className="absolute left-6 text-white hover:text-gray-200 transition-colors"
           aria-label="Takaisin"
         >
           <FaArrowLeft size={20} />
         </button>
       )}
-      
-      <h1 className="text-2xl tracking-widest p-2" style={{ fontFamily: "var(--font-machina-bold)" }}>{title}</h1>
-      
+
+      <h1
+        className="text-2xl tracking-widest p-2"
+        style={{ fontFamily: "var(--font-machina-bold)" }}
+      >
+        {title}
+      </h1>
+
       {showEdit && (
         <Link
           href="/profile/edit"
