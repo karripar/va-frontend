@@ -12,7 +12,7 @@ const ContactItem: React.FC<ContactItemProps> = ({ contact, isAdmin, onRemove, t
     <li className="flex justify-between items-center border border-gray-300 rounded-xl p-4">
       <div>
         <p className="font-medium">{contact.name}</p>
-        <p className="text-sm italic text-gray-500">{contact.title}</p>
+        <p className="text-sm italic text-[var(--typography)]">{contact.title}</p>
         <a href={`mailto:${contact.email}`} className="text-blue-600 hover:underline">
           {contact.email}
         </a>

@@ -43,7 +43,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
     <button
       type="submit"
       disabled={loading}
-      className="bg-[#FF5000] text-white rounded-lg py-2 hover:bg-[var(--sushi-red3)] transition-colors"
+      className="bg-[#FF5000] text-white rounded-lg py-2 transition-colors hover:bg-[#e64500] disabled:bg-gray-400"
     >
       {loading ? t.loading : t.add}
     </button>

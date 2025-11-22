@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ProfileResponse } from "va-hybrid-types/contentTypes";
 import useSearchActions from "@/hooks/searchHooks";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Props {
   title: string;
@@ -14,8 +15,19 @@ export default function SearchUsers({ title, noUsersText }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ProfileResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
-
   const { searchUsersByEmail, usersLoading } = useSearchActions();
+  const { language } = useLanguage();
+
+  const t: Record<string, Record<string, string>> = {
+    en: {
+      noUsersFound: "No users found with that email.",
+      searchByEmail: "Search by email...",
+    },
+    fi: {
+      noUsersFound: "Ei käyttäjiä löydetty kyseisellä sähköpostilla.",
+      searchByEmail: "Etsi sähköpostilla...",
+    },
+  };
 
   // Debounce search
   const debounceSearch = (() => {
@@ -48,7 +60,7 @@ export default function SearchUsers({ title, noUsersText }: Props) {
 
       <input
         type="text"
-        placeholder="Search by email..."
+        placeholder={t[language]?.searchByEmail || "Search by email..."}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="border p-2 rounded w-full"
@@ -72,6 +84,7 @@ export default function SearchUsers({ title, noUsersText }: Props) {
                 <div className="flex flex-col">
                   <span className="font-medium">{user.userName || user.email}</span>
                   <span className="text-sm break-all text-gray-600">{user.email}</span>
+                  
                 </div>
               </div>
 
