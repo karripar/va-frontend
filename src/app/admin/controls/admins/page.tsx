@@ -54,6 +54,7 @@ const AdminBoard = () => {
       emailMismatch: string;
       success: string;
       fail: string;
+      failedFetch: string;
       [key: string]: string;
     }
   > = {
@@ -84,6 +85,7 @@ const AdminBoard = () => {
       searchUsers: "Search Users",
       noUsers: "No users found.",
       addUserAsAdmin: "Add as Admin",
+      failedFetch: "Failed to fetch admins.",
     },
     fi: {
       addAdmin: "Ylläpitäjien hallinta",
@@ -111,6 +113,7 @@ const AdminBoard = () => {
       searchUsers: "Hae käyttäjiä",
       noUsers: "Käyttäjiä ei löytynyt.",
       addUserAsAdmin: "Lisää ylläpitäjäksi",
+      failedFetch: "Ylläpitäjien hakeminen epäonnistui.",
     },
   };
 
@@ -128,6 +131,7 @@ const AdminBoard = () => {
     emailMismatch: string;
     success: string;
     fail: string;
+    failedFetch: string;
     [key: string]: string;
   } = translations[language];
 
@@ -142,7 +146,7 @@ const AdminBoard = () => {
           setAdmins([]);
         }
       } catch (err) {
-        setError(t.fail);
+        setError(t.failedFetch);
       }
     };
     fetchAdmins();
@@ -243,6 +247,10 @@ const AdminBoard = () => {
           loading={loading}
           t={t}
         />
+
+        {/* error / message */}
+        {message && <p className="text-green-600">{message}</p>}
+        {error && <p className="text-red-600">{error}</p>}
 
         <SearchUsers title={t.searchUsers} noUsersText={t.noUsers} />
 

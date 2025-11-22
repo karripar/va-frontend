@@ -87,7 +87,7 @@ const useAdminActions = () => {
         }
       );
 
-      if (!response) setError("No data received from server");
+      if (!response) setError("Failed to fetch admins");
       return response;
     } catch (err: unknown) {
       console.error("Error fetching admins:", err);
