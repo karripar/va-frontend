@@ -25,7 +25,7 @@ export const authService = {
     });
 
     if (!response.ok) {
-      throw new Error(`Authentication failed: ${response.status}`);
+      throw new Error(`Authentication failed: ${response.status}. User may have been blocked.`);
     }
 
     const authResponse = await response.json();

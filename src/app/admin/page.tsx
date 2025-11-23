@@ -16,6 +16,7 @@ const AdminControlPanel = () => {
       welcome:
         "Welcome to the admin panel. Here you can manage administrators and uploaded documents.",
       adminManagement: "Admin Management",
+      userManagement: "User Management",
       documentManagement: "Document Management",
     },
     fi: {
@@ -26,6 +27,7 @@ const AdminControlPanel = () => {
       welcome:
         "Tervetuloa hallintapaneeliin. Täällä voit hallita ylläpitäjiä ja ladattuja dokumentteja.",
       adminManagement: "Ylläpitäjien hallinta",
+      userManagement: "Käyttäjien hallinta",
       documentManagement: "Dokumenttien hallinta",
     },
   };
@@ -76,6 +78,21 @@ const AdminControlPanel = () => {
               >
                 <span className="font-medium text-lg tracking-wide">
                   {t.adminManagement}
+                </span>
+                <span>›</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin/controls/users"
+              className="block w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[var(--va-orange)] text-[var(--typography)] hover:text-white transition-colors"
+            >
+              <div
+                className="flex justify-between items-center"
+                style={{ fontFamily: "var(--font-machina-regular)" }}
+              >
+                <span className="font-medium text-lg tracking-wide">
+                  {t.userManagement}
                 </span>
                 <span>›</span>
               </div>

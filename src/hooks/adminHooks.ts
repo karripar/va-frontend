@@ -2,6 +2,8 @@
 
 import fetchData from "@/lib/fetchData";
 import { useState } from "react";
+import { ProfileResponse } from "va-hybrid-types/contentTypes";
+import { MessageResponse } from "va-hybrid-types/MessageTypes";
 
 const API_URL = process.env.NEXT_PUBLIC_AUTH_API || "";
 
@@ -16,6 +18,10 @@ interface MakeAdminResponse {
 
 interface AdminListResponse {
   admins: { _id: string; email: string; userName: string; user_level_id: number}[];
+}
+
+interface BlockedUsersResponse {
+  blockedUsers: ProfileResponse[];
 }
 
 const useAdminActions = () => {
@@ -164,11 +170,115 @@ const useAdminActions = () => {
     }
   };
 
+  const getBlockedUsers = async (): Promise<BlockedUsersResponse> => {
+  
+    setLoading(true);
+    setError(null);
+  
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No auth token found");
+      setLoading(false);
+      return { blockedUsers: [] };
+    }
+
+    try {
+  
+      const response = await fetchData<BlockedUsersResponse>(`${API_URL}/users/blocked/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      return response as BlockedUsersResponse;
+    } catch (err) {
+      console.log("STEP 5: Error thrown:", err);
+      throw err;
+    } finally {
+      console.log("STEP 6: finally executed");
+      setLoading(false);
+    }
+  };
+  
+  
+  
+
+  const toggleBlockUser = async (userId: string) => {
+    setLoading(true);
+    setError(null);
+
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No auth token found");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetchData<MessageResponse>(
+        `${API_URL}/users/block/${encodeURIComponent(userId)}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.message) setError(response.message);
+      return response;
+    } catch (err: unknown) {
+      console.error("Error toggling block status for user:", err);
+      setError("Failed to toggle block status for user");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    setLoading(true);
+    setError(null);
+
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No auth token found");
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await fetchData<MessageResponse>(
+        `${API_URL}/users/${encodeURIComponent(userId)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.message) setError(response.message);
+      return response;
+    } catch (err: unknown) {
+      console.error("Error deleting user:", err);
+      setError("Failed to delete user");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     promoteToAdmin,
     getAdmins,
     demoteFromAdmin,
     elevateAdmin,
+    getBlockedUsers,
+    toggleBlockUser,
+    deleteUser,
     loading,
     error,
   };

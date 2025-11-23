@@ -260,7 +260,7 @@ const AdminBoard = () => {
         {message && <p className="text-green-600">{message}</p>}
         {error && <p className="text-red-600">{error}</p>}
 
-        <SearchUsers title={t.searchUsers} noUsersText={t.noUsers} />
+        <SearchUsers title={t.searchUsers} noUsersText={t.noUsers} adminActions={false}/>
 
         {/* Admin list */}
         <div className="border-t pt-4 mb-12">
