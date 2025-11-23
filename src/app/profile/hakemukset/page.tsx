@@ -26,7 +26,7 @@ interface CategoryExpense {
   notes: string;
 }
 
-// Compact inline document link form component
+// Compact inline document link 
 interface QuickDocumentLinkFormProps {
   documentType: string;
   phase: string;
@@ -50,7 +50,7 @@ const QuickDocumentLinkForm = ({ documentType, phase, onDocumentAdded, onCancel 
       const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
       if (!apiUrl) throw new Error("API URL not configured");
 
-      const response = await fetch(`${apiUrl}/applications/documents`, {
+      const response = await fetch(`${apiUrl}/documents`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
