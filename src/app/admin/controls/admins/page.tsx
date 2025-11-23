@@ -44,6 +44,8 @@ const AdminBoard = () => {
       currentAdmins: string;
       noAdmins: string;
       actions: string;
+      admin: string;
+      elevatedAdmin: string;
       elevate: string;
       demote: string;
       enterEmail: string;
@@ -54,11 +56,14 @@ const AdminBoard = () => {
       emailMismatch: string;
       success: string;
       fail: string;
+      failedFetch: string;
       [key: string]: string;
     }
   > = {
     en: {
       addAdmin: "Admin Management",
+      admin: "Admin",
+      elevatedAdmin: "Super Admin",
       notice:
         "Adding a new admin will grant them administrative privileges. They may alter content and add other admins. Double-check the email before proceeding.",
       notice2:
@@ -84,9 +89,12 @@ const AdminBoard = () => {
       searchUsers: "Search Users",
       noUsers: "No users found.",
       addUserAsAdmin: "Add as Admin",
+      failedFetch: "Failed to fetch admins.",
     },
     fi: {
       addAdmin: "Ylläpitäjien hallinta",
+      admin: "Ylläpitäjä",
+      elevatedAdmin: "Korkein ylläpitäjä",
       notice:
         "Uuden ylläpitäjän lisääminen antaa heille hallinnolliset oikeudet. He voivat muokata sisältöä ja lisätä muita ylläpitäjiä. Tarkista sähköposti huolellisesti ennen jatkamista.",
       notice2:
@@ -111,11 +119,14 @@ const AdminBoard = () => {
       searchUsers: "Hae käyttäjiä",
       noUsers: "Käyttäjiä ei löytynyt.",
       addUserAsAdmin: "Lisää ylläpitäjäksi",
+      failedFetch: "Ylläpitäjien hakeminen epäonnistui.",
     },
   };
 
   const t: {
     currentAdmins: string;
+    admin: string;
+    elevatedAdmin: string;
     noAdmins: string;
     actions: string;
     elevate: string;
@@ -128,6 +139,7 @@ const AdminBoard = () => {
     emailMismatch: string;
     success: string;
     fail: string;
+    failedFetch: string;
     [key: string]: string;
   } = translations[language];
 
@@ -142,7 +154,7 @@ const AdminBoard = () => {
           setAdmins([]);
         }
       } catch (err) {
-        setError(t.fail);
+        setError(t.failedFetch);
       }
     };
     fetchAdmins();
@@ -244,17 +256,22 @@ const AdminBoard = () => {
           t={t}
         />
 
-        <SearchUsers title={t.searchUsers} noUsersText={t.noUsers} />
+        {/* error / message */}
+        {message && <p className="text-green-600">{message}</p>}
+        {error && <p className="text-red-600">{error}</p>}
+
+        <SearchUsers title={t.searchUsers} noUsersText={t.noUsers} adminActions={false}/>
 
         {/* Admin list */}
+        <div className="border-t pt-4 mb-12">
         <AdminList
           admins={admins}
-          setAdmins={setAdmins}
           onDemote={handleDemote}
           onElevate={handleElevate}
           loading={loading}
           t={t}
         />
+        </div>
       </div>
     </>
   );

@@ -1,9 +1,10 @@
 "use client";
 import fetchData from "@/lib/fetchData";
-import { useEffect, useState } from "react";
-import {ExchangeStory, StoriesResponse, StoryFilters } from "va-hybrid-types/contentTypes";
+import { useCallback, useEffect, useState } from "react";
+//import {ExchangeStory, StoriesResponse, StoryFilters } from "va-hybrid-types/contentTypes";
+import { ExchangeStoriesResponse, StoryFilters, ExchangeStory } from 'va-hybrid-types/contentTypes';
 
-// Re-export types for use in other components
+
 export type { StoryFilters, ExchangeStory };
 
 export const useExchangeStories = (filters?: StoryFilters) => {
@@ -12,49 +13,39 @@ export const useExchangeStories = (filters?: StoryFilters) => {
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
 
+  // Use the correct API URL for content
+  const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
+  const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+
+  // API request helper
+  const apiRequest = useCallback(
+    async (url: string, options: RequestInit = {}) => {
+      const res = await fetch(url, {
+        ...options,
+        headers: { Authorization: `Bearer ${token}`, ...options.headers },
+      });
+      return res.ok ? res.json().catch(() => null) : null;
+    },
+    [token]
+  );
+
+  // Provided fetchStories logic
+  const fetchStories = useCallback(async () => {
+    setLoading(true);
+    const data = await apiRequest(`${apiUrl}/exchange-stories/stories/all`);
+    if (data?.stories) setStories(data.stories);
+    setLoading(false);
+  }, [apiUrl, apiRequest]);
+
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
     if (!apiUrl) {
       setError("API URL not configured");
       setLoading(false);
       return;
     }
-
-    const controller = new AbortController();
-
-    const fetchStories = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const params = new URLSearchParams();
-        if (filters?.country) params.append("country", filters.country);
-        if (filters?.university) params.append("university", filters.university);
-        if (filters?.tags?.length) params.append("tags", filters.tags.join(","));
-        if (filters?.minRating) params.append("minRating", filters.minRating.toString());
-        if (filters?.search) params.append("search", filters.search);
-        if (filters?.sort) params.append("sort", filters.sort);
-
-        const data = await fetchData<StoriesResponse>(
-          `${apiUrl}/tips/stories?${params.toString()}`,
-          { signal: controller.signal }
-        );
-
-        setStories(data.stories);
-        setHasMore(data.hasMore);
-      } catch (err: unknown) {
-        if ((err as Error).name !== "AbortError") {
-          console.error("Error fetching stories:", err);
-          setError("Failed to fetch stories");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchStories();
-    return () => controller.abort();
-  }, [filters?.country, filters?.university, filters?.tags, filters?.minRating, filters?.search, filters?.sort]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchStories]);
 
   return { stories, loading, error, hasMore };
 };

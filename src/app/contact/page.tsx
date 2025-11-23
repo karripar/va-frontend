@@ -69,7 +69,7 @@ const ContactPage: React.FC = () => {
     <div className="p-6 max-w-2xl mx-auto mt-6 text-[var(--typography)]">
       <h2 className="text-2xl font-semibold text-center mb-6">{t.title}</h2>
 
-      {loading && <p className="text-center text-gray-500">{t.loading}</p>}
+      {loading && <p className="text-center text-[var(--typography)]">{t.loading}</p>}
       {error && <p className="text-center text-red-500">{t.error}</p>}
 
       <ContactList

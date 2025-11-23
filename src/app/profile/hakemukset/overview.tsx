@@ -8,6 +8,7 @@ import ProgressStep from "@/components/applications/ProgressStep";
 import DocumentUpload from "@/components/applications/DocumentUpload";
 import { useApplicationsData } from "@/hooks/applicationsHooks";
 import{ApplicationPhase, ApplicationStatus}from "va-hybrid-types/contentTypes";
+import LanguageToggle from "@/components/LanguageToggle";
 
 //type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
 //type ApplicationStatus = "not_started" | "in_progress" | "completed" | "pending_review";
@@ -130,8 +131,11 @@ export default function HakemuksetOverviewPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
+      {/* Header with Language Toggle inside, absolutely positioned */}
+      <div className="bg-[#FF5722] text-white flex items-center justify-center relative min-h-[64px]">
+        <div className="absolute right-8 top-4 z-10">
+          <LanguageToggle />
+        </div>
         <button
           onClick={() => router.back()}
           className="absolute left-4 text-white hover:text-gray-200 transition-colors"
