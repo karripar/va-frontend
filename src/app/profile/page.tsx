@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FiEdit } from "react-icons/fi";
 import LogoutButton from "@/components/ui/LogoutButton";
 import { FaArrowLeft } from "react-icons/fa6";
+import LanguageToggle from "@/components/LanguageToggle";
 
 export default function ProfilePage() {
   const { user: profile, loading } = useAuth();
@@ -35,9 +36,13 @@ export default function ProfilePage() {
 
   // Rendering profile data
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       {/* Orange Header with Title, Back Arrow and Edit Icon, Logout */}
       <div className="bg-[#FF5722] text-white px-8 py-6 flex items-center justify-center relative">
+        {/* Language Toggle at top right, above icons */}
+        <div className="absolute right-16 top-2">
+          <LanguageToggle />
+        </div>
         <Link
           href="/"
           className="absolute left-6 text-white hover:scale-110"
@@ -55,9 +60,9 @@ export default function ProfilePage() {
           href="/profile/edit"
           className="absolute right-16 text-white hover:scale-110"
         >
-          <FiEdit size={22} />
+          <FiEdit size={15} />
         </Link>
-        <LogoutButton className="absolute right-6 text-white hover:scale-110" />
+        <LogoutButton className="absolute right-6 text-white hover:scale-110 !text-base" />
       </div>
 
       {/* Profile Content - White background */}

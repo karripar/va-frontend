@@ -91,7 +91,7 @@ const useApplicationDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/applications/documents/${documentId}`, {
+      const response = await fetch(`${apiUrl}/documents/${documentId}`, {
         method: 'DELETE',
       });
 
