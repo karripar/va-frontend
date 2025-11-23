@@ -19,19 +19,18 @@ const Page = () => {
   useEffect(() => {
     const fetchBlocked = async () => {
       try {
-        const data = await getBlockedUsers();                 // { blockedUsers: [...] }
+        const data = await getBlockedUsers(); // { blockedUsers: [...] }
         console.log("Blocked users:", data);
-        setBlockedUsers(data?.blockedUsers || []);           // <-- extract the array
+        setBlockedUsers(data?.blockedUsers || []); // <-- extract the array
       } catch (err) {
         setError("Error fetching blocked users.");
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchBlocked();
   }, []);
-  
 
   const t: Record<string, Record<string, string>> = {
     en: {
@@ -39,12 +38,16 @@ const Page = () => {
       userManagement: "User Management",
       block: "Block",
       unblock: "Unblock",
+      blockedUsers: "Blocked Users",
+      noBlockedUsers: "No blocked users.",
     },
     fi: {
       backToHome: "Takaisin ylläpitäjän etusivulle",
       userManagement: "Käyttäjien hallinta",
       block: "Estä",
       unblock: "Poista esto",
+      blockedUsers: "Estetyt käyttäjät",
+      noBlockedUsers: "Ei estettyjä käyttäjiä.",
     },
   };
 
@@ -67,16 +70,23 @@ const Page = () => {
         </h1>
       </div>
       <div className="p-6 max-w-3xl mx-auto space-y-12">
+        <SearchUsers
+          title={t[language]?.userManagement || "User Management"}
+          noUsersText="No users found."
+          adminActions={true}
+        />
 
-        <SearchUsers title={t[language]?.userManagement || "User Management"} noUsersText="No users found." adminActions={true}/>
-
-        <h1 className="text-xl font-semibold mb-4">Blocked Users</h1>
+        <h1 className="text-xl font-semibold mb-4">
+            {t[language]?.blockedUsers || "Blocked Users"}
+        </h1>
 
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-600">{error}</p>}
 
         {!loading && blockedUsers.length === 0 && (
-          <p className="text-gray-600">No blocked users.</p>
+          <p className="text-gray-600">
+            {t[language]?.noBlockedUsers || "No blocked users."}
+          </p>
         )}
 
         {!loading && blockedUsers.length > 0 && (
