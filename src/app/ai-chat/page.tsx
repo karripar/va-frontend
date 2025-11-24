@@ -441,7 +441,7 @@ function MessageBubble({ role, text }: { role: Role; text: string }) {
     <div className="flex gap-3 pr-4">
       {/* Bot Icon */}
       <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--va-orange)] flex items-center justify-center text-white font-bold text-xs mt-1 shadow-sm">
-        VA
+        AI
       </div>
 
       <div className="flex flex-col gap-2 w-full max-w-[90%]">
