@@ -410,63 +410,122 @@ export default function AIChatPage() {
 
 function MessageBubble({ role, text }: { role: Role; text: string }) {
   const base =
-    'w-fit max-w-[96%] sm:max-w-[88%] lg:max-w-[72ch] px-3 py-2 rounded-lg break-words leading-snug';
+    'w-fit max-w-[100%] px-4 py-3 rounded-2xl break-words leading-relaxed shadow-sm';
+
+  // Split text if it contains "Lähteet:"
+  let content = text;
+  let sources = '';
+  // Case insensitive search for "Lähteet:" or "Sources:"
+  const sourcesMatch = text.match(/(?:\n|^)(?:Lähteet|Sources):/i);
+
+  if (sourcesMatch && sourcesMatch.index !== undefined) {
+    content = text.substring(0, sourcesMatch.index).trim();
+    sources = text
+      .substring(sourcesMatch.index + sourcesMatch[0].length)
+      .trim();
+  }
+
   if (role === 'user') {
     return (
-      <div className="ml-auto flex justify-end">
+      <div className="ml-auto flex justify-end pl-10">
         <div
-          className={`${base} whitespace-pre-wrap border border-[var(--va-border)] shadow-sm`}
-          style={{
-            backgroundColor: 'var(--va-grey-50)',
-            color: 'var(--typography)',
-          }}
+          className={`${base} bg-[var(--va-grey-50)] text-[var(--typography)] border border-[var(--va-border)] rounded-br-sm`}
         >
           {text}
         </div>
       </div>
     );
   }
+
   return (
-    <div
-      className={`${base} border border-[var(--va-border)] shadow-sm`}
-      style={{
-        backgroundColor: 'var(--background)',
-        color: 'var(--typography)',
-      }}
-    >
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          ul: ({ ...props }) => (
-            <ul className="list-disc pl-5 my-2 space-y-1" {...props} />
-          ),
-          ol: ({ ...props }) => (
-            <ol className="list-decimal pl-5 my-2 space-y-1" {...props} />
-          ),
-          li: ({ ...props }) => <li className="leading-relaxed" {...props} />,
-          p: ({ ...props }) => <p className="my-2 last:mb-0" {...props} />,
-          strong: ({ ...props }) => <strong className="font-bold" {...props} />,
-          a: ({ ...props }) => (
-            <a
-              className="text-[var(--va-orange)] hover:underline font-medium"
-              target="_blank"
-              rel="noopener noreferrer"
-              {...props}
-            />
-          ),
-          h1: ({ ...props }) => (
-            <h1 className="text-lg font-bold my-2" {...props} />
-          ),
-          h2: ({ ...props }) => (
-            <h2 className="text-base font-bold my-2" {...props} />
-          ),
-          h3: ({ ...props }) => (
-            <h3 className="text-sm font-bold my-1" {...props} />
-          ),
-        }}
-      >
-        {text}
-      </ReactMarkdown>
+    <div className="flex gap-3 pr-4">
+      {/* Bot Icon */}
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--va-orange)] flex items-center justify-center text-white font-bold text-xs mt-1 shadow-sm">
+        VA
+      </div>
+
+      <div className="flex flex-col gap-2 w-full max-w-[90%]">
+        <div
+          className={`${base} bg-white text-[var(--typography)] border border-[var(--va-border)] rounded-bl-sm`}
+        >
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              ul: ({ ...props }) => (
+                <ul className="list-disc pl-5 my-2 space-y-1" {...props} />
+              ),
+              ol: ({ ...props }) => (
+                <ol className="list-decimal pl-5 my-2 space-y-1" {...props} />
+              ),
+              li: ({ ...props }) => (
+                <li className="leading-relaxed" {...props} />
+              ),
+              p: ({ ...props }) => <p className="my-2 last:mb-0" {...props} />,
+              strong: ({ ...props }) => (
+                <strong className="font-bold" {...props} />
+              ),
+              a: ({ ...props }) => (
+                <a
+                  className="text-[var(--va-orange)] hover:underline font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  {...props}
+                />
+              ),
+              h1: ({ ...props }) => (
+                <h1 className="text-lg font-bold my-2" {...props} />
+              ),
+              h2: ({ ...props }) => (
+                <h2 className="text-base font-bold my-2" {...props} />
+              ),
+              h3: ({ ...props }) => (
+                <h3 className="text-sm font-bold my-1" {...props} />
+              ),
+            }}
+          >
+            {content}
+          </ReactMarkdown>
+        </div>
+
+        {sources && (
+          <div className="bg-orange-50/50 border border-orange-100 rounded-xl p-3 text-sm animate-in fade-in slide-in-from-top-2 duration-500">
+            <p className="font-bold text-[var(--va-orange)] mb-2 flex items-center gap-2 text-xs uppercase tracking-wider">
+              <FiBook className="w-3 h-3" /> Lähteet
+            </p>
+            <div className="prose prose-sm max-w-none prose-ul:my-1 prose-li:my-0 text-gray-600">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  ul: ({ ...props }) => (
+                    <ul className="list-none space-y-2 pl-0" {...props} />
+                  ),
+                  li: ({ ...props }) => (
+                    <li
+                      className="flex items-start gap-2 bg-white p-2 rounded border border-orange-100 shadow-sm"
+                      {...props}
+                    >
+                      <span className="text-[var(--va-orange)] mt-1 text-xs">
+                        📄
+                      </span>
+                      <span className="flex-1">{props.children}</span>
+                    </li>
+                  ),
+                  a: ({ ...props }) => (
+                    <a
+                      className="text-[var(--va-orange)] hover:underline font-medium break-all"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      {...props}
+                    />
+                  ),
+                }}
+              >
+                {sources}
+              </ReactMarkdown>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
