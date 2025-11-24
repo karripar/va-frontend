@@ -44,7 +44,10 @@ export async function sendChatMessage(
         })),
         toolsState: {
           fileSearchEnabled: true,
-          webSearchEnabled: false,
+          webSearchEnabled: true,
+          webSearchConfig: {
+            allowed_domains: ['opiskelijan.metropolia.fi'],
+          },
           codeInterpreterEnabled: false,
           vectorStore: process.env.NEXT_PUBLIC_VECTOR_STORE_ID
             ? {
