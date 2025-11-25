@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
+import Link from "next/link";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { FiExternalLink, FiEdit2, FiX, FiCheck, FiFile } from "react-icons/fi";
+import { FiExternalLink, FiEdit2, FiFile, FiEdit } from "react-icons/fi";
 import { AuthContext } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import {
@@ -8,6 +9,8 @@ import {
   useToggleInstructionVisibility,
   useInstructionLinks,
   useUpdateInstructionLink,
+  useInstructionSteps,
+  useUpdateInstructionStep,
 } from "@/hooks/instructionHooks";
 import { useFileUpload } from "@/hooks/useFileUpload";
 
@@ -52,11 +55,10 @@ export const Stepper = ({ steps }: StepperProps) => {
     return fi ?? fallback ?? en ?? "";
   };
 
-  // Admin UI translations
-  const adminTranslations = {
+  const translations: Record<string, Record<string, string>> = {
     fi: {
       editLink: "Muokkaa linkkiä",
-      oldUrl: "Vanha osoite:",
+      oldUrl: "Nykyinen osoite:",
       newUrl: "Lisää uusi osoite tai lataa tiedosto:",
       uploadFile: "Lataa tiedosto",
       acceptedTypes: "Hyväksytyt tiedostotyypit: PDF, PPT, PPTX, DOC, DOCX",
@@ -68,6 +70,13 @@ export const Stepper = ({ steps }: StepperProps) => {
       cancel: "Peruuta",
       hideStep: "Piilota vaihe",
       showStep: "Näytä vaihe",
+      updateContent: "Päivitä sisältöä",
+      editStepTitle: "Muokkaa vaiheen sisältöä",
+      editStepDisclaimer: "Päivitäthän ohjeet sekä suomeksi että englanniksi. Tyhjäksi jätetyt kentät eivät päivity.",
+      currentTitleFi: "Nykyinen otsikko (FI):",
+      currentTitleEn: "Nykyinen otsikko (EN):",
+      currentTextFi: "Nykyinen teksti (FI):",
+      currentTextEn: "Nykyinen teksti (EN):",
     },
     en: {
       editLink: "Edit link",
@@ -83,12 +92,17 @@ export const Stepper = ({ steps }: StepperProps) => {
       cancel: "Cancel",
       hideStep: "Hide step",
       showStep: "Show step",
+      updateContent: "Update content",
+      editStepTitle: "Edit step content",
+      editStepDisclaimer: "Please update instructions in both Finnish and English. Empty fields will not be updated.",
+      currentTitleFi: "Current title (FI):",
+      currentTitleEn: "Current title (EN):",
+      currentTextFi: "Current text (FI):",
+      currentTextEn: "Current text (EN):",
     },
   };
 
-  const t =
-    adminTranslations[language as keyof typeof adminTranslations] ||
-    adminTranslations.fi;
+  const t = translations[language as keyof typeof translations] || translations.fi;
 
   const [visibleSteps, setVisibleSteps] = useState<boolean[]>(
     steps.map(() => true)
@@ -98,6 +112,17 @@ export const Stepper = ({ steps }: StepperProps) => {
   const [editingLink, setEditingLink] = useState<string | null>(null);
   const [editingHref, setEditingHref] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // step edit state (admin only)
+  const [editingStepIndex, setEditingStepIndex] = useState<number | null>(null);
+  const [newTitleFi, setNewTitleFi] = useState("");
+  const [newTitleEn, setNewTitleEn] = useState("");
+  const [newTextFi, setNewTextFi] = useState("");
+  const [newTextEn, setNewTextEn] = useState("");
+
+  // hook for raw steps and update
+  const { rawSteps } = useInstructionSteps();
+  const { updateStep } = useUpdateInstructionStep();
 
   // set the visible states
   useEffect(() => {
@@ -197,22 +222,40 @@ export const Stepper = ({ steps }: StepperProps) => {
             <div className="absolute -top-3 -left-3 w-8 h-8 flex items-center justify-center bg-[var(--va-orange)] text-white rounded-full ">
               {i + 1}
             </div>
-            <div className="flex gap-2">
-              {/*if admin toggle visibility of a step*/}
+            <div className="flex gap-3 items-center justify-end px-1 py-1">
+              {/* if admin toggle visibility of a step */}
               {isAdmin && (
-                <button
-                  name="Toggle Step Visibility"
-                  onClick={() => handleToggleVisibility(i)}
-                  className="hover:text-[var(--va-orange)] transition-colors cursor-pointer flex justify-end w-full"
-                  aria-label={visibleSteps[i] ? t.hideStep : t.showStep}
-                  title={visibleSteps[i] ? t.hideStep : t.showStep}
-                >
-                  {visibleSteps[i] ? (
-                    <FaRegEye size={24} />
-                  ) : (
-                    <FaRegEyeSlash size={24} />
-                  )}
-                </button>
+                <>
+                  {/* single content edit button per step */}
+                  <button
+                    onClick={() => {
+                      setEditingStepIndex(i === editingStepIndex ? null : i);
+                      setNewTitleFi("");
+                      setNewTitleEn("");
+                      setNewTextFi("");
+                      setNewTextEn("");
+                      setEditingLink(null);
+                    }}
+                    className="hover:text-[var(--va-orange)] transition-colors cursor-pointer"
+                    aria-label={t.updateContent}
+                    title={t.updateContent}
+                  >
+                    <FiEdit size={22} />
+                  </button>
+                  <button
+                    name="Toggle Step Visibility"
+                    onClick={() => handleToggleVisibility(i)}
+                    className="hover:text-[var(--va-orange)] transition-colors cursor-pointer"
+                    aria-label={visibleSteps[i] ? t.hideStep : t.showStep}
+                    title={visibleSteps[i] ? t.hideStep : t.showStep}
+                  >
+                    {visibleSteps[i] ? (
+                      <FaRegEye size={24} />
+                    ) : (
+                      <FaRegEyeSlash size={24} />
+                    )}
+                  </button>
+                </>
               )}
             </div>
             {/* display the visible steps */}
@@ -232,6 +275,116 @@ export const Stepper = ({ steps }: StepperProps) => {
                 >
                   {step.text}
                 </div>
+                {/* form for admins to edit instruction step content */}
+                {isAdmin && editingStepIndex === i && (
+                  <div className="sm:mx-6 mx-2 my-6 p-4 border border-[var(--va-border)] rounded-lg">
+                    <label
+                      className="text-lg text-[var(--va-orange)]"
+                      style={{
+                        fontFamily: "var(--font-machina-bold)",
+                      }}
+                    >
+                      {t.editStepTitle}
+                    </label>
+                    <p className="text-sm text-[var(--typography)] my-6">
+                      {t.editStepDisclaimer}
+                    </p>
+
+                    <div className="mb-6">
+                      <div className="text-sm text-[var(--typography)] my-4">
+                        {t.currentTitleFi} <b>{rawSteps?.find((s) => s.stepIndex === i)?.titleFi || "-"}</b>
+                      </div>
+                      <input
+                        value={newTitleFi}
+                        onChange={(e) => setNewTitleFi(e.target.value)}
+                        placeholder="Uusi otsikko (FI)"
+                        className="w-full px-3 py-2 border border-[var(--va-border)] rounded-md text-sm bg-[var(--background)]"
+                      />
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="text-sm text-[var(--typography)] my-4">
+                        {t.currentTitleEn} <b>{rawSteps?.find((s) => s.stepIndex === i)?.titleEn || "-"}</b>
+                      </div>
+                      <input
+                        value={newTitleEn}
+                        onChange={(e) => setNewTitleEn(e.target.value)}
+                        placeholder="Uusi otsikko (EN)"
+                        className="w-full px-3 py-2 border border-[var(--va-border)] rounded-md text-sm bg-[var(--background)]"
+                      />
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="text-sm text-[var(--typography)]">{t.currentTextFi}</div>
+                      <div className="mb-2 text-sm py-4">
+                        {rawSteps?.find((s) => s.stepIndex === i)?.textFi ||
+                          "-"}
+                      </div>
+                      <textarea
+                        value={newTextFi}
+                        onChange={(e) => setNewTextFi(e.target.value)}
+                        placeholder="Uusi teksti (FI)"
+                        className="w-full px-3 py-2 border border-[var(--va-border)] rounded-md text-sm bg-[var(--background)]"
+                      />
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="text-sm text-[var(--typography)]">{t.currentTextEn}</div>
+                      <div className="mb-2 text-sm py-4">
+                        {rawSteps?.find((s) => s.stepIndex === i)?.textEn ||
+                          "-"}
+                      </div>
+                      <textarea
+                        value={newTextEn}
+                        onChange={(e) => setNewTextEn(e.target.value)}
+                        placeholder="Uusi teksti (EN)"
+                        className="w-full px-3 py-2 border border-[var(--va-border)] rounded-md text-sm bg-[var(--background)]"
+                      />
+                    </div>
+
+                    <div className="flex gap-3 mt-3">
+                      <button
+                        onClick={async () => {
+                          const updates: Record<string, string> = {};
+                          if (newTitleFi.trim())
+                            updates.titleFi = newTitleFi.trim();
+                          if (newTitleEn.trim())
+                            updates.titleEn = newTitleEn.trim();
+                          if (newTextFi.trim())
+                            updates.textFi = newTextFi.trim();
+                          if (newTextEn.trim())
+                            updates.textEn = newTextEn.trim();
+                          if (Object.keys(updates).length === 0) {
+                            setEditingStepIndex(null);
+                            return;
+                          }
+                          await updateStep(i, updates);
+                          setEditingStepIndex(null);
+                          setNewTitleFi("");
+                          setNewTitleEn("");
+                          setNewTextFi("");
+                          setNewTextEn("");
+                        }}
+                        className="px-4 py-2 bg-[var(--va-orange)] text-white rounded-md"
+                      >
+                        {t.update}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingStepIndex(null);
+                          setNewTitleFi("");
+                          setNewTitleEn("");
+                          setNewTextFi("");
+                          setNewTextEn("");
+                        }}
+                        className="px-4 py-2 bg-[var(--va-grey-50)] rounded-md border border-[var(--va-border)]"
+                      >
+                        {t.cancel}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {/* display the links */}
                 {(() => {
                   // get all links for steps from backend
@@ -262,45 +415,77 @@ export const Stepper = ({ steps }: StepperProps) => {
                           >
                             {!isEditing && (
                               <div className="flex items-center sm:gap-2 gap-1">
-                                <a
-                                  href={href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex-1 bg-[var(--va-orange)] px-2 mb-2 mt-1 inline-block text-[var(--background)] uppercase hover:scale-102 sm:px-4 py-2 rounded-full sm:text-md text-sm tracking-wider text-center"
-                                  style={{
-                                    fontFamily: "var(--font-machina-bold)",
-                                  }}
-                                >
-                                  <span className="inline-flex items-center gap-2 px-2 break-words">
-                                    {displayLabel}
-                                    <div className="flex flex-row justify-between gap-1">
-                                      {isFile && <FiFile size={16} />}
-                                      {isExternal && (
-                                        <FiExternalLink
-                                          size={20}
-                                          className="pb-1"
-                                        />
-                                      )}
-                                    </div>
-                                  </span>
-                                </a>
-                                {isAdmin && (
-                                  <button
-                                    onClick={() =>
-                                      handleStartEditLink(i, displayLabel, href)
-                                    }
-                                    className="p-2 text-[var(--va-orange)] hover:bg-[var(--va-grey-50)] rounded-md transition-colors"
-                                    title={t.editLink}
+                                {!isExternal &&
+                                !isFile &&
+                                href &&
+                                href.startsWith("/") ? (
+                                  <Link
+                                    href={href}
+                                    className="flex-1 bg-[var(--va-orange)] px-2 mb-2 mt-1 inline-block text-[var(--background)] uppercase hover:scale-102 sm:px-4 py-2 rounded-full sm:text-md text-sm tracking-wider text-center"
+                                    style={{
+                                      fontFamily: "var(--font-machina-bold)",
+                                    }}
                                   >
-                                    <FiEdit2 size={20} />
-                                  </button>
+                                    <span className="inline-flex items-center gap-2 px-2 break-words">
+                                      {displayLabel}
+                                      <div className="flex flex-row justify-between gap-1">
+                                        {isFile && <FiFile size={16} />}
+                                        {isExternal && (
+                                          <FiExternalLink
+                                            size={20}
+                                            className="pb-1"
+                                          />
+                                        )}
+                                      </div>
+                                    </span>
+                                  </Link>
+                                ) : (
+                                  <a
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 bg-[var(--va-orange)] px-2 mb-2 mt-1 inline-block text-[var(--background)] uppercase hover:scale-102 sm:px-4 py-2 rounded-full sm:text-md text-sm tracking-wider text-center"
+                                    style={{
+                                      fontFamily: "var(--font-machina-bold)",
+                                    }}
+                                  >
+                                    <span className="inline-flex items-center gap-2 px-2 break-words">
+                                      {displayLabel}
+                                      <div className="flex flex-row justify-between gap-1">
+                                        {isFile && <FiFile size={16} />}
+                                        {isExternal && (
+                                          <FiExternalLink
+                                            size={20}
+                                            className="pb-1"
+                                          />
+                                        )}
+                                      </div>
+                                    </span>
+                                  </a>
+                                )}
+                                {isAdmin && (
+                                  <>
+                                    <button
+                                      onClick={() =>
+                                        handleStartEditLink(
+                                          i,
+                                          displayLabel,
+                                          href
+                                        )
+                                      }
+                                      className="p-2 text-[var(--va-orange)] hover:bg-[var(--va-grey-50)] rounded-md transition-colors"
+                                      title={t.editLink}
+                                    >
+                                      <FiEdit2 size={20} />
+                                    </button>
+                                  </>
                                 )}
                               </div>
                             )}
 
                             {/* edit links */}
                             {isAdmin && isEditing && (
-                              <div className="p-4 sm:p-8 rounded-lg space-y-3 my-3">
+                              <div className="my-4 sm:mx-0 mx-1 p-4 m-1 border border-[var(--va-border)] rounded-lg">
                                 <label
                                   style={{
                                     fontFamily: "var(--font-machina-bold)",
@@ -310,7 +495,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                                   {displayLabel}
                                 </label>
                                 <div>
-                                  <label className="text-sm text-[var(--va-dark-grey)] my-4 block">
+                                  <label className="text-sm text-[var(--typography)] my-4 block">
                                     {t.oldUrl}
                                   </label>
                                   <p className="text-sm text-[var(--typography)] bg-white p-2 rounded border border-[var(--va-border)] break-all">
@@ -319,7 +504,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                                 </div>
 
                                 <div>
-                                  <label className="text-sm text-[var(--va-dark-grey)] block my-4 pt-2">
+                                  <label className="text-sm text-[var(--typography)] block my-4 pt-2">
                                     {t.newUrl}
                                   </label>
                                   <input
@@ -337,7 +522,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                                   <div className="bg-white p-4 rounded border border-dashed border-[var(--va-orange-50)] hover:border-[var(--va-orange)] transition-colors my-6">
                                     <div className="flex flex-col items-center mx-2">
                                       <FiFile className="h-12 w-12 text-[var(--va-orange)] my-2" />
-                                      <h4 className="my-4 text-base font-bold text-[var(--va-dark-grey)]">
+                                      <h4 className="my-4 text-base font-bold text-[var(--typography)]">
                                         {t.uploadFile}
                                       </h4>
                                       <p className="my-2 text-sm text-[var(--typography)] px-4">
@@ -364,7 +549,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                                         </label>
                                       </div>
                                       {selectedFile && (
-                                        <p className="my-2 text-sm text-[var(--va-dark-grey)] px-4">
+                                        <p className="my-2 text-sm text-[var(--typography)] px-4">
                                           {t.selected} {selectedFile.name}
                                         </p>
                                       )}
@@ -372,7 +557,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                                   </div>
 
                                   {/* buttons for updating and canceling */}
-                                  <div className="flex flex-col sm:flex-row gap-2">
+                                  <div className="flex flex-row gap-2">
                                     <button
                                       onClick={() =>
                                         selectedFile
@@ -384,9 +569,8 @@ export const Stepper = ({ steps }: StepperProps) => {
                                             )
                                       }
                                       disabled={updating || uploading}
-                                      className="flex-1 px-4 py-2 bg-[var(--va-orange)] text-white hover:opacity-90 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 rounded-full"
+                                      className="px-4 py-2 bg-[var(--va-orange)] text-white rounded-md"
                                     >
-                                      <FiCheck size={16} />
                                       {selectedFile
                                         ? uploading
                                           ? t.uploading
@@ -396,9 +580,8 @@ export const Stepper = ({ steps }: StepperProps) => {
 
                                     <button
                                       onClick={handleCancelEdit}
-                                      className="flex-1 px-4 py-2 bg-[var(--va-dark-grey)] text-white  hover:opacity-90 transition-colors flex items-center justify-center gap-2 rounded-full"
+                                      className="px-4 py-2 bg-[var(--va-grey-50)] rounded-md border border-[var(--va-border)]"
                                     >
-                                      <FiX size={16} />
                                       {t.cancel}
                                     </button>
                                   </div>

@@ -5,6 +5,7 @@ import ProfileHeader from "@/components/profile/ProfileHeader";
 import LoadingSpinner from "@/components/profile/LoadingSpinner";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function FavoritesPage() {
   const router = useRouter();
@@ -16,6 +17,24 @@ export default function FavoritesPage() {
   const [removing, setRemoving] = useState<string | null>(null);
 
   const isLoading = favoritesLoading;
+
+  const { language } = useLanguage();
+
+  const translations: Record<string, Record<string, string>> = {
+    fi: {
+      header: "Suosikkikohteet",
+      noFavorites: "Ei vielä suosikkikohteita",
+      removeAria: "Poista {item} suosikeista",
+      browse: "Selaa kohteita",
+    },
+    en: {
+      header: "Favorites",
+      noFavorites: "No favorites yet",
+      removeAria: "Remove {item} from favorites",
+      browse: "Browse destinations",
+    },
+  };
+  const t = translations[language];
 
   const handleRemoveFavorite = async (destination: string) => {
     setRemoving(destination);
@@ -35,7 +54,7 @@ export default function FavoritesPage() {
       className="min-h-screen"
       style={{ backgroundColor: "var(--background)" }}
     >
-      <ProfileHeader title="Suosikkikohteet" />
+      <ProfileHeader title={t.header} />
       <div
         className="min-h-screen"
         style={{ backgroundColor: "var(--background)" }}
@@ -51,12 +70,12 @@ export default function FavoritesPage() {
                     color: "var(--va-dark-grey)",
                   }}
                 >
-                  Ei vielä suosikkikohteita
+                  {t.noFavorites}
                 </p>
               </div>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 px-4">
               {favorites.map((destination) => (
                 <div
                   key={destination}
@@ -84,7 +103,7 @@ export default function FavoritesPage() {
                     style={{
                       color: "var(--va-dark-grey)",
                     }}
-                    aria-label={`Remove ${destination} from favorites`}
+                    aria-label={t.removeAria.replace("{item}", destination)}
                   >
                     <FaTrash />
                   </button>
@@ -94,14 +113,14 @@ export default function FavoritesPage() {
           )}
           <button
             onClick={() => router.push("/destinations")}
-            className="px-6 py-2 my-6 rounded-lg font-medium transition-all duration-200 hover:scale-105 focus-ring uppercase mx-auto block tracking-wider"
+            className="px-6 py-2 my-6 rounded-full text-md transition-all duration-200 hover:scale-105 focus-ring mx-auto block tracking-wider cursor-pointer"
             style={{
-              backgroundColor: "var(--va-orange)",
+              backgroundColor: "var(--va-dark-grey)",
               color: "var(--background)",
               fontFamily: "var(--font-machina-bold)",
             }}
           >
-            Selaa lisää kohteita
+            {t.browse}
           </button>
         </div>
       </div>

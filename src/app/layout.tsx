@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import ClientProviders from "./clientProviders";
 
 export const metadata: Metadata = {
-  title: "Vaihtoaktivaattori",
+  title: "Go Exchange",
   description: "Platform for students interested in student exchange.",
   manifest: "/manifest.json",
   icons: {

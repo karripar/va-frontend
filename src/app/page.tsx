@@ -5,92 +5,120 @@ import { FiMessageSquare, FiGlobe, FiFileText } from "react-icons/fi";
 import { RiMoneyEuroCircleLine } from "react-icons/ri";
 import { useLanguage } from "@/context/LanguageContext";
 
-// get label based on language
-const getLabel = (language: string, label: string, labelEn: string): string => {
-  return language === "en" ? labelEn : label;
+// translations
+type CardItem = { title: string; description: string; href: string };
+type BenefitItem = { title: string; description: string };
+type Locale = {
+  heroTitle: string;
+  heroSubtitle: string;
+  cards: CardItem[];
+  whyExchange: string;
+  benefits: BenefitItem[];
+  chatButton: string;
 };
 
-// translations for hero section and cards
-const translations = {
-  heroTitle: {
-    fi: "Tervetuloa Metropolian vaihto­sovellukseen!",
-    en: "Welcome to the Exchange Application!",
+const translations: Record<"fi" | "en", Locale> = {
+  fi: {
+    heroTitle: "Tervetuloa Metropolian vaihto­sovellukseen!",
+    heroSubtitle:
+      "Löydä hakuohjeet, kohdemaat, apurahat ja vinkit yhdestä paikasta.",
+    cards: [
+      {
+        title: "VAIHTOON HAKEMINEN",
+        description: "Tutustu hakuprosessiin ja ohjeisiin askel askeleelta.",
+        href: "/instructions",
+      },
+      {
+        title: "APURAHAT",
+        description: "Katso apurahat ja mahdolliset kustannukset.",
+        href: "/profile/hakemukset?tab=apurahat",
+      },
+      {
+        title: "KOHDEMAAT",
+        description: "Selaa partnerikouluja ja vaihtokohteita.",
+        href: "/destinations",
+      },
+      {
+        title: "AI–CHAT JA FAQ",
+        description: "Kysy kysymyksiä AI:lta tai selaile usein kysyttyjä.",
+        href: "/ai-chat",
+      },
+    ],
+    whyExchange: "MIKSI LÄHTEÄ VAIHTOON?",
+    benefits: [
+      {
+        title: "KANSAINVÄLINEN KOKEMUS",
+        description:
+          "Kehitä kulttuurista ymmärrystä ja kansainvälistä näkökulmaa",
+      },
+      {
+        title: "AMMATILLINEN KASVU",
+        description:
+          "Opi uusia menetelmiä ja laajenna osaamistasi eri näkökulmista",
+      },
+      {
+        title: "URAETU",
+        description:
+          "Erottaudu työmarkkinoilla ja verkostoidu kansainvälisesti",
+      },
+      {
+        title: "HENKILÖKOHTAINEN KASVU",
+        description:
+          "Vahvista itseluottamusta ja sopeutumiskykyä uusissa tilanteissa",
+      },
+    ],
+    chatButton: "CHAT",
   },
-  heroSubtitle: {
-    fi: "Löydä hakuohjeet, kohdemaat, apurahat ja vinkit yhdestä paikasta.",
-    en: "Find application instructions, destinations, grants, and tips all in one place.",
-  },
-  cards: [
-    {
-      titleFi: "VAIHTOON HAKEMINEN",
-      titleEn: "APPLY FOR EXCHANGE",
-      descriptionFi: "Tutustu hakuprosessiin ja ohjeisiin askel askeleelta.",
-      descriptionEn:
-        "Learn about the application process and view step-by-step instructions.",
-      href: "/instructions",
-    },
-    {
-      titleFi: "APURAHAT",
-      titleEn: "GRANTS & COSTS",
-      descriptionFi: "Katso apurahat ja mahdolliset kustannukset.",
-      descriptionEn: "Check out grants and potential costs.",
-      href: "/profile/hakemukset?tab=apurahat",
-    },
-    {
-      titleFi: "KOHDEMAAT",
-      titleEn: "DESTINATIONS",
-      descriptionFi: "Selaa partnerikouluja ja vaihtokohteita.",
-      descriptionEn: "Browse partner universities and exchange destinations.",
-      href: "/destinations",
-    },
-    {
-      titleFi: "AI–CHAT JA FAQ",
-      titleEn: "AI CHAT & FAQ",
-      descriptionFi: "Kysy kysymyksiä AI:lta tai selaa usein kysyttyjä.",
-      descriptionEn:
-        "Ask questions from AI or browse frequently asked questions.",
-      href: "/ai-chat",
-    },
-  ],
-  whyExchange: {
-    fi: "MIKSI LÄHTEÄ VAIHTOON?",
-    en: "WHY GO TO EXCHANGE?",
-  },
-  benefits: [
-    {
-      titleFi: "KANSAINVÄLINEN KOKEMUS",
-      titleEn: "INTERNATIONAL EXPERIENCE",
-      descriptionFi:
-        "Kehitä kulttuurista ymmärrystä ja kansainvälistä näkökulmaa",
-      descriptionEn:
-        "Develop cultural understanding and international perspective",
-    },
-    {
-      titleFi: "AMMATILLINEN KASVU",
-      titleEn: "PROFESSIONAL GROWTH",
-      descriptionFi:
-        "Opi uusia menetelmiä ja laajenna osaamistasi eri näkökulmista",
-      descriptionEn:
-        "Learn new methods and expand your skills from different perspectives",
-    },
-    {
-      titleFi: "URAETU",
-      titleEn: "CAREER ADVANTAGE",
-      descriptionFi:
-        "Erottaudu työmarkkinoilla ja verkostoidu kansainvälisesti",
-      descriptionEn: "Stand out in the job market and network internationally",
-    },
-    {
-      titleFi: "HENKILÖKOHTAINEN KASVU",
-      titleEn: "PERSONAL GROWTH",
-      descriptionFi:
-        "Vahvista itseluottamusta ja sopeutumiskykyä uusissa tilanteissa",
-      descriptionEn: "Strengthen confidence and adaptability in new situations",
-    },
-  ],
-  chatButton: {
-    fi: "CHAT",
-    en: "CHAT",
+  en: {
+    heroTitle: "Welcome to the Exchange Application!",
+    heroSubtitle:
+      "Find application instructions, destinations, grants, and tips all in one place.",
+    cards: [
+      {
+        title: "APPLY FOR EXCHANGE",
+        description:
+          "Learn about the application process and view step-by-step instructions.",
+        href: "/instructions",
+      },
+      {
+        title: "GRANTS & COSTS",
+        description: "Check out grants and potential costs.",
+        href: "/profile/hakemukset?tab=apurahat",
+      },
+      {
+        title: "DESTINATIONS",
+        description: "Browse partner universities and exchange destinations.",
+        href: "/destinations",
+      },
+      {
+        title: "AI CHAT & FAQ",
+        description:
+          "Ask questions from AI or browse frequently asked questions.",
+        href: "/ai-chat",
+      },
+    ],
+    whyExchange: "WHY GO TO EXCHANGE?",
+    benefits: [
+      {
+        title: "INTERNATIONAL EXPERIENCE",
+        description:
+          "Develop cultural understanding and international perspective",
+      },
+      {
+        title: "PROFESSIONAL GROWTH",
+        description:
+          "Learn new methods and expand your skills from different perspectives",
+      },
+      {
+        title: "CAREER ADVANTAGE",
+        description: "Stand out in the job market and network internationally",
+      },
+      {
+        title: "PERSONAL GROWTH",
+        description: "Strengthen confidence and adaptability in new situations",
+      },
+    ],
+    chatButton: "CHAT",
   },
 };
 
@@ -106,11 +134,7 @@ export default function Home() {
               className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl tracking-wider text-[var(--typography)] uppercase pb-8 xl:leading-15 lg:leading-12 leading-10"
               style={{ fontFamily: "var(--font-machina-bold)" }}
             >
-              {getLabel(
-                language,
-                translations.heroTitle.fi,
-                translations.heroTitle.en
-              )}
+              {translations[language].heroTitle}
             </h1>
             <p
               className="text-lg md:text-xl xl:text-2xl text-[var(--typography)]"
@@ -118,11 +142,7 @@ export default function Home() {
                 fontFamily: "var(--font-montreal-mono-medium)",
               }}
             >
-              {getLabel(
-                language,
-                translations.heroSubtitle.fi,
-                translations.heroSubtitle.en
-              )}
+              {translations[language].heroSubtitle}
             </p>
           </div>
           <div className="relative flex-1 h-[400px] hidden md:flex xl:max-w-200">
@@ -165,43 +185,41 @@ export default function Home() {
             className="grid grid-cols-1 sm:grid-cols-2 gap-6 uppercase"
             style={{ fontFamily: "var(--font-machina-bold)" }}
           >
-            {translations.cards.map((card, index) => {
-              const icons = [
-                <FiFileText
-                  key="file"
-                  className="text-[var(--va-orange)]"
-                  size={38}
-                />,
-                <RiMoneyEuroCircleLine
-                  key="money"
-                  className="text-[var(--va-orange)]"
-                  size={38}
-                />,
-                <FiGlobe
-                  key="globe"
-                  className="text-[var(--va-orange)]"
-                  size={38}
-                />,
-                <FiMessageSquare
-                  key="message"
-                  className="text-[var(--va-orange)]"
-                  size={38}
-                />,
-              ];
-              return (
-                <Card
-                  key={card.href}
-                  icon={icons[index]}
-                  title={getLabel(language, card.titleFi, card.titleEn)}
-                  description={getLabel(
-                    language,
-                    card.descriptionFi,
-                    card.descriptionEn
-                  )}
-                  href={card.href}
-                />
-              );
-            })}
+            {translations[language].cards.map(
+              (card: CardItem, index: number) => {
+                const icons = [
+                  <FiFileText
+                    key="file"
+                    className="text-[var(--va-orange)]"
+                    size={38}
+                  />,
+                  <RiMoneyEuroCircleLine
+                    key="money"
+                    className="text-[var(--va-orange)]"
+                    size={38}
+                  />,
+                  <FiGlobe
+                    key="globe"
+                    className="text-[var(--va-orange)]"
+                    size={38}
+                  />,
+                  <FiMessageSquare
+                    key="message"
+                    className="text-[var(--va-orange)]"
+                    size={38}
+                  />,
+                ];
+                return (
+                  <Card
+                    key={card.href}
+                    icon={icons[index]}
+                    title={card.title}
+                    description={card.description}
+                    href={card.href}
+                  />
+                );
+              }
+            )}
           </div>
         </div>
 
@@ -212,56 +230,50 @@ export default function Home() {
                 className="text-2xl md:text-3xl mb-4 tracking-wider"
                 style={{ fontFamily: "var(--font-machina-bold)" }}
               >
-                {getLabel(
-                  language,
-                  translations.whyExchange.fi,
-                  translations.whyExchange.en
-                )}
+                {translations[language].whyExchange}
               </h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {translations.benefits.map((benefit, index) => (
-                <div key={index} className="text-center p-4">
-                  <div className="mx-auto mb-4 flex items-center justify-center">
-                    <Image
-                      src={
-                        [
-                          "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png",
-                          "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-03.png",
-                          "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-09.png",
-                          "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-13.png",
-                        ][index]
-                      }
-                      alt=""
-                      priority
-                      width={index === 1 || index === 3 ? 140 : 80}
-                      height={index === 1 || index === 3 ? 140 : 80}
-                      className="h-30 w-30"
-                      style={{
-                        width: "auto",
-                      }}
-                    />
+              {translations[language].benefits.map(
+                (benefit: BenefitItem, index: number) => (
+                  <div key={index} className="text-center p-4">
+                    <div className="mx-auto mb-4 flex items-center justify-center">
+                      <Image
+                        src={
+                          [
+                            "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-11.png",
+                            "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-03.png",
+                            "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-09.png",
+                            "/images/liito-oravat/21032024_liito-orava_RGB_Metropolia_KV_JO-13.png",
+                          ][index]
+                        }
+                        alt=""
+                        priority
+                        width={index === 1 || index === 3 ? 140 : 80}
+                        height={index === 1 || index === 3 ? 140 : 80}
+                        className="h-30 w-30"
+                        style={{
+                          width: "auto",
+                        }}
+                      />
+                    </div>
+                    <h3
+                      className={`text-lg mb-4 tracking-wide ${
+                        index === 2 ? "lg:mb-11 mb-2" : ""
+                      }`}
+                      style={{ fontFamily: "var(--font-machina-bold)" }}
+                    >
+                      {benefit.title}
+                    </h3>
+                    <p
+                      className="text-md"
+                      style={{ fontFamily: "var(--font-montreal-mono)" }}
+                    >
+                      {benefit.description}
+                    </p>
                   </div>
-                  <h3
-                    className={`text-lg mb-4 tracking-wide ${
-                      index === 2 ? "lg:mb-11 mb-2" : ""
-                    }`}
-                    style={{ fontFamily: "var(--font-machina-bold)" }}
-                  >
-                    {getLabel(language, benefit.titleFi, benefit.titleEn)}
-                  </h3>
-                  <p
-                    className="text-md"
-                    style={{ fontFamily: "var(--font-montreal-mono)" }}
-                  >
-                    {getLabel(
-                      language,
-                      benefit.descriptionFi,
-                      benefit.descriptionEn
-                    )}
-                  </p>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         </section>
@@ -273,11 +285,7 @@ export default function Home() {
         className="fixed -right-6 bottom-1/10 -translate-y-1/2 z-40 origin-center -rotate-90 bg-[var(--va-orange)] text-[var(--background)] px-4 py-3 rounded-t-md shadow hover:brightness-95 text-sm tracking-wider"
         style={{ fontFamily: "var(--font-machina-bold)" }}
       >
-        {getLabel(
-          language,
-          translations.chatButton.fi,
-          translations.chatButton.en
-        )}
+        {translations[language].chatButton}
       </a>
     </div>
   );
