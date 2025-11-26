@@ -8,12 +8,20 @@ const mockToggleVisibility = vi.fn();
 const mockGetInstructionLinks = vi.fn();
 const mockUpdateLink = vi.fn();
 const mockUploadFile = vi.fn();
+const mockUseInstructionSteps = vi.fn();
+const mockUpdateStep = vi.fn();
 
 // Mock hooks
 vi.mock("@/hooks/instructionHooks", () => ({
+  useInstructionSteps: () => mockUseInstructionSteps(),
   useInstructionVisibility: () => mockGetInstructionVisibility(),
   useToggleInstructionVisibility: () => ({
     toggleVisibility: mockToggleVisibility,
+    loading: false,
+    error: null,
+  }),
+  useUpdateInstructionStep: () => ({
+    updateStep: mockUpdateStep,
     loading: false,
     error: null,
   }),
@@ -93,6 +101,36 @@ describe("InstructionsPage", () => {
     });
     mockGetInstructionLinks.mockReturnValue({
       links: [],
+      loading: false,
+      error: null,
+    });
+    // default steps returned by useInstructionSteps (match controller defaults)
+    mockUseInstructionSteps.mockReturnValue({
+      steps: [
+        { title: "Find information", text: "Paragraph1\n\nParagraph2" },
+        { title: "Application info", text: "Paragraph1\n\nParagraph2" },
+        { title: "Before you apply", text: "Paragraph1\n\nParagraph2" },
+        {
+          title: "Metropolia's internal application",
+          text: "Paragraph1\n\nParagraph2",
+        },
+        {
+          title: "Internal selection results",
+          text: "Paragraph1\n\nParagraph2",
+        },
+        {
+          title: "Apply to the host university",
+          text: "Paragraph1\n\nParagraph2",
+        },
+        { title: "Filling attachments", text: "Paragraph1\n\nParagraph2" },
+        {
+          title: "Submitting application & acceptance",
+          text: "Paragraph1\n\nParagraph2",
+        },
+        { title: "Prepare for departure", text: "Paragraph1\n\nParagraph2" },
+      ],
+      rawSteps: [],
+      stepsMap: {},
       loading: false,
       error: null,
     });
@@ -250,6 +288,85 @@ describe("Stepper Component - Visibility", () => {
     await userEvent.click(eyeButtons[0]);
 
     expect(mockToggleVisibility).toHaveBeenCalledWith(0);
+  });
+});
+
+// muokkaa ohje stepin sisältöä
+describe("Stepper Component - Steps (editing)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetInstructionVisibility.mockReturnValue({
+      visibility: [true],
+      loading: false,
+      error: null,
+    });
+    mockGetInstructionLinks.mockReturnValue({
+      links: [],
+      loading: false,
+      error: null,
+    });
+  });
+
+  test("admin can edit instruction step content", async () => {
+    const steps = [{ title: "Step A", text: <p>Original content</p> }];
+
+    render(<Stepper steps={steps} />);
+
+    // muokkaa nappi
+    const editButtons = screen.getAllByRole("button", {
+      name: /Update content|Edit step content/i,
+    });
+    await userEvent.click(editButtons[0]);
+
+    // muokkauslomake renderöityy ja nykyiset arvot näkyvät
+    expect(screen.getByText(/Current title \(EN\):/i)).toBeInTheDocument();
+
+    // muokkaa kenttiä 
+    const textboxes = screen.getAllByRole("textbox");
+    // titleFi, titleEn, textFi, textEn
+    const titleInput = textboxes[1] as HTMLInputElement;
+    const textInput = textboxes[3] as HTMLTextAreaElement;
+
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, "New Title");
+    await userEvent.clear(textInput);
+    await userEvent.type(textInput, "New content paragraph.");
+
+    mockUpdateStep.mockResolvedValueOnce({
+      stepIndex: 0,
+      titleFi: "",
+      titleEn: "New Title",
+      textFi: "",
+      textEn: "New content paragraph.",
+    });
+
+    const updateButtons = screen.getAllByRole("button", { name: /^Update$/i });
+    await userEvent.click(updateButtons[0]);
+
+    await waitFor(() => {
+      expect(mockUpdateStep).toHaveBeenCalledWith(0, {
+        titleEn: "New Title",
+        textEn: "New content paragraph.",
+      });
+    });
+  });
+
+  test("empty fields do not trigger an update (no overwrite)", async () => {
+    const steps = [{ title: "Step B", text: <p>Original</p> }];
+
+    render(<Stepper steps={steps} />);
+
+    const editButtons = screen.getAllByRole("button", {
+      name: /Update content|Edit step content/i,
+    });
+    await userEvent.click(editButtons[0]);
+
+    // jätä kentät tyhjiksi ja klikkaa Päivitä nappia
+    const updateButtons = screen.getAllByRole("button", { name: /^Update$/i });
+    await userEvent.click(updateButtons[0]);
+
+    // päivitys ei tapahdu, jos kentät ovat tyhjiä --> ei ylikirjoitusta
+    expect(mockUpdateStep).not.toHaveBeenCalled();
   });
 });
 

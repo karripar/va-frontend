@@ -51,7 +51,13 @@ export const useFileUpload = () => {
         size: responseData.data.filesize,
       };
     } catch (err) {
-      console.error("Upload error:", err);
+        // Log only a concise message to avoid noisy stacks in the browser console
+        // (caller already shows a user-facing notification).
+        if (err instanceof Error) {
+          console.error("Upload error:", err.message);
+        } else {
+          console.error("Upload error:", String(err));
+        }
       return null;
     } finally {
       setUploading(false);

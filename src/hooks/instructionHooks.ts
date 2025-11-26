@@ -38,8 +38,12 @@ export const useInstructionSteps = () => {
           }>
         );
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch steps");
+        setError("Failed to fetch steps");
         setSteps([]);
+        console.error(
+          "Error fetching steps:",
+          err instanceof Error ? err.message : err
+        );
       } finally {
         setLoading(false);
       }
@@ -54,7 +58,12 @@ export const useInstructionSteps = () => {
     stepIndex: s.stepIndex,
   }));
 
-  return { steps: mappedSteps, rawSteps: steps, loading, error };
+  const stepsMap: Record<number, (typeof steps)[0]> = {};
+  steps.forEach((s) => {
+    stepsMap[s.stepIndex] = s;
+  });
+
+  return { steps: mappedSteps, rawSteps: steps, stepsMap, loading, error };
 };
 
 /**
@@ -86,10 +95,11 @@ const useInstructionVisibility = () => {
         });
         setVisibility(visibilityArray);
       } catch (err) {
-        console.error("Error fetching visibility:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch visibility"
+        console.error(
+          "Error fetching visibility:",
+          err instanceof Error ? err.message : String(err)
         );
+        setError("Failed to fetch visibility");
         setVisibility(new Array(9).fill(true));
       } finally {
         setLoading(false);
@@ -134,8 +144,7 @@ const useToggleInstructionVisibility = () => {
 
       return data.visibility.isVisible;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Toggle failed";
-      setError(errorMessage);
+      setError("Failed to toggle visibility");
       console.error("Toggle visibility error:", err);
       return null;
     } finally {
@@ -198,7 +207,8 @@ export const useUpdateInstructionStep = () => {
       });
       return data.step;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Update failed");
+      setError("Failed to update step");
+      console.error("Update step error:", err);
       return null;
     } finally {
       setLoading(false);
@@ -247,8 +257,11 @@ const useInstructionLinks = () => {
         }> = await fetchData(url);
         setLinks(data);
       } catch (err) {
-        console.error("Error fetching instruction links:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch links");
+        console.error(
+          "Error fetching links:",
+          err instanceof Error ? err.message : err
+        );
+        setError("Failed to fetch links");
         setLinks([]);
       } finally {
         setLoading(false);
@@ -315,8 +328,7 @@ const useUpdateInstructionLink = () => {
 
       return data.link;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Update failed";
-      setError(errorMessage);
+      setError("Failed to update link");
       console.error("Update link error:", err);
       return null;
     } finally {
