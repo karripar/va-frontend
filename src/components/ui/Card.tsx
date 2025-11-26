@@ -366,7 +366,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                       </p>
 
                       <div className="mb-6">
-                        <div className="text-sm text-[var(--typography)] my-4  break-words">
+                        <div className="text-sm text-[var(--typography)] my-4 break-words">
                           {t.currentTitleFi}{" "}
                           <b>{stepsMap[i]?.titleFi || "-"}</b>
                         </div>
@@ -389,7 +389,7 @@ export const Stepper = ({ steps }: StepperProps) => {
                       </div>
 
                       <div className="mb-6">
-                        <div className="text-sm text-[var(--typography)] my-4  break-words">
+                        <div className="text-sm text-[var(--typography)] my-4 break-words">
                           {t.currentTitleEn}{" "}
                           <b>{stepsMap[i]?.titleEn || "-"}</b>
                         </div>
