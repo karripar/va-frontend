@@ -1,4 +1,4 @@
-# Vaihtoaktivaattori – Frontend
+# Go Exchange – Frontend
 
 Frontend repository for the **Vaihtoaktivaattori** project (Mediapalveluprojekti course).
 
@@ -21,6 +21,9 @@ User interface for exploring and managing international exchange opportunities.
 
 **Hybrid Types Repository**<br>
 - The va-hybrid-types repository and installable module used for TypeScript typing is found [here](https://github.com/karripar/va-hybrid-types)
+
+**AI Chat Service Repository**
+- The AI Chat and RAG implementation service repository is available [here](https://github.com/samukan/va-chat-service)
 
 **Installation**<br>
 1. Clone The repository in your desired directory.

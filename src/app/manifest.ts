@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'Vaihtoaktivaattori', // TODO: Change this when the final name has been decided
-        short_name: 'Vaihtoaktivaattori',
+        name: 'Go Exchange',
+        short_name: 'Go Exchange',
         description: 'Platform for students interested in student exchange.',
         start_url: '/',
         display: 'standalone',
