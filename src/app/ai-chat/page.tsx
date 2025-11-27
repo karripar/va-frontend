@@ -1,6 +1,15 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { FiSend, FiChevronDown, FiChevronUp, FiBook } from 'react-icons/fi';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  FiSend,
+  FiChevronDown,
+  FiChevronUp,
+  FiBook,
+  FiGlobe,
+  FiFileText,
+  FiExternalLink,
+  FiDownload,
+} from 'react-icons/fi';
 import { FaPlane, FaFileAlt, FaMoneyBillWave } from 'react-icons/fa';
 import {
   sendChatMessage,
@@ -468,14 +477,28 @@ function MessageBubble({ role, text }: { role: Role; text: string }) {
               strong: ({ ...props }) => (
                 <strong className="font-bold" {...props} />
               ),
-              a: ({ ...props }) => (
-                <a
-                  className="text-[var(--va-orange)] hover:underline font-medium"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  {...props}
-                />
-              ),
+              a: ({ ...props }) => {
+                const href = props.href;
+                // Fix URLs that are missing protocol (e.g. "opiskelijan.metropolia.fi" -> "https://opiskelijan.metropolia.fi")
+                const fixedHref =
+                  href &&
+                  !href.startsWith('http') &&
+                  !href.startsWith('/') &&
+                  !href.startsWith('#') &&
+                  !href.startsWith('mailto')
+                    ? `https://${href}`
+                    : href;
+
+                return (
+                  <a
+                    className="text-[var(--va-orange)] hover:underline font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    {...props}
+                    href={fixedHref}
+                  />
+                );
+              },
               h1: ({ ...props }) => (
                 <h1 className="text-lg font-bold my-2" {...props} />
               ),
@@ -516,27 +539,97 @@ function MessageBubble({ role, text }: { role: Role; text: string }) {
                       ul: ({ ...props }) => (
                         <ul className="list-none space-y-2 pl-0" {...props} />
                       ),
-                      li: ({ ...props }) => (
-                        <li
-                          className="flex items-start gap-2 bg-white p-2 rounded border border-orange-100 shadow-sm text-xs"
-                          {...props}
-                        >
-                          <span className="text-[var(--va-orange)] mt-0.5">
-                            📄
-                          </span>
-                          <span className="flex-1 break-all">
-                            {props.children}
-                          </span>
-                        </li>
-                      ),
-                      a: ({ ...props }) => (
-                        <a
-                          className="text-[var(--va-orange)] hover:underline font-medium"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          {...props}
-                        />
-                      ),
+                      li: ({ ...props }) => {
+                        const children = React.Children.toArray(props.children);
+                        const hasLink = children.some(
+                          (child) =>
+                            React.isValidElement(child) &&
+                            (child.type === 'a' ||
+                              (child.props as { href?: string })?.href ||
+                              (typeof child.type === 'function' &&
+                                child.type.name === 'a'))
+                        );
+
+                        if (hasLink) {
+                          return (
+                            <li
+                              className="flex items-start gap-2 bg-white p-2 rounded border border-orange-100 shadow-sm text-xs hover:bg-orange-50 transition-colors group"
+                              {...props}
+                            >
+                              <span className="text-[var(--va-orange)] mt-0.5 flex-shrink-0">
+                                <FiGlobe />
+                              </span>
+                              <span className="flex-1 break-all">
+                                {props.children}
+                              </span>
+                              <FiExternalLink className="w-3 h-3 text-gray-400 mt-0.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </li>
+                          );
+                        }
+
+                        // File handling
+                        const filename = children
+                          .map((c) => c.toString())
+                          .join('')
+                          .trim();
+                        const uploadApi =
+                          process.env.NEXT_PUBLIC_UPLOAD_API ||
+                          'http://localhost:3003/api/v1';
+                        const baseUrl = uploadApi.replace(/\/api\/v1\/?$/, '');
+                        const downloadUrl = `${baseUrl}/uploads/ai-files/${encodeURIComponent(
+                          filename
+                        )}`;
+
+                        return (
+                          <li
+                            className="flex items-start gap-2 bg-white p-2 rounded border border-orange-100 shadow-sm text-xs hover:bg-orange-50 transition-colors group"
+                            {...props}
+                          >
+                            <span className="text-[var(--va-orange)] mt-0.5 flex-shrink-0">
+                              <FiFileText />
+                            </span>
+                            <span className="flex-1 break-all">
+                              <a
+                                href={downloadUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:underline text-gray-700 hover:text-[var(--va-orange)] block"
+                              >
+                                {props.children}
+                              </a>
+                            </span>
+                            <a
+                              href={downloadUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-shrink-0"
+                            >
+                              <FiDownload className="w-3 h-3 text-gray-400 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </a>
+                          </li>
+                        );
+                      },
+                      a: ({ ...props }) => {
+                        const href = props.href;
+                        const fixedHref =
+                          href &&
+                          !href.startsWith('http') &&
+                          !href.startsWith('/') &&
+                          !href.startsWith('#') &&
+                          !href.startsWith('mailto')
+                            ? `https://${href}`
+                            : href;
+
+                        return (
+                          <a
+                            className="text-[var(--va-orange)] hover:underline font-medium"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            {...props}
+                            href={fixedHref}
+                          />
+                        );
+                      },
                     }}
                   >
                     {sources}
