@@ -409,6 +409,7 @@ export default function AIChatPage() {
 }
 
 function MessageBubble({ role, text }: { role: Role; text: string }) {
+  const [isSourcesOpen, setIsSourcesOpen] = useState(false);
   const base =
     'w-fit max-w-[100%] px-4 py-3 rounded-2xl break-words leading-relaxed shadow-sm';
 
@@ -416,7 +417,10 @@ function MessageBubble({ role, text }: { role: Role; text: string }) {
   let content = text;
   let sources = '';
   // Case insensitive search for "Lähteet:" or "Sources:"
-  const sourcesMatch = text.match(/(?:\n|^)(?:Lähteet|Sources):/i);
+  // Matches: "Lähteet:", "**Lähteet:**", "## Lähteet:", etc.
+  const sourcesMatch = text.match(
+    /(?:\n|^)(?:[\#\*_]*)(?:Lähteet|Sources)(?:[\#\*_]*):/i
+  );
 
   if (sourcesMatch && sourcesMatch.index !== undefined) {
     content = text.substring(0, sourcesMatch.index).trim();
@@ -488,41 +492,58 @@ function MessageBubble({ role, text }: { role: Role; text: string }) {
         </div>
 
         {sources && (
-          <div className="bg-orange-50/50 border border-orange-100 rounded-xl p-3 text-sm animate-in fade-in slide-in-from-top-2 duration-500">
-            <p className="font-bold text-[var(--va-orange)] mb-2 flex items-center gap-2 text-xs uppercase tracking-wider">
-              <FiBook className="w-3 h-3" /> Lähteet
-            </p>
-            <div className="prose prose-sm max-w-none prose-ul:my-1 prose-li:my-0 text-gray-600">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  ul: ({ ...props }) => (
-                    <ul className="list-none space-y-2 pl-0" {...props} />
-                  ),
-                  li: ({ ...props }) => (
-                    <li
-                      className="flex items-start gap-2 bg-white p-2 rounded border border-orange-100 shadow-sm"
-                      {...props}
-                    >
-                      <span className="text-[var(--va-orange)] mt-1 text-xs">
-                        📄
-                      </span>
-                      <span className="flex-1">{props.children}</span>
-                    </li>
-                  ),
-                  a: ({ ...props }) => (
-                    <a
-                      className="text-[var(--va-orange)] hover:underline font-medium break-all"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      {...props}
-                    />
-                  ),
-                }}
-              >
-                {sources}
-              </ReactMarkdown>
-            </div>
+          <div className="bg-orange-50/50 border border-orange-100 rounded-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-500">
+            <button
+              onClick={() => setIsSourcesOpen(!isSourcesOpen)}
+              className="w-full flex items-center justify-between p-3 text-left hover:bg-orange-100/50 transition-colors"
+            >
+              <p className="font-bold text-[var(--va-orange)] flex items-center gap-2 text-xs uppercase tracking-wider">
+                <FiBook className="w-3 h-3" /> Lähteet
+              </p>
+              {isSourcesOpen ? (
+                <FiChevronUp className="text-[var(--va-orange)]" />
+              ) : (
+                <FiChevronDown className="text-[var(--va-orange)]" />
+              )}
+            </button>
+
+            {isSourcesOpen && (
+              <div className="px-3 pb-3 pt-0">
+                <div className="prose prose-sm max-w-none prose-ul:my-1 prose-li:my-0 text-gray-600 border-t border-orange-100/50 pt-2">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      ul: ({ ...props }) => (
+                        <ul className="list-none space-y-2 pl-0" {...props} />
+                      ),
+                      li: ({ ...props }) => (
+                        <li
+                          className="flex items-start gap-2 bg-white p-2 rounded border border-orange-100 shadow-sm text-xs"
+                          {...props}
+                        >
+                          <span className="text-[var(--va-orange)] mt-0.5">
+                            📄
+                          </span>
+                          <span className="flex-1 break-all">
+                            {props.children}
+                          </span>
+                        </li>
+                      ),
+                      a: ({ ...props }) => (
+                        <a
+                          className="text-[var(--va-orange)] hover:underline font-medium"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          {...props}
+                        />
+                      ),
+                    }}
+                  >
+                    {sources}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
