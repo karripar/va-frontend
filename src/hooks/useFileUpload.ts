@@ -19,6 +19,7 @@ interface ServerResponse {
 // hook for admins to upload files to the instructions page
 export const useFileUpload = () => {
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const uploadFile = async (file: File): Promise<UploadResponse | null> => {
     try {
@@ -50,8 +51,9 @@ export const useFileUpload = () => {
         name: responseData.data.filename,
         size: responseData.data.filesize,
       };
-    } catch (err) {
-      console.error("Upload error:", err);
+    } catch (error) {
+      console.error("Upload error:", error);
+      setError("File upload failed");
       return null;
     } finally {
       setUploading(false);
@@ -61,5 +63,6 @@ export const useFileUpload = () => {
   return {
     uploadFile,
     uploading,
+    error,
   };
 };

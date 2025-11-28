@@ -18,7 +18,7 @@ export default function ProfileHeader({
   const router = useRouter();
 
   return (
-    <div className="bg-[#FF5722] text-white p-4 flex items-center justify-center relative">
+    <div className="bg-[var(--va-orange)] text-white px-4 flex items-center justify-center relative py-2 md:h-20 h-15 ">
       {showBack && (
         <button
           onClick={() => (backPath ? router.push(backPath) : router.back())}
@@ -30,7 +30,7 @@ export default function ProfileHeader({
       )}
 
       <h1
-        className="text-2xl tracking-widest p-2"
+        className="sm:text-2xl text-xl tracking-widest sm:max-w-full max-w-60 text-center"
         style={{ fontFamily: "var(--font-machina-bold)" }}
       >
         {title}

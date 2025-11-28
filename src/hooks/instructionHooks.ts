@@ -1,5 +1,70 @@
 import { useEffect, useState } from "react";
 import fetchData from "@/lib/fetchData";
+import { useLanguage } from "@/context/LanguageContext";
+
+/**
+ * fetch all instruction steps (content)
+ */
+export const useInstructionSteps = () => {
+  const { language } = useLanguage();
+  const [steps, setSteps] = useState<
+    Array<{
+      stepIndex: number;
+      titleFi: string;
+      titleEn: string;
+      textFi: string;
+      textEn: string;
+    }>
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSteps = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const contentApiUrl =
+          process.env.NEXT_PUBLIC_CONTENT_API || "http://localhost:3002/api/v1";
+        const url = `${contentApiUrl}/instructions/steps`;
+        const data = await fetchData(url);
+        setSteps(
+          data as Array<{
+            stepIndex: number;
+            titleFi: string;
+            titleEn: string;
+            textFi: string;
+            textEn: string;
+          }>
+        );
+      } catch (err) {
+        setError("Failed to fetch steps");
+        setSteps([]);
+        console.error(
+          "Error fetching steps:",
+          err instanceof Error ? err.message : err
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSteps();
+  }, [language]);
+
+  // Palauta oikea kieliversio
+  const mappedSteps = steps.map((s) => ({
+    title: language === "en" ? s.titleEn : s.titleFi,
+    text: language === "en" ? s.textEn : s.textFi,
+    stepIndex: s.stepIndex,
+  }));
+
+  const stepsMap: Record<number, (typeof steps)[0]> = {};
+  steps.forEach((s) => {
+    stepsMap[s.stepIndex] = s;
+  });
+
+  return { steps: mappedSteps, rawSteps: steps, stepsMap, loading, error };
+};
 
 /**
  * fetch instruction visibility settings
@@ -30,10 +95,11 @@ const useInstructionVisibility = () => {
         });
         setVisibility(visibilityArray);
       } catch (err) {
-        console.error("Error fetching visibility:", err);
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch visibility"
+        console.error(
+          "Error fetching visibility:",
+          err instanceof Error ? err.message : String(err)
         );
+        setError("Failed to fetch visibility");
         setVisibility(new Array(9).fill(true));
       } finally {
         setLoading(false);
@@ -78,8 +144,7 @@ const useToggleInstructionVisibility = () => {
 
       return data.visibility.isVisible;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Toggle failed";
-      setError(errorMessage);
+      setError("Failed to toggle visibility");
       console.error("Toggle visibility error:", err);
       return null;
     } finally {
@@ -92,6 +157,65 @@ const useToggleInstructionVisibility = () => {
     loading,
     error,
   };
+};
+
+/**
+ * update an instruction step (admin only)
+ */
+export const useUpdateInstructionStep = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const updateStep = async (
+    stepIndex: number,
+    updates: {
+      titleFi?: string;
+      titleEn?: string;
+      textFi?: string;
+      textEn?: string;
+    }
+  ): Promise<{
+    stepIndex: number;
+    titleFi: string;
+    titleEn: string;
+    textFi: string;
+    textEn: string;
+  } | null> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const contentApiUrl =
+        process.env.NEXT_PUBLIC_CONTENT_API || "http://localhost:3002/api/v1";
+      const url = `${contentApiUrl}/instructions/steps/${stepIndex}`;
+      const authToken = localStorage.getItem("authToken") || "";
+      const data: {
+        message: string;
+        step: {
+          stepIndex: number;
+          titleFi: string;
+          titleEn: string;
+          textFi: string;
+          textEn: string;
+        };
+      } = await fetchData(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(updates),
+      });
+      return data.step;
+    } catch (err) {
+      setError("Failed to update step");
+      console.error("Update step error:", err);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { updateStep, loading, error };
 };
 
 /**
@@ -133,8 +257,11 @@ const useInstructionLinks = () => {
         }> = await fetchData(url);
         setLinks(data);
       } catch (err) {
-        console.error("Error fetching instruction links:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch links");
+        console.error(
+          "Error fetching links:",
+          err instanceof Error ? err.message : err
+        );
+        setError("Failed to fetch links");
         setLinks([]);
       } finally {
         setLoading(false);
@@ -179,7 +306,7 @@ const useUpdateInstructionLink = () => {
         process.env.NEXT_PUBLIC_CONTENT_API || "http://localhost:3002/api/v1";
       const url = `${contentApiUrl}/instructions/links/${linkId}`;
       const authToken = localStorage.getItem("authToken") || "";
-      
+
       const data: {
         message: string;
         link: {
@@ -201,8 +328,7 @@ const useUpdateInstructionLink = () => {
 
       return data.link;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Update failed";
-      setError(errorMessage);
+      setError("Failed to update link");
       console.error("Update link error:", err);
       return null;
     } finally {

@@ -9,94 +9,10 @@ import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 
-// navigaation kategoriat
-const navigationCategories = [
-  {
-    id: "exchange",
-    title: "Opiskelijavaihto",
-    titleEn: "Student Exchange",
-    links: [
-      {
-        href: "/instructions",
-        label: "Hakuprosessi ja ohjeet",
-        labelEn: "Application Process",
-      },
-      {
-        href: "/destinations",
-        label: "Vaihtokohteet",
-        labelEn: "Destinations",
-      },
-      {
-        href: "/profile/hakemukset?tab=budget",
-        label: "Apurahat ja kustannukset",
-        labelEn: "Grants & Costs",
-      },
-    ],
-  },
-  {
-    id: "community",
-    title: "Yhteisö ja tuki",
-    titleEn: "Community & Support",
-    links: [
-      {
-        href: "/tips",
-        label: "Kokemukset ja vinkit",
-        labelEn: "Experiences & Tips",
-      },
-      { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
-      { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
-    ],
-  },
-  {
-    id: "user",
-    title: "Käyttäjän asetukset",
-    titleEn: "User Settings",
-    links: [
-      { href: "/profile", label: "Profiili", labelEn: "Profile" },
-      {
-        href: "/admin",
-        label: "Ylläpito",
-        labelEn: "Admin Panel",
-        requiresAdmin: true,
-      },
-    ],
-  },
-];
+// navigaation kategoriat ja sivun käännökset
+type NavLink = { href: string; label: string; requiresAdmin?: boolean };
+type NavCategory = { id: string; title: string; links?: NavLink[] };
 
-const hamburgerLinks = [
-  { href: "/", label: "Etusivu", labelEn: "Home" },
-  {
-    href: "/instructions",
-    label: "Hakuprosessi ja ohjeet",
-    labelEn: "Application Process",
-  },
-  { href: "/destinations", label: "Vaihtokohteet", labelEn: "Destinations" },
-  {
-    href: "/profile/hakemukset?tab=budget",
-    label: "Apurahat ja kustannukset",
-    labelEn: "Grants & Costs",
-  },
-  {
-    href: "/tips",
-    label: "Kokemukset ja vinkit",
-    labelEn: "Experiences & Tips",
-  },
-  { href: "/ai-chat", label: "AI Chat ja FAQ", labelEn: "AI Chat & FAQ" },
-  { href: "/contact", label: "Ota yhteyttä", labelEn: "Contact" },
-  {
-    href: "/admin",
-    label: "Ylläpito",
-    labelEn: "Admin Panel",
-    requiresAdmin: true,
-  },
-];
-
-// get label based on language
-const getLabel = (language: string, label: string, labelEn: string): string => {
-  return language === "en" ? labelEn : label;
-};
-
-// navigation
 const Navbar = () => {
   const { language } = useLanguage();
   const pathname = usePathname();
@@ -106,23 +22,128 @@ const Navbar = () => {
   const adminLevels = [2, 3];
   const isAdmin = user && adminLevels.includes(Number(user.user_level_id));
 
+  const translations = {
+    fi: {
+      openMenu: "Avaa valikko",
+      closeMenu: "Sulje valikko",
+      defaultTitle: "Go Exchange",
+      nav: {
+        categories: [
+          {
+            id: "exchange",
+            title: "Opiskelijavaihto",
+            links: [
+              { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
+              { href: "/destinations", label: "Vaihtokohteet" },
+              {
+                href: "/profile/hakemukset?tab=budget",
+                label: "Apurahat ja kustannukset",
+              },
+            ],
+          },
+          {
+            id: "community",
+            title: "Yhteisö ja tuki",
+            links: [
+              { href: "/tips", label: "Kokemukset ja vinkit" },
+              { href: "/ai-chat", label: "AI Chat ja FAQ" },
+              { href: "/contact", label: "Ota yhteyttä" },
+            ],
+          },
+          {
+            id: "user",
+            title: "Käyttäjän asetukset",
+            links: [
+              { href: "/profile", label: "Profiili" },
+              { href: "/admin", label: "Ylläpito", requiresAdmin: true },
+            ],
+          },
+        ],
+        hamburger: [
+          { href: "/", label: "Etusivu" },
+          { href: "/instructions", label: "Hakuprosessi ja ohjeet" },
+          { href: "/destinations", label: "Vaihtokohteet" },
+          {
+            href: "/profile/hakemukset?tab=budget",
+            label: "Apurahat ja kustannukset",
+          },
+          { href: "/tips", label: "Kokemukset ja vinkit" },
+          { href: "/ai-chat", label: "AI Chat ja FAQ" },
+          { href: "/contact", label: "Ota yhteyttä" },
+          { href: "/admin", label: "Ylläpito", requiresAdmin: true },
+        ],
+      },
+    },
+    en: {
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
+      defaultTitle: "Go Exchange",
+      nav: {
+        categories: [
+          {
+            id: "exchange",
+            title: "Student Exchange",
+            links: [
+              { href: "/instructions", label: "Application Process" },
+              { href: "/destinations", label: "Destinations" },
+              {
+                href: "/profile/hakemukset?tab=budget",
+                label: "Grants & Costs",
+              },
+            ],
+          },
+          {
+            id: "community",
+            title: "Community & Support",
+            links: [
+              { href: "/tips", label: "Experiences & Tips" },
+              { href: "/ai-chat", label: "AI Chat & FAQ" },
+              { href: "/contact", label: "Contact" },
+            ],
+          },
+          {
+            id: "user",
+            title: "User Settings",
+            links: [
+              { href: "/profile", label: "Profile" },
+              { href: "/admin", label: "Admin Panel", requiresAdmin: true },
+            ],
+          },
+        ],
+        hamburger: [
+          { href: "/", label: "Home" },
+          { href: "/instructions", label: "Application Process" },
+          { href: "/destinations", label: "Destinations" },
+          { href: "/profile/hakemukset?tab=budget", label: "Grants & Costs" },
+          { href: "/tips", label: "Experiences & Tips" },
+          { href: "/ai-chat", label: "AI Chat & FAQ" },
+          { href: "/contact", label: "Contact" },
+          { href: "/admin", label: "Admin Panel", requiresAdmin: true },
+        ],
+      },
+    },
+  };
+
+  const localizedNavigation: NavCategory[] =
+    translations[language]?.nav?.categories || translations.fi.nav.categories;
+  const hamburgerLinksLocalized: NavLink[] =
+    translations[language]?.nav?.hamburger || translations.fi.nav.hamburger;
+
   // get the current page's name to display it in the nav
   const getCurrentPageInfo = () => {
-    for (const category of navigationCategories) {
+    for (const category of localizedNavigation) {
       if (category.links) {
-        const link = category.links.find((link) => link.href === pathname);
-        if (link)
-          return {
-            category: category.title,
-            page: link.label,
-            pageEn: link.labelEn,
-          };
+        const link = category.links.find(
+          (link: NavLink) => link.href === pathname
+        );
+        if (link) return { category: category.title, page: link.label };
       }
     }
     return {
-      category: "Vaihtoaktivaattori",
-      page: "Vaihtoaktivaattori",
-      pageEn: "Vaihtoaktivaattori",
+      category:
+        translations[language]?.defaultTitle || translations.fi.defaultTitle,
+      page:
+        translations[language]?.defaultTitle || translations.fi.defaultTitle,
     };
   };
 
@@ -141,16 +162,13 @@ const Navbar = () => {
       {/* Mobile header */}
       <div className="md:hidden sticky top-0 z-50">
         <header className="bg-[var(--va-orange)] text-[var(--background)] text-xl sm:text-md px-2 shadow-lg">
-          <div className="mx-auto h-20 flex items-center justify-between px-2 my-auto">
+          <div className="mx-auto h-15 flex items-center justify-between px-2 my-auto">
             <button
               aria-label={
                 mobileMenuOpen
-                  ? language === "en"
-                    ? "Close menu"
-                    : "Sulje valikko"
-                  : language === "en"
-                  ? "Open menu"
-                  : "Avaa valikko"
+                  ? translations[language]?.closeMenu ||
+                    translations.fi.closeMenu
+                  : translations[language]?.openMenu || translations.fi.openMenu
               }
               className="cursor-pointer p-2 -ml-2 z-60"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -161,7 +179,7 @@ const Navbar = () => {
               className="tracking-widest text-md text-center px-2"
               style={{ fontFamily: "var(--font-machina-bold)" }}
             >
-              {getLabel(language, currentPageInfo.page, currentPageInfo.pageEn)}
+              {currentPageInfo.page}
             </h1>
             <Link href={"/profile"}>
               <FiUser
@@ -198,11 +216,11 @@ const Navbar = () => {
                 height={70}
               />
             </Link>
-            {getLabel(language, currentPageInfo.page, currentPageInfo.pageEn)}
+            {currentPageInfo.page}
             <ToggleSwitch />
           </div>
           <div className="flex flex-row m-auto z-10 gap-16 justify-center px-4">
-            {navigationCategories.map((category) => (
+            {localizedNavigation.map((category: NavCategory) => (
               <div
                 key={category.id}
                 className="relative"
@@ -222,7 +240,7 @@ const Navbar = () => {
                       activeCategory === category.id ? "active" : ""
                     }`}
                   >
-                    {getLabel(language, category.title, category.titleEn)}
+                    {category.title}
                   </span>
                   <span
                     className={`text-[var(--va-orange)] pl-1 transition-transform duration-300 ${
@@ -239,11 +257,14 @@ const Navbar = () => {
                     {category.links && (
                       <div>
                         {category.links.filter(
-                          (link) => !link.requiresAdmin || isAdmin
+                          (link: NavLink) => !link.requiresAdmin || isAdmin
                         ).length > 0
                           ? category.links
-                              .filter((link) => !link.requiresAdmin || isAdmin)
-                              .map((link) => (
+                              .filter(
+                                (link: NavLink) =>
+                                  !link.requiresAdmin || isAdmin
+                              )
+                              .map((link: NavLink) => (
                                 <Link
                                   key={link.href}
                                   href={link.href}
@@ -273,7 +294,7 @@ const Navbar = () => {
                                     }
                                   }}
                                 >
-                                  {getLabel(language, link.label, link.labelEn)}
+                                  {link.label}
                                 </Link>
                               ))
                           : null}
@@ -302,7 +323,7 @@ const Navbar = () => {
         aria-label="Sivunavigaatio"
       >
         <div
-          className="h-20 flex items-center justify-between px-4 tracking-wide"
+          className="h-15 flex items-center justify-between px-4 tracking-wide"
           style={{
             backgroundColor: "var(--va-orange)",
             color: "var(--background)",
@@ -311,7 +332,9 @@ const Navbar = () => {
         >
           <ToggleSwitch isMobileMenu={true} />
           <button
-            aria-label={language === "en" ? "Close menu" : "Sulje valikko"}
+            aria-label={
+              translations[language]?.closeMenu || translations.fi.closeMenu
+            }
             onClick={closeMobileMenu}
             className="p-2"
           >
@@ -319,9 +342,9 @@ const Navbar = () => {
           </button>
         </div>
         <nav className="px-4 py-3 space-y-2 overflow-y-auto h-[calc(100%-5rem)]">
-          {hamburgerLinks
-            .filter((link) => !link.requiresAdmin || isAdmin)
-            .map((link) => (
+          {hamburgerLinksLocalized
+            .filter((link: NavLink) => !link.requiresAdmin || isAdmin)
+            .map((link: NavLink) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -349,7 +372,7 @@ const Navbar = () => {
                   }
                 }}
               >
-                {getLabel(language, link.label, link.labelEn)}
+                {link.label}
               </Link>
             ))}
         </nav>

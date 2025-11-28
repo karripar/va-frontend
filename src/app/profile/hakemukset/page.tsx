@@ -50,7 +50,7 @@ const QuickDocumentLinkForm = ({ documentType, phase, onDocumentAdded, onCancel 
       const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
       if (!apiUrl) throw new Error("API URL not configured");
 
-      const response = await fetch(`${apiUrl}/documents`, {
+      const response = await fetch(`${apiUrl}/applications/documents`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

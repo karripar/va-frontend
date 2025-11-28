@@ -5,7 +5,6 @@ import Link from "next/link";
 import { FiEdit } from "react-icons/fi";
 import LogoutButton from "@/components/ui/LogoutButton";
 import { FaArrowLeft } from "react-icons/fa6";
-import LanguageToggle from "@/components/LanguageToggle";
 
 export default function ProfilePage() {
   const { user: profile, loading } = useAuth();
@@ -38,11 +37,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen relative">
       {/* Orange Header with Title, Back Arrow and Edit Icon, Logout */}
-      <div className="bg-[#FF5722] text-white px-8 py-6 flex items-center justify-center relative">
-        {/* Language Toggle at top right, above icons */}
-        <div className="absolute right-16 top-2">
-          <LanguageToggle />
-        </div>
+      <div className="bg-[var(--va-orange)] text-white px-8 py-2 md:h-20 h-15 flex items-center justify-center relative">
         <Link
           href="/"
           className="absolute left-6 text-white hover:scale-110"
@@ -58,9 +53,9 @@ export default function ProfilePage() {
         </h1>
         <Link
           href="/profile/edit"
-          className="absolute right-16 text-white hover:scale-110"
+          className="absolute right-14 text-white hover:scale-110"
         >
-          <FiEdit size={15} />
+          <FiEdit size={22} />
         </Link>
         <LogoutButton className="absolute right-6 text-white hover:scale-110 !text-base" />
       </div>
@@ -80,15 +75,8 @@ export default function ProfilePage() {
               />
             )}
 
-            {/* Exchange badge */}
-            {profile.exchangeBadge && (
-              <span className="mb-4 px-4 py-2 bg-[#5B9FED] text-white rounded-full text-sm font-medium">
-                Exchange Student
-              </span>
-            )}
-
             {/* Welcome text */}
-            <p className="text-gray-800 text-center text-base mb-2 font-normal mt-4">
+            <p className="text-[var(--typography)] text-center text-base mb-2 font-normal mt-4">
               Tervetuloa profiiliisi, täällä voit selata tallentamiasi
               vaihtokohteitä ja seurata hakemustesi etenemistä vaiheittain.
             </p>
@@ -98,7 +86,7 @@ export default function ProfilePage() {
           <div className="space-y-3">
             <Link
               href="/profile/favorites"
-              className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
+              className="block w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[#FFA07A] transition-colors"
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
@@ -110,7 +98,7 @@ export default function ProfilePage() {
 
             <Link
               href="/profile/documents"
-              className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
+              className="block w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[#FFA07A] transition-colors"
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
@@ -122,9 +110,9 @@ export default function ProfilePage() {
 
             <Link
               href="/profile/hakemukset"
-              className="block w-full p-4 rounded-lg bg-[#FFB299] hover:bg-[#FFA07A] transition-colors"
+              className="block w-full p-4 rounded-lg bg-[var(--va-orange-50)] hover:bg-[#FFA07A] transition-colors"
             >
-              <div className="flex justify-between items-center text-gray-800">
+              <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
                   Hakemukset ja kustannusarviointi (
                   {profile.applications
