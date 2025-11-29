@@ -1,0 +1,28 @@
+export const translations: Record<string, Record<string, string>> = {
+  en: {
+    title: "Exchange Experiences",
+    subtitle: "Find inspiration and tips from previous exchange students' stories",
+    mindMap: "Mind Map",
+    listView: "List View",
+    loading: "Loading...",
+    error: "Failed to load stories",
+    tryAgain: "Try again",
+    noStories: "No stories",
+    clearFilters: "Clear filters",
+    exploreByCountry: "Explore stories by country and city",
+    featured: "Featured",
+  },
+  fi: {
+    title: "Vaihtokokemuksia",
+    subtitle: "Löydä inspiraatiota ja vinkkejä aiempien vaihto-opiskelijoiden tarinoista",
+    mindMap: "Mind Map",
+    listView: "List View",
+    loading: "Ladataan...",
+    error: "Tarinoiden lataus epäonnistui",
+    tryAgain: "Yritä uudelleen",
+    noStories: "Ei tarinoita",
+    clearFilters: "Tyhjennä suodattimet",
+    exploreByCountry: "Explore stories by country and city",
+    featured: "Featured",
+  },
+};

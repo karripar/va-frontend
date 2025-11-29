@@ -1,0 +1,51 @@
+export const translations: Record<string, Record<string, string>> = {
+  en: {
+    title: "Exchange Student AI Chat",
+    subtitle: "Ask me anything about student exchange!",
+    chatPlaceholder: "Type your question here...",
+    send: "Send",
+    greeting: "Hi! You can ask me questions about student exchange.",
+    faqTitle: "Frequently Asked Questions",
+    allCategories: "All",
+    general: "General",
+    applying: "Applying",
+    grants: "Grants",
+    documents: "Documents",
+    traveling: "Traveling",
+    askQuestion: "Have a question? Ask me!",
+    errorMessage: "Failed to send message. Please try again.",
+  },
+  fi: {
+    title: "Vaihto-opiskelijan AI-chatti",
+    subtitle: "Kysy minulta mitä tahansa opiskelijavaihdosta!",
+    chatPlaceholder: "Kirjoita kysymyksesi tähän...",
+    send: "Lähetä",
+    greeting: "Hei! Minulta voit kysyä opiskelijavaihtoon liittyviä kysymyksiä.",
+    faqTitle: "Usein kysytyt kysymykset",
+    allCategories: "Kaikki",
+    general: "Yleistä",
+    applying: "Hakeminen",
+    grants: "Apurahat",
+    documents: "Dokumentit",
+    traveling: "Matkustaminen",
+    askQuestion: "Onko sinulla kysymys? Kysy minulta!",
+    errorMessage: "Viestin lähetys epäonnistui. Yritä uudelleen.",
+  },
+};
+
+export const categoryTranslations: Record<string, Record<string, string>> = {
+  en: {
+    Yleistä: "General",
+    Hakeminen: "Applying",
+    Apurahat: "Grants",
+    Dokumentit: "Documents",
+    Matkustaminen: "Traveling",
+  },
+  fi: {
+    Yleistä: "Yleistä",
+    Hakeminen: "Hakeminen",
+    Apurahat: "Apurahat",
+    Dokumentit: "Dokumentit",
+    Matkustaminen: "Matkustaminen",
+  },
+};

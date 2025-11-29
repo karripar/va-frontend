@@ -5,9 +5,13 @@ import ProfileHeader from "@/components/profile/ProfileHeader";
 import LoadingSpinner from "@/components/profile/LoadingSpinner";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/favorites";
 
 export default function FavoritesPage() {
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = translations[language];
   const {
     favorites,
     removeFavorite,
@@ -21,7 +25,7 @@ export default function FavoritesPage() {
     setRemoving(destination);
     const success = await removeFavorite(destination);
     if (!success) {
-      alert("Virhe poistossa");
+      alert(t.errorRemoving);
     }
     setRemoving(null);
   };
@@ -35,7 +39,7 @@ export default function FavoritesPage() {
       className="min-h-screen"
       style={{ backgroundColor: "var(--background)" }}
     >
-      <ProfileHeader title="Suosikkikohteet" />
+      <ProfileHeader title={t.title} />
       <div
         className="min-h-screen"
         style={{ backgroundColor: "var(--background)" }}
@@ -51,7 +55,7 @@ export default function FavoritesPage() {
                     color: "var(--va-dark-grey)",
                   }}
                 >
-                  Ei vielä suosikkikohteita
+                  {t.noFavorites}
                 </p>
               </div>
             </div>
@@ -101,7 +105,7 @@ export default function FavoritesPage() {
               fontFamily: "var(--font-machina-bold)",
             }}
           >
-            Selaa lisää kohteita
+            {t.browseMore}
           </button>
         </div>
       </div>

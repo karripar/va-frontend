@@ -1,0 +1,28 @@
+export const translations: Record<string, Record<string, string>> = {
+  en: {
+    title: "Profile",
+    loading: "Loading profile...",
+    notFound: "Profile not found",
+    loginAgain: "Login again",
+    welcome: "Welcome to your profile, here you can browse your saved exchange destinations and track your application progress step by step.",
+    favorites: "Favorite Destinations",
+    documents: "My Documents",
+    applications: "Applications and Budget Estimation",
+    memberSince: "Member since:",
+    notAvailable: "Not available",
+    backToHome: "Back to home",
+  },
+  fi: {
+    title: "Profiili",
+    loading: "Ladataan profiilia...",
+    notFound: "Profiilia ei löytynyt",
+    loginAgain: "Kirjaudu uudelleen",
+    welcome: "Tervetuloa profiiliisi, täällä voit selata tallentamiasi vaihtokohteitä ja seurata hakemustesi etenemistä vaiheittain.",
+    favorites: "Suosikkikohteet",
+    documents: "Omat dokumentit",
+    applications: "Hakemukset ja kustannusarviointi",
+    memberSince: "Jäsen alkaen:",
+    notAvailable: "Ei saatavilla",
+    backToHome: "Takaisin etusivulle",
+  },
+};

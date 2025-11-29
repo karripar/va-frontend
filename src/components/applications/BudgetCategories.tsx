@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { FaPlane, FaShieldAlt, FaHome, FaShoppingCart, FaPencilAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/applications";
 
 export type BudgetCategory = 
   | "matkakulut"
@@ -29,6 +31,8 @@ interface BudgetCategoriesProps {
 }
 
 export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesProps) {
+  const { language } = useLanguage();
+  const t = translations[language];
   const [expandedCategory, setExpandedCategory] = useState<BudgetCategory | null>(null);
   const [expenses, setExpenses] = useState<Record<BudgetCategory, CategoryExpense>>({
     matkakulut: { amount: 0, notes: "" },
@@ -41,40 +45,40 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
   const categories: BudgetCategoryData[] = [
     {
       category: "matkakulut",
-      title: "Matkakulut",
-      description: "Lennot, junat, bussit, kimppakyytit, viisumi",
+      title: t.budgetCategoryTravel,
+      description: t.budgetCategoryTravelDesc,
       icon: <FaPlane size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
     },
     {
       category: "vakuutukset",
-      title: "Vakuutukset",
-      description: "Matka- ja opiskelija­vakuutukset",
+      title: t.budgetCategoryInsurance,
+      description: t.budgetCategoryInsuranceDesc,
       icon: <FaShieldAlt size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
     },
     {
       category: "asuminen",
-      title: "Asuminen",
-      description: "Vuokra ja -vakuus, muut asuntoon liittyvät laskut",
+      title: t.budgetCategoryHousing,
+      description: t.budgetCategoryHousingDesc,
       icon: <FaHome size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
     },
     {
       category: "ruoka_ja_arki",
-      title: "Ruoka ja arki",
-      description: "Kaupat ja ravintolat, hygieniä",
+      title: t.budgetCategoryFood,
+      description: t.budgetCategoryFoodDesc,
       icon: <FaShoppingCart size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
     },
     {
       category: "opintovalineet",
-      title: "Opintovalineet",
-      description: "Kirjat, materiaalit, tietokone",
+      title: t.budgetCategoryStudy,
+      description: t.budgetCategoryStudyDesc,
       icon: <FaPencilAlt size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
@@ -115,9 +119,9 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-[var(--typography)]">Budjetti</h2>
+        <h2 className="text-xl font-semibold text-[var(--typography)]">{t.budgetTitle}</h2>
         <div className="text-right">
-          <p className="text-sm text-[var(--typography)]">Kokonaissumma</p>
+          <p className="text-sm text-[var(--typography)]">{t.budgetTotalLabel}</p>
           <p className="text-2xl font-bold text-[#FF5722]">{getTotalAmount()}€</p>
         </div>
       </div>
@@ -152,7 +156,7 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
                 <div className="p-4 border-t border-[var(--va-border)] bg-gray-50 space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--typography)] mb-2">
-                      Arvioitu summa (€)
+                      {t.budgetEstimatedAmount}
                     </label>
                     <div className="flex items-center space-x-2">
                       <button
@@ -179,12 +183,12 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
 
                   <div>
                     <label className="block text-sm font-medium text-[var(--typography)] mb-2">
-                      Muistiinpanot
+                      {t.budgetNotesLabel}
                     </label>
                     <textarea
                       value={expense.notes}
                       onChange={(e) => updateNotes(cat.category, e.target.value)}
-                      placeholder="Lisää tarkempia tietoja kustannuksista..."
+                      placeholder={t.budgetNotesPlaceholder}
                       className="w-full px-4 py-2 border border-[var(--va-border)] rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent resize-none"
                       rows={3}
                     />
