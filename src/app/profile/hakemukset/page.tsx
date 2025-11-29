@@ -54,9 +54,17 @@ const QuickDocumentLinkForm = ({ documentType, phase, onDocumentAdded, onCancel 
       const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
       if (!apiUrl) throw new Error("API URL not configured");
 
-      const response = await fetch(`${apiUrl}/applications/documents`, {
+      const token = localStorage.getItem('authToken');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${apiUrl}/linkUploads/documents`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           phase,
           documentType,
@@ -160,6 +168,33 @@ export default function HakemuksetPage() {
   const [taskCompletion, setTaskCompletion] = useState<Record<string, boolean>>({});
   const [showReminder, setShowReminder] = useState<string | null>(null);
 
+  // Load saved documents from database on mount
+  useEffect(() => {
+    if (documents && documents.length > 0) {
+      const loadedDocs: Record<string, Record<string, { url: string; source: string }>> = {};
+      
+      documents.forEach(doc => {
+        // Parse task reference from documentType
+        const taskMatch = doc.documentType?.match(/Task: (.+)/);
+        if (taskMatch) {
+          const taskId = taskMatch[1];
+          const docId = doc.fileName;
+          
+          if (!loadedDocs[taskId]) {
+            loadedDocs[taskId] = {};
+          }
+          
+          loadedDocs[taskId][docId] = {
+            url: doc.fileUrl,
+            source: doc.sourceType
+          };
+        }
+      });
+      
+      setTaskDocuments(loadedDocs);
+    }
+  }, [documents]);
+
   // Handle URL parameters for direct navigation from navbar
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -187,24 +222,55 @@ export default function HakemuksetPage() {
     return Object.values(budgetExpenses).reduce((sum, expense) => sum + expense.amount, 0);
   };
 
-  const handleAddDocument = (taskId: string, docId: string, url: string, source: string) => {
-    setTaskDocuments(prev => ({
-      ...prev,
-      [taskId]: {
-        ...(prev[taskId] || {}),
-        [docId]: { url, source }
-      }
-    }));
+  const handleAddDocument = async (taskId: string, docId: string, url: string, source: string) => {
+    try {
+      // Save to database via API
+      const newDoc = await addDocumentLink({
+        phase: activePhase,
+        documentType: `Task: ${taskId}`, // Store task reference in documentType
+        fileName: docId, // Use docId as the document name/identifier
+        fileUrl: url,
+        sourceType: source,
+      });
+      
+      // Update local state after successful save
+      setTaskDocuments(prev => ({
+        ...prev,
+        [taskId]: {
+          ...(prev[taskId] || {}),
+          [docId]: { url, source }
+        }
+      }));
+    } catch (error) {
+      console.error("Error saving document:", error);
+      alert(language === 'fi' ? 'Dokumentin tallentaminen epäonnistui' : 'Failed to save document');
+    }
   };
 
-  const handleDeleteDocument = (taskId: string, docId: string) => {
-    setTaskDocuments(prev => {
-      const updated = { ...prev };
-      if (updated[taskId]) {
-        delete updated[taskId][docId];
+  const handleDeleteDocument = async (taskId: string, docId: string) => {
+    try {
+      // Find the document in the current documents list
+      const docToDelete = documents.find(doc => 
+        doc.fileName === docId && doc.documentType?.includes(`Task: ${taskId}`)
+      );
+      
+      if (docToDelete && docToDelete.id) {
+        // Delete from database
+        await deleteDocument(docToDelete.id);
       }
-      return updated;
-    });
+      
+      // Update local state
+      setTaskDocuments(prev => {
+        const updated = { ...prev };
+        if (updated[taskId]) {
+          delete updated[taskId][docId];
+        }
+        return updated;
+      });
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      alert(language === 'fi' ? 'Dokumentin poistaminen epäonnistui' : 'Failed to delete document');
+    }
   };
 
   const handleCompleteTask = async (taskId: string, task: { documents: Array<{ id: string; required: boolean }> }) => {

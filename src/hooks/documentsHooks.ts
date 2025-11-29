@@ -5,18 +5,34 @@ import { ApplicationDocument } from "va-hybrid-types/contentTypes";
 
 /**
  * Validate document link based on source type
+ * More flexible validation - checks if URL is valid and optionally matches platform
  */
-const validateDocumentLink = (url: string, sourceType: string): boolean => {
+const validateDocumentLink = (url: string, sourceType: string, strict: boolean = false): boolean => {
+  // Basic URL validation
+  if (!url || typeof url !== 'string') return false;
+  
+  // Check if it's a valid URL format
+  try {
+    new URL(url);
+  } catch {
+    // If not a full URL, check if it starts with http/https
+    if (!/^https?:\/\/.+/.test(url)) return false;
+  }
+
+  // If not strict mode, any valid URL is acceptable
+  if (!strict) return true;
+
+  // Strict mode: validate against platform patterns
   const patterns: Record<string, RegExp> = {
-    google_drive: /drive\.google\.com\/(file\/d\/|open\?id=)/,
-    onedrive: /1drv\.ms\/|onedrive\.live\.com/,
-    dropbox: /dropbox\.com\//,
+    google_drive: /drive\.google\.com/,
+    onedrive: /(1drv\.ms|onedrive\.live\.com|sharepoint\.com)/,
+    dropbox: /dropbox\.com/,
     icloud: /icloud\.com/,
     other_url: /^https?:\/\/.+/
   };
 
   const pattern = patterns[sourceType];
-  return pattern ? pattern.test(url) : false;
+  return pattern ? pattern.test(url) : true;
 };
 
 /**
@@ -42,9 +58,9 @@ const useApplicationDocuments = () => {
       setLoading(true);
       setError(null);
 
-      // Validate link before submission
-      if (!validateDocumentLink(data.fileUrl, data.sourceType)) {
-        throw new Error('Invalid document link format for the selected platform');
+      // Validate link before submission (non-strict mode for application documents)
+      if (!validateDocumentLink(data.fileUrl, data.sourceType, false)) {
+        throw new Error('Invalid document link format');
       }
 
       const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
@@ -52,11 +68,17 @@ const useApplicationDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/applications/documents`, {
+      const token = localStorage.getItem('authToken');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${apiUrl}/linkUploads/documents`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(data),
       });
 
@@ -91,8 +113,15 @@ const useApplicationDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/documents/${documentId}`, {
+      const token = localStorage.getItem('authToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${apiUrl}/linkUploads/documents/${documentId}`, {
         method: 'DELETE',
+        headers,
       });
 
       if (!response.ok) {
@@ -123,7 +152,7 @@ const useApplicationDocuments = () => {
       }
 
       const data = await fetchData<ApplicationDocument[]>(
-        `${apiUrl}/applications/${applicationId}/documents`
+        `${apiUrl}/linkUploads/documents?applicationId=${applicationId}`
       );
 
       setDocuments(data);
@@ -166,9 +195,9 @@ const useProfileDocuments = () => {
       setLoading(true);
       setError(null);
 
-      // Validating the link before submission
-      if (!validateDocumentLink(data.url, data.sourceType)) {
-        throw new Error('Invalid document link format for the selected platform');
+      // Validating the link before submission (non-strict mode)
+      if (!validateDocumentLink(data.url, data.sourceType, false)) {
+        throw new Error('Invalid document link format');
       }
 
       const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
@@ -176,11 +205,17 @@ const useProfileDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/profile/documents`, {
+      const token = localStorage.getItem('authToken');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${apiUrl}/linkUploads/documents`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(data),
       });
 
@@ -216,8 +251,15 @@ const useProfileDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const response = await fetch(`${apiUrl}/profile/documents/${documentId}`, {
+      const token = localStorage.getItem('authToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${apiUrl}/linkUploads/documents/${documentId}`, {
         method: 'DELETE',
+        headers,
       });
 
       if (!response.ok) {
@@ -248,7 +290,7 @@ const useProfileDocuments = () => {
         throw new Error("API URL not configured");
       }
 
-      const data = await fetchData<ApplicationDocument[]>(`${apiUrl}/profile/documents`);
+      const data = await fetchData<ApplicationDocument[]>(`${apiUrl}/linkUploads/documents`);
       setDocuments(data);
     } catch (err: unknown) {
       console.error("Error fetching documents:", err);

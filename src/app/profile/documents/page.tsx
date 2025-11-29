@@ -21,8 +21,8 @@ const PLATFORM_OPTIONS = [
 ];
 
 export default function DocumentsPage() {
-  const { profileData: profile, loading } = useProfileData();
-  const { addDocumentLink, deleteDocument } = useProfileDocuments();
+  const { loading: profileLoading } = useProfileData();
+  const { documents: fetchedDocuments, addDocumentLink, deleteDocument, fetchDocuments, loading: docsLoading } = useProfileDocuments();
   const { language } = useLanguage();
   const t = translations[language];
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -38,11 +38,18 @@ export default function DocumentsPage() {
     notes: ""
   });
 
+  // Fetch documents on mount
   useEffect(() => {
-    if (profile?.documents) {
-      setDocuments(profile.documents as unknown as Document[]);
+    fetchDocuments();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update local state when documents are fetched
+  useEffect(() => {
+    if (fetchedDocuments && fetchedDocuments.length > 0) {
+      setDocuments(fetchedDocuments as unknown as Document[]);
     }
-  }, [profile]);
+  }, [fetchedDocuments]);
 
   const resetForm = () => {
     setFormData({ name: "", url: "", sourceType: "google_drive", notes: "" });
@@ -90,7 +97,7 @@ export default function DocumentsPage() {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (profileLoading || docsLoading) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen">

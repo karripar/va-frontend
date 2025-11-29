@@ -19,7 +19,7 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
 
   const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
   const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : "";
+    typeof window !== "undefined" ? localStorage.getItem("authToken") : "";
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

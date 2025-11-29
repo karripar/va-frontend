@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlane, FaShieldAlt, FaHome, FaShoppingCart, FaPencilAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/lib/translations/applications";
+import { useBudgetEstimate } from "@/hooks/budgetArviointiHooks";
 
 export type BudgetCategory = 
   | "matkakulut"
@@ -33,6 +34,7 @@ interface BudgetCategoriesProps {
 export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesProps) {
   const { language } = useLanguage();
   const t = translations[language];
+  const { budget, saveBudget, fetchBudget } = useBudgetEstimate();
   const [expandedCategory, setExpandedCategory] = useState<BudgetCategory | null>(null);
   const [expenses, setExpenses] = useState<Record<BudgetCategory, CategoryExpense>>({
     matkakulut: { amount: 0, notes: "" },
@@ -41,6 +43,36 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     ruoka_ja_arki: { amount: 0, notes: "" },
     opintovalineet: { amount: 0, notes: "" },
   });
+
+  // Fetch budget data on mount
+  useEffect(() => {
+    fetchBudget();
+  }, [fetchBudget]);
+
+  // Load budget data when available
+  useEffect(() => {
+    if (budget?.categories) {
+      const loadedExpenses: Record<BudgetCategory, CategoryExpense> = {
+        matkakulut: { amount: 0, notes: "" },
+        vakuutukset: { amount: 0, notes: "" },
+        asuminen: { amount: 0, notes: "" },
+        ruoka_ja_arki: { amount: 0, notes: "" },
+        opintovalineet: { amount: 0, notes: "" },
+      };
+      
+      // Map budget categories to expenses if available
+      Object.entries(budget.categories || {}).forEach(([key, value]) => {
+        if (key in loadedExpenses && typeof value === 'object' && value !== null) {
+          loadedExpenses[key as BudgetCategory] = { 
+            amount: value.estimatedCost || 0, 
+            notes: value.notes || "" 
+          };
+        }
+      });
+      
+      setExpenses(loadedExpenses);
+    }
+  }, [budget]);
 
   const categories: BudgetCategoryData[] = [
     {
@@ -96,6 +128,9 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     };
     setExpenses(updatedExpenses);
     onBudgetChange?.(updatedExpenses);
+    
+    // Save to backend
+    saveBudgetToBackend(updatedExpenses);
   };
 
   const updateNotes = (category: BudgetCategory, notes: string) => {
@@ -105,6 +140,30 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     };
     setExpenses(updatedExpenses);
     onBudgetChange?.(updatedExpenses);
+    
+    // Save to backend
+    saveBudgetToBackend(updatedExpenses);
+  };
+
+  const saveBudgetToBackend = async (budgetExpenses: Record<BudgetCategory, CategoryExpense>) => {
+    try {
+      const categories: Record<string, { estimatedCost: number; notes?: string }> = {};
+      Object.entries(budgetExpenses).forEach(([key, value]) => {
+        categories[key] = {
+          estimatedCost: value.amount,
+          notes: value.notes || undefined,
+        };
+      });
+      
+      await saveBudget({
+        categories,
+        totalEstimate: Object.values(budgetExpenses).reduce((sum, exp) => sum + exp.amount, 0),
+        destination: budget?.destination || "",
+        currency: budget?.currency || "EUR",
+      });
+    } catch (error) {
+      console.error("Error saving budget:", error);
+    }
   };
 
   const adjustAmount = (category: BudgetCategory, delta: number) => {

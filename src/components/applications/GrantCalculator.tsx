@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlus, FaMinus, FaTimes, FaDivide, FaEquals, FaHistory } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/lib/translations/applications";
+import { useCalculatorHistory } from "@/hooks/calculatorHooks";
 
 interface GrantCalculatorProps {
   onCalculate?: (result: number) => void;
@@ -13,10 +14,18 @@ type Operation = "add" | "subtract" | "multiply" | "divide" | null;
 export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
   const { language } = useLanguage();
   const t = translations[language];
+  const { history: savedHistory, saveHistoryEntry, clearHistory: clearSavedHistory } = useCalculatorHistory();
   const [currentValue, setCurrentValue] = useState<string>("0");
   const [previousValue, setPreviousValue] = useState<string>("");
   const [operation, setOperation] = useState<Operation>(null);
   const [history, setHistory] = useState<string[]>([]);
+
+  // Load saved history when available
+  useEffect(() => {
+    if (savedHistory && savedHistory.length > 0) {
+      setHistory(savedHistory.map(entry => entry.calculation));
+    }
+  }, [savedHistory]);
 
   const handleNumberClick = (num: string) => {
     if (currentValue === "0" && num !== ".") {
@@ -68,6 +77,13 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
 
     const calculation = `${prev} ${operationSymbol} ${current} = ${result.toFixed(2)}`;
     setHistory([calculation, ...history.slice(0, 4)]);
+    
+    // Save to backend
+    saveHistoryEntry({
+      calculation,
+      result,
+    });
+    
     setCurrentValue(result.toFixed(2));
     setPreviousValue("");
     setOperation(null);
@@ -80,8 +96,9 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
     setOperation(null);
   };
 
-  const clearHistory = () => {
+  const clearHistory = async () => {
     setHistory([]);
+    await clearSavedHistory();
   };
 
   const backspace = () => {
