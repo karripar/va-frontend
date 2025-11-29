@@ -2,7 +2,6 @@
 import fetchData from "@/lib/fetchData";
 import { useEffect, useState } from "react";
 import { DestinationWithCoordinatesResponse } from "va-hybrid-types/contentTypes";
-import { useLanguage } from "@/context/LanguageContext";
 
 // simple cache that survives re-renders but not page reloads
 const destinationCache: Record<string, DestinationWithCoordinatesResponse> = {};
@@ -15,7 +14,6 @@ const useDestinationData = (
     useState<DestinationWithCoordinatesResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { language } = useLanguage();
 
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
@@ -42,7 +40,7 @@ const useDestinationData = (
 
         const url = useMock
           ? "/testDestinations.json"
-          : `${apiUrl}/destinations/metropolia/destinations?field=${field}&lang=${language}`;
+          : `${apiUrl}/destinations/metropolia/destinations?field=${field}`;
 
         const data = await fetchData<DestinationWithCoordinatesResponse>(url, {
           signal: controller.signal,
@@ -67,7 +65,7 @@ const useDestinationData = (
     return () => {
       controller.abort();
     };
-  }, [field, useMock, language]);
+  }, [field, useMock]);
 
   return { destinationArray, loading, error };
 };

@@ -59,8 +59,7 @@ vi.mock("@/components/exchange-destinations/DestinationList", () => ({
   ),
 }));
 
-
-import DestinationsPage from "@/app/destinations/page";
+import DestinationsPage from "@/app/destinations/page-old";
 import DestinationAdminPanel from "@/components/exchange-destinations/destinationAdminPanel";
 
 describe("DestinationsPage", () => {
@@ -94,7 +93,9 @@ describe("DestinationsPage", () => {
     });
 
     renderWithSuspense();
-    expect(screen.getByText(/Could not load destinations/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Could not load destinations/i)
+    ).toBeInTheDocument();
   });
 
   test("renders destinations and components", async () => {

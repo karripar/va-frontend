@@ -1,14 +1,15 @@
 "use client";
 import { useDestinationData } from "@/hooks/destinationHooks";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import DestinationList from "@/components/exchange-destinations/DestinationList";
 import { useLanguage } from "@/context/LanguageContext";
 import DestinationAdminPanel from "@/components/exchange-destinations/destinationAdminPanel";
 import { useAuth } from "@/hooks/useAuth";
 import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID } from "@/config/roles";
-import {
-  DestinationUrlResponse,
-  useDestinationUrls,
-} from "@/hooks/destinationUrlHooks";
+
+const DestinationMap = React.lazy(
+  () => import("@/components/exchange-destinations/DestinationMap")
+);
 
 // Normal import for testing purposes, vitest has issues with React.lazy
 // import DestinationMap from "@/components/exchange-destinations/DestinationMap";
@@ -17,10 +18,6 @@ const DestinationsPage = () => {
   const { language } = useLanguage();
   const useMockData = process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true";
   const { isAuthenticated, user } = useAuth();
-  const { getDestinationUrls } = useDestinationUrls();
-  const [destinationUrls, setDestinationUrls] = useState<
-    DestinationUrlResponse[]
-  >([]);
 
   const adminLevels = [Number(ADMIN_LEVEL_ID), Number(ELEVATED_LEVEL_ID)];
 
@@ -31,16 +28,6 @@ const DestinationsPage = () => {
     selectedField,
     useMockData
   );
-
-  useEffect(() => {
-    const fetchUrls = async () => {
-      const urls = await getDestinationUrls();
-      if (urls) {
-        setDestinationUrls(urls.urls);
-      }
-    };
-    fetchUrls();
-  }, []);
 
   if (loading) {
     return <div className="p-4 text-center">Loading destinations...</div>;
@@ -78,8 +65,7 @@ const DestinationsPage = () => {
       culture: "Kulttuuri",
       business: "Liiketalous",
       couldNotLoad: "Kohteita ei voida ladata: ",
-      youCanStillModify:
-        "Voit silti muokata kohteiden URL-osoitteita. Tarkista että kaikki kohteiden URL-osoitteet löytyvät hallintapaneelista.",
+      youCanStillModify: "Voit silti muokata kohteiden URL-osoitteita. Tarkista että kaikki kohteiden URL-osoitteet löytyvät hallintapaneelista.",
     },
     en: {
       partnerSchools: "International Partner Universities",
@@ -92,8 +78,7 @@ const DestinationsPage = () => {
       culture: "Culture",
       business: "Business",
       couldNotLoad: "Could not load destinations: ",
-      youCanStillModify:
-        "You can still modify destination URLs. Make sure all destination URLs are found in the admin panel.",
+      youCanStillModify: "You can still modify destination URLs. Make sure all destination URLs are found in the admin panel.",
     },
   };
 
@@ -118,26 +103,37 @@ const DestinationsPage = () => {
         <DestinationAdminPanel fetchError={error} />
       )}
 
-      {/** Show destination urls as link buttons to the users */}
-      {destinationUrls.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6">
-          {destinationUrls.map((dest) => (
-            <a
-              key={dest._id}
-              href={dest.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col justify-between p-5 rounded-xl border border-gray-200 shadow-sm bg-white hover:shadow-lg transition hover:border-[#FF5000] hover:ring-1 hover:ring-[#FF5000]"
+      {/** Only render field selection & map/list if data is valid */}
+      {!error && destinationArray && (
+        <>
+          <div className="text-center overflow-hidden rounded-lg my-12 p-4">
+            <h2 className="text-lg mb-4">
+              {translations[language].chooseField}
+            </h2>
+            <select
+              value={selectedField}
+              onChange={(e) =>
+                setSelectedField(
+                  e.target.value as "tech" | "health" | "culture" | "business"
+                )
+              }
+              className="px-6 py-2 bg-[var(--va-mint-50)] rounded-full font-medium shadow-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF5000]"
             >
-              <div className="font-semibold text-lg text-gray-800">
-                {fieldLabels[dest.field]}
-              </div>
-              <div className="text-sm text-gray-500 mt-1">
-                {dest.lang.toUpperCase()}
-              </div>
-            </a>
-          ))}
-        </div>
+              {Object.entries(fieldLabels).map(([field, label]) => (
+                <option
+                  key={field}
+                  value={field}
+                  className="text-[var(--typography)] bg-[var(--background)]"
+                >
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <DestinationMap data={destinationArray} />
+          <DestinationList data={destinationArray} />
+        </>
       )}
 
       {/** Optional message for admins when data fetch failed */}
