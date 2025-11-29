@@ -129,7 +129,7 @@ const DestinationsPage = () => {
               rel="noopener noreferrer"
               className="flex flex-col justify-between p-5 rounded-xl border border-gray-200 shadow-sm bg-white hover:shadow-lg transition hover:border-[#FF5000] hover:ring-1 hover:ring-[#FF5000]"
             >
-              <div className="font-semibold text-lg text-gray-800">
+              <div className="font-semibold text-lg text-[var(--typography)]">
                 {fieldLabels[dest.field]}
               </div>
               <div className="text-sm text-gray-500 mt-1">
