@@ -47,7 +47,7 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
   // Fetch budget data on mount
   useEffect(() => {
     fetchBudget();
-  }, [fetchBudget]);
+  }, []);
 
   // Load budget data when available
   useEffect(() => {
