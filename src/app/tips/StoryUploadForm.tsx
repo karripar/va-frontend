@@ -12,7 +12,7 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
     city: "",
     university: "",
     title: "",
-    storyText: "",
+    content: "",
   });
 
   const [image, setImage] = useState<File | null>(null);
@@ -31,20 +31,44 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = new FormData();
-    Object.entries(form).forEach(([k, v]) => data.append(k, v));
-    if (image) data.append("image", image);
+    if (!token) {
+      alert("You must be logged in to submit a story");
+      return;
+    }
 
-    const res = await fetch(`${apiUrl}/exchange-stories`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`, 
-      },
-      body: data,
-    });
+    try {
+      // Send as JSON - backend expects req.body with fields
+      const payload = {
+        country: form.country,
+        city: form.city,
+        university: form.university,
+        title: form.title,
+        content: form.content,
+        // Note: Image upload would need separate endpoint or multipart handling
+      };
 
-    if (res.ok) onSuccess();
-    else alert("Failed to upload story");
+      const res = await fetch(`${apiUrl}/exchange-stories`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        console.log("Story created:", result);
+        onSuccess();
+      } else {
+        const error = await res.json().catch(() => ({ error: "Failed to upload story" }));
+        console.error("Story upload failed:", error);
+        alert(error.error || "Failed to upload story");
+      }
+    } catch (error) {
+      console.error("Error submitting story:", error);
+      alert("Network error. Please try again.");
+    }
   };
 
   return (
@@ -57,8 +81,8 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
       <div>
         <label className="block mb-1 font-medium">Story Text</label>
         <textarea
-          name="storyText"
-          value={form.storyText}
+          name="content"
+          value={form.content}
           required
           onChange={handleChange}
           className="w-full border rounded-lg px-3 py-2 min-h-[120px]"

@@ -55,17 +55,22 @@ export const useExchangeStories = (filters?: StoryFilters) => {
 
     setLoading(true);
 
-    // ADMIN endpoint
     const url = `${CONTENT_API}/exchange-stories/all`;
-    console.log('🔍 Fetching stories from:', url);
-    console.log('🔍 CONTENT_API value:', CONTENT_API);
 
-    const data: ExchangeStoriesResponse | null = await apiRequest(url);
+    try {
+      const data: ExchangeStoriesResponse | null = await apiRequest(url);
 
-    if (data?.stories) {
-      setStories(data.stories);
-    } else {
-      setError("Failed to load stories");
+      if (data?.stories) {
+        setStories(data.stories);
+        setError(null);
+      } else {
+        setStories([]);
+        setError("Failed to load stories");
+      }
+    } catch (err) {
+      console.error("Error fetching stories:", err);
+      setStories([]);
+      setError("Failed to fetch stories");
     }
 
     setLoading(false);
@@ -73,7 +78,8 @@ export const useExchangeStories = (filters?: StoryFilters) => {
 
   useEffect(() => {
     fetchStories();
-  }, [fetchStories]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return { stories, loading, error };
 };
@@ -98,7 +104,6 @@ export const useFeaturedStories = () => {
       try {
         setLoading(true);
 
-
         const url = `${CONTENT_API}/exchange-stories`;
 
         const data = await fetchData<{ stories: ExchangeStory[] }>(url, {
@@ -106,9 +111,11 @@ export const useFeaturedStories = () => {
         });
 
         setStories(data.stories);
+        setError(null);
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {
           console.error("Error fetching featured stories:", err);
+          setStories([]);
           setError("Failed to fetch featured stories");
         }
       } finally {

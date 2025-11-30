@@ -22,49 +22,90 @@ export default function StoryAdminPanel() {
   // Unified Fetch Wrapper
   const apiRequest = useCallback(
     async (url: string, options: RequestInit = {}) => {
-      const res = await fetch(url, {
-        ...options,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ...options.headers,
-        },
-      });
+      if (!token) {
+        console.error("No auth token available");
+        return null;
+      }
 
-      return res.ok ? res.json().catch(() => null) : null;
+      try {
+        const res = await fetch(url, {
+          ...options,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            ...options.headers,
+          },
+        });
+
+        if (!res.ok) {
+          const error = await res.json().catch(() => ({ error: "Request failed" }));
+          console.error("API request failed:", res.status, error);
+          return null;
+        }
+
+        return res.json().catch(() => null);
+      } catch (error) {
+        console.error("API request error:", error);
+        return null;
+      }
     },
     [token]
   );
 
-  // Fetch ALL stories (admin)
+  // Fetch ALL stories 
   const fetchStories = useCallback(async () => {
     setLoading(true);
 
     const url = `${apiUrl}/exchange-stories/all`;
-    console.log('🔍 Admin fetching from:', url);
-    console.log('🔍 apiUrl value:', apiUrl);
 
     const data = await apiRequest(url);
 
-    if (data?.stories) setStories(data.stories);
+    if (data?.stories) {
+      setStories(data.stories);
+    } else {
+      setStories([]);
+      console.warn("No stories data received from backend");
+    }
+    
     setLoading(false);
   }, [apiUrl, apiRequest]);
 
   // Approve Story
-  const approveStory = (id: string) =>
-    apiRequest(`${apiUrl}/exchange-stories/${id}/approve`, {
+  const approveStory = async (id: string) => {
+    const result = await apiRequest(`${apiUrl}/exchange-stories/${id}/approve`, {
       method: "PUT",
-    }).then(fetchStories);
+    });
+    
+    if (result) {
+      console.log("Story approved successfully");
+      await fetchStories();
+    } else {
+      alert("Failed to approve story");
+    }
+  };
 
   // Delete Story
-  const deleteStory = (id: string) =>
-    confirm("Delete this story?") &&
-    apiRequest(`${apiUrl}/exchange-stories/${id}`, {
+  const deleteStory = async (id: string) => {
+    if (!confirm("Delete this story? This action cannot be undone.")) {
+      return;
+    }
+
+    const result = await apiRequest(`${apiUrl}/exchange-stories/${id}`, {
       method: "DELETE",
-    }).then(fetchStories);
+    });
+
+    if (result) {
+      console.log("Story deleted successfully");
+      await fetchStories();
+    } else {
+      alert("Failed to delete story");
+    }
+  };
 
   useEffect(() => {
     if (isAdmin) fetchStories();
-  }, [isAdmin, fetchStories]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin]);
 
   if (!isAdmin) return null;
 
@@ -82,6 +123,8 @@ export default function StoryAdminPanel() {
 
       {loading ? (
         <p className="text-gray-600">Loading...</p>
+      ) : stories.length === 0 ? (
+        <p className="text-gray-600">No stories yet. Click &quot;Add Story&quot; to create one.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full bg-white rounded-lg">
@@ -98,8 +141,8 @@ export default function StoryAdminPanel() {
             </thead>
 
             <tbody className="divide-y">
-              {stories.map((story) => (
-                <tr key={story.id} className="hover:bg-gray-50">
+              {stories.map((story, index) => (
+                <tr key={story.id || `story-${index}`} className="hover:bg-gray-50">
                   <td className="px-4 py-3">{story.country}</td>
                   <td className="px-4 py-3">{story.city}</td>
                   <td className="px-4 py-3">{story.title}</td>
