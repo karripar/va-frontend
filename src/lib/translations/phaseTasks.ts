@@ -18,6 +18,7 @@ interface TaskTile {
   reminderText?: string;
   reminderLink?: string;
   reminderLinkText?: string;
+  isCheckboxOnly?: boolean;
 }
 
 export const phaseTasksTranslations: Record<string, Record<ApplicationPhase, TaskTile[]>> = {
@@ -46,8 +47,9 @@ export const phaseTasksTranslations: Record<string, Record<ApplicationPhase, Tas
         description: "Osallistu alakohtaisiin hakuinfoihin ja tutustu U!REKA-allianssin mahdollisuuksiin. Lue vaihtoraportit OMASta ja valmistaudu hakuprosessiin.",
         icon: "🎓",
         color: "purple",
+        isCheckboxOnly: true,
         documents: [
-          { id: "infotilaisuus-muistiinpanot", label: "Infotilaisuuden muistiinpanot", required: false },
+          { id: "attended", label: "Olen osallistunut infotilaisuuteen", required: true },
         ],
         reminderTitle: "Valmistaudu huolellisesti",
         reminderText: "Valinnassa painotetaan: opintomenestys, motivaatio, kielitaito ja kv-aktiivisuus. Varmista että täytät kriteerit: vähintään 60 op suoritettu."
@@ -94,8 +96,9 @@ export const phaseTasksTranslations: Record<string, Record<ApplicationPhase, Tas
         description: "Osallistu pakollisiin vaihto-orientaatioihin. Saat tärkeää tietoa hakuprosessista, dokumenteista ja käytännön asioista.",
         icon: "📚",
         color: "orange",
+        isCheckboxOnly: true,
         documents: [
-          { id: "orientaatio-todistus", label: "Osallistumistodistus", required: false },
+          { id: "attended", label: "Olen osallistunut orientaatioon", required: true },
         ],
         reminderTitle: "Osallistu orientaatioon",
         reminderText: "Orientaatiot ovat pakollisia. Merkitse kalenteriisi ja osallistu!"
@@ -132,7 +135,7 @@ export const phaseTasksTranslations: Record<string, Record<ApplicationPhase, Tas
         ],
         reminderTitle: "Kelan opintotuki",
         reminderText: "Hae opintotukea hyvissä ajoin ennen lähtöä.",
-        reminderLink: "https://www.kela.fi/opintotuki-ulkomailla",
+        reminderLink: "https://www.kela.fi/opinnot-ulkomailla#oletko-lahdossa-vaihtoon",
         reminderLinkText: "Kelan opintotuki"
       },
       {
@@ -303,7 +306,7 @@ export const phaseTasksTranslations: Record<string, Record<ApplicationPhase, Tas
         ],
         reminderTitle: "Kela study grant",
         reminderText: "Apply for study grant well in advance before departure.",
-        reminderLink: "https://www.kela.fi/opintotuki-ulkomailla",
+        reminderLink: "https://www.kela.fi/opinnot-ulkomailla#oletko-lahdossa-vaihtoon",
         reminderLinkText: "Kela study grant"
       },
       {

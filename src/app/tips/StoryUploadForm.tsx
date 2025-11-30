@@ -35,7 +35,7 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
     Object.entries(form).forEach(([k, v]) => data.append(k, v));
     if (image) data.append("image", image);
 
-    const res = await fetch(`${apiUrl}/exchange-stories/stories`, {
+    const res = await fetch(`${apiUrl}/exchange-stories`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`, 

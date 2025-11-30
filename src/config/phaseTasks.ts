@@ -17,6 +17,7 @@ export interface TaskTile {
   icon: string;
   color: string;
   documents: TaskDocument[];
+  isCheckboxOnly?: boolean; // If true, shows checkbox instead of document upload
   reminderTitle?: string;
   reminderText?: string;
   reminderLink?: string;

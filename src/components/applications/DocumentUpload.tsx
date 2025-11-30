@@ -103,7 +103,7 @@ export default function DocumentUpload({
   const [sourceType, setSourceType] = useState("google_drive");
   const [notes, setNotes] = useState("");
 
-  const AUTH_API = process.env.NEXT_PUBLIC_AUTH_API;
+  const AUTH_API = process.env.NEXT_PUBLIC_UPLOAD_API;
 
   const getPlatformIcon = (sourceType: string) => {
     const icons: Record<string, string> = {
@@ -142,7 +142,7 @@ export default function DocumentUpload({
     }
 
     if (!AUTH_API) {
-      alert('API configuration missing. Set NEXT_PUBLIC_AUTH_API.');
+      alert('API configuration missing. Set NEXT_PUBLIC_UPLOAD_API.');
       return;
     }
 

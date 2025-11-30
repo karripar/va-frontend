@@ -18,6 +18,7 @@ export interface TaskTile {
   icon: string;
   color: string;
   documents: TaskDocument[];
+  isCheckboxOnly?: boolean; // If true, shows checkbox instead of document upload
   reminderTitle?: string;
   reminderText?: string;
   reminderLink?: string;
@@ -114,13 +115,13 @@ export function TaskCard({
                 <FaExternalLinkAlt className="text-[#FF5722] text-xl" />
                 <div className="flex-1">
                   <div className="font-semibold text-gray-900">{task.reminderLinkText || t.uploadDocument}</div>
-                  <div className="text-sm text-gray-600">{t.attendInfoSessionReminder}</div>
+                  {task.reminderText && <div className="text-sm text-gray-600">{task.reminderText}</div>}
                 </div>
               </a>
               {/* Only show warning for Mobility Online application */}
-              {task.id === 'metropolia-application' && (
+              {task.id === 'sisainen-hakemus' && (
                 <p className="mt-2 text-xs text-orange-700 bg-orange-50 p-2 rounded border border-orange-200">
-                  ⚠️ Please note that the link will be active during the application periods!
+                  ⚠️ {language === 'fi' ? 'Huomioithan, että linkki on aktiivinen vain hakuaikoina!' : 'Please note that the link will be active only during the application periods!'}
                 </p>
               )}
             </div>
@@ -128,36 +129,64 @@ export function TaskCard({
 
           {/* Document Upload Section */}
           <div className="space-y-3 mb-6">
-            <h4 className="font-semibold text-gray-900">{t.uploadDocument}</h4>
+            <h4 className="font-semibold text-gray-900">
+              {task.isCheckboxOnly ? (language === 'fi' ? 'Vahvista osallistuminen' : 'Confirm participation') : t.uploadDocument}
+            </h4>
             {task.documents.map((doc) => (
               <div key={doc.id} className="bg-white border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900">{doc.label}</span>
-                    {doc.required && <span className="text-xs text-red-500">*{language === 'fi' ? 'pakollinen' : 'required'}</span>}
-                  </div>
-                  {taskDocuments[doc.id] ? (
-                    <button
-                      onClick={() => onDeleteDocument(task.id, doc.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <FaTrash className="w-4 h-4" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setActiveDocForm(activeDocForm === doc.id ? null : doc.id)}
-                      className="text-[#FF5722] hover:text-orange-700 text-sm font-medium"
-                    >
-                      {activeDocForm === doc.id ? t.cancel : `+ ${t.addDocument}`}
-                    </button>
-                  )}
-                </div>
+                {task.isCheckboxOnly ? (
+                  /* Checkbox-only mode for attendance confirmation */
+                  <label className="flex items-center gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={!!taskDocuments[doc.id]}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          onAddDocument(task.id, doc.id, 'attended', 'checkbox');
+                        } else {
+                          onDeleteDocument(task.id, doc.id);
+                        }
+                      }}
+                      className="w-5 h-5 text-[#FF5722] border-gray-300 rounded focus:ring-[#FF5722] cursor-pointer"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-gray-900 group-hover:text-[#FF5722] transition-colors">
+                        {doc.label}
+                      </span>
+                    </div>
+                    {taskDocuments[doc.id] && (
+                      <FaCheck className="text-green-600 text-lg" />
+                    )}
+                  </label>
+                ) : (
+                  /* Original document upload mode */
+                  <>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-900">{doc.label}</span>
+                      </div>
+                      {taskDocuments[doc.id] ? (
+                        <button
+                          onClick={() => onDeleteDocument(task.id, doc.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <FaTrash className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setActiveDocForm(activeDocForm === doc.id ? null : doc.id)}
+                          className="text-[#FF5722] hover:text-orange-700 text-sm font-medium"
+                        >
+                          {activeDocForm === doc.id ? t.cancel : `+ ${t.addDocument}`}
+                        </button>
+                      )}
+                    </div>
 
-                {taskDocuments[doc.id] ? (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <FaCheck className="text-green-600" />
-                    <a 
-                      href={taskDocuments[doc.id].url} 
+                    {taskDocuments[doc.id] ? (
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <FaCheck className="text-green-600" />
+                        <a 
+                          href={taskDocuments[doc.id].url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-[#FF5722] hover:underline flex items-center gap-1"
@@ -180,12 +209,14 @@ export function TaskCard({
                 ) : null}
                 
                 {/* Show notification after saving */}
-                {showSavedNotification === doc.id && (
+                {!task.isCheckboxOnly && showSavedNotification === doc.id && (
                   <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                     <p className="text-sm text-orange-800">
                       ℹ️ {t.submitApplicationReminder}
                     </p>
                   </div>
+                )}
+                  </>
                 )}
               </div>
             ))}

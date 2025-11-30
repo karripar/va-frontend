@@ -56,7 +56,9 @@ export const useExchangeStories = (filters?: StoryFilters) => {
     setLoading(true);
 
     // ADMIN endpoint
-    const url = `${CONTENT_API}/exchange-stories/stories/all`;
+    const url = `${CONTENT_API}/exchange-stories/all`;
+    console.log('🔍 Fetching stories from:', url);
+    console.log('🔍 CONTENT_API value:', CONTENT_API);
 
     const data: ExchangeStoriesResponse | null = await apiRequest(url);
 
@@ -97,7 +99,7 @@ export const useFeaturedStories = () => {
         setLoading(true);
 
 
-        const url = `${CONTENT_API}/exchange-stories/stories`;
+        const url = `${CONTENT_API}/exchange-stories`;
 
         const data = await fetchData<{ stories: ExchangeStory[] }>(url, {
           signal: controller.signal,

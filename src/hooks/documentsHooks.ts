@@ -1,6 +1,6 @@
 "use client";
 import fetchData from "@/lib/fetchData";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ApplicationDocument } from "va-hybrid-types/contentTypes";
 
 /**
@@ -38,10 +38,39 @@ const validateDocumentLink = (url: string, sourceType: string, strict: boolean =
 /**
  * Hook for managing application documents
  */
-const useApplicationDocuments = () => {
+const useApplicationDocuments = (phase?: string) => {
   const [documents, setDocuments] = useState<ApplicationDocument[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Fetch documents on mount and when phase changes
+  useEffect(() => {
+    const fetchAllDocuments = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const apiUrl = process.env.NEXT_PUBLIC_UPLOAD_API;
+        if (!apiUrl) {
+          throw new Error("Upload API URL not configured");
+        }
+
+        const endpoint = phase 
+          ? `${apiUrl}/linkUploads/documents?phase=${phase}`
+          : `${apiUrl}/linkUploads/documents`;
+
+        const data = await fetchData<ApplicationDocument[]>(endpoint);
+        setDocuments(data || []);
+      } catch (err: unknown) {
+        console.error("Error fetching documents:", err);
+        setError("Failed to fetch documents");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllDocuments();
+  }, [phase]);
 
   /**
    * Add a document link (replaces old file upload)
@@ -58,14 +87,14 @@ const useApplicationDocuments = () => {
       setLoading(true);
       setError(null);
 
-      // Validate link before submission (non-strict mode for application documents)
-      if (!validateDocumentLink(data.fileUrl, data.sourceType, false)) {
+      // Skipping validation for checkbox only tasks
+      if (data.sourceType !== 'checkbox' && !validateDocumentLink(data.fileUrl, data.sourceType, false)) {
         throw new Error('Invalid document link format');
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      const apiUrl = process.env.NEXT_PUBLIC_UPLOAD_API;
       if (!apiUrl) {
-        throw new Error("API URL not configured");
+        throw new Error("Upload API URL not configured");
       }
 
       const token = localStorage.getItem('authToken');
@@ -108,9 +137,9 @@ const useApplicationDocuments = () => {
       setLoading(true);
       setError(null);
 
-      const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      const apiUrl = process.env.NEXT_PUBLIC_UPLOAD_API;
       if (!apiUrl) {
-        throw new Error("API URL not configured");
+        throw new Error("Upload API URL not configured");
       }
 
       const token = localStorage.getItem('authToken');
@@ -146,9 +175,9 @@ const useApplicationDocuments = () => {
       setLoading(true);
       setError(null);
 
-      const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      const apiUrl = process.env.NEXT_PUBLIC_UPLOAD_API;
       if (!apiUrl) {
-        throw new Error("API URL not configured");
+        throw new Error("Upload API URL not configured");
       }
 
       const data = await fetchData<ApplicationDocument[]>(
@@ -200,9 +229,9 @@ const useProfileDocuments = () => {
         throw new Error('Invalid document link format');
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      const apiUrl = process.env.NEXT_PUBLIC_UPLOAD_API;
       if (!apiUrl) {
-        throw new Error("API URL not configured");
+        throw new Error("Upload API URL not configured");
       }
 
       const token = localStorage.getItem('authToken');
@@ -246,9 +275,9 @@ const useProfileDocuments = () => {
       setLoading(true);
       setError(null);
 
-      const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      const apiUrl = process.env.NEXT_PUBLIC_UPLOAD_API;
       if (!apiUrl) {
-        throw new Error("API URL not configured");
+        throw new Error("Upload API URL not configured");
       }
 
       const token = localStorage.getItem('authToken');
@@ -285,9 +314,9 @@ const useProfileDocuments = () => {
       setLoading(true);
       setError(null);
 
-      const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
+      const apiUrl = process.env.NEXT_PUBLIC_UPLOAD_API;
       if (!apiUrl) {
-        throw new Error("API URL not configured");
+        throw new Error("Upload API URL not configured");
       }
 
       const data = await fetchData<ApplicationDocument[]>(`${apiUrl}/linkUploads/documents`);

@@ -39,9 +39,11 @@ export default function StoryAdminPanel() {
   const fetchStories = useCallback(async () => {
     setLoading(true);
 
-    const data = await apiRequest(
-      `${apiUrl}/exchange-stories/stories/all`
-    );
+    const url = `${apiUrl}/exchange-stories/all`;
+    console.log('🔍 Admin fetching from:', url);
+    console.log('🔍 apiUrl value:', apiUrl);
+
+    const data = await apiRequest(url);
 
     if (data?.stories) setStories(data.stories);
     setLoading(false);
@@ -49,14 +51,14 @@ export default function StoryAdminPanel() {
 
   // Approve Story
   const approveStory = (id: string) =>
-    apiRequest(`${apiUrl}/exchange-stories/stories/${id}/approve`, {
+    apiRequest(`${apiUrl}/exchange-stories/${id}/approve`, {
       method: "PUT",
     }).then(fetchStories);
 
   // Delete Story
   const deleteStory = (id: string) =>
     confirm("Delete this story?") &&
-    apiRequest(`${apiUrl}/exchange-stories/stories/${id}`, {
+    apiRequest(`${apiUrl}/exchange-stories/${id}`, {
       method: "DELETE",
     }).then(fetchStories);
 

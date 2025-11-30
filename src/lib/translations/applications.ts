@@ -194,7 +194,7 @@ export const translations: Record<string, Record<string, string>> = {
     calculatorTip2: "Laske kuukausittaisia kuluja ja vertaa apurahaan",
     calculatorTip3: "Tallenna tärkeät laskelmat muistiinpanoihin",
     // Task reminders and notifications
-    attendInfoSessionReminder: "Muista osallistua infotilaisuuksiin ja merkitä tämä kohta kun tilaisuuksiin on osallistuttu",
+    attendInfoSessionReminder: "Huomioithan, että linkki on aktiivinen vain hakuaikoina!",
     submitApplicationReminder: "Muista täyttää ja lähettää hakemuksesi virallisissa sivustoissa!",
     linkSavedNotification: "Linkki tallennettu onnistuneesti!",
     save: "Tallenna",

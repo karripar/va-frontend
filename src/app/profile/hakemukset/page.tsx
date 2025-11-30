@@ -1,4 +1,5 @@
-﻿/* eslint-disable @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useApplicationDocuments } from "@/hooks/documentsHooks";
 import { useApplicationsData, useApplicationStages } from "@/hooks/applicationsHooks";
@@ -51,8 +52,8 @@ const QuickDocumentLinkForm = ({ documentType, phase, onDocumentAdded, onCancel 
 
     setSubmitting(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
-      if (!apiUrl) throw new Error("API URL not configured");
+      const apiUrl = process.env.NEXT_PUBLIC_UPLOAD_API;
+      if (!apiUrl) throw new Error("Upload API URL not configured");
 
       const token = localStorage.getItem('authToken');
       const headers: Record<string, string> = {
@@ -146,10 +147,11 @@ const getPhaseTitle = (phase: ApplicationPhase, language: string) => {
 };
 
 export default function HakemuksetPage() {
+  const [activePhase, setActivePhase] = useState<ApplicationPhase>("esihaku");
   const { profileData: profile, loading: profileLoading, error: profileError } = useProfileData();
   const { applications, loading: appsLoading, error: appsError } = useApplicationsData();
   const { stages: applicationStages, loading: stagesLoading, error: stagesError } = useApplicationStages();
-  const { documents, addDocumentLink, deleteDocument } = useApplicationDocuments();
+  const { documents, addDocumentLink, deleteDocument } = useApplicationDocuments(activePhase);
   const { grants, loading: grantsLoading, error: grantsError } = useGrantsData();
   const { budget } = useBudgetEstimate();
   const router = useRouter();
@@ -158,42 +160,59 @@ export default function HakemuksetPage() {
   const t = translations[language];
   const PHASE_TASKS = getPhaseTasks(language);
   
-  const [activePhase, setActivePhase] = useState<ApplicationPhase>("esihaku");
   const [expandedTask, setExpandedTask] = useState<string | null>(null);
   const [activeBudgetTab, setActiveBudgetTab] = useState<"stages" | "budget">("stages");
   const [budgetExpenses, setBudgetExpenses] = useState<Record<BudgetCategory, CategoryExpense> | null>(null);
   
-  // Task-specific document management
+  // Task's specific document management
   const [taskDocuments, setTaskDocuments] = useState<Record<string, Record<string, { url: string; source: string }>>>({});
-  const [taskCompletion, setTaskCompletion] = useState<Record<string, boolean>>({});
   const [showReminder, setShowReminder] = useState<string | null>(null);
 
   // Load saved documents from database on mount
   useEffect(() => {
+    console.log('📄 Documents changed:', documents);
+    
+    const loadedDocs: Record<string, Record<string, { url: string; source: string }>> = {};
+    
     if (documents && documents.length > 0) {
-      const loadedDocs: Record<string, Record<string, { url: string; source: string }>> = {};
-      
-      documents.forEach(doc => {
-        // Parse task reference from documentType
-        const taskMatch = doc.documentType?.match(/Task: (.+)/);
+      documents.forEach((doc: any) => {
+        console.log('Processing document:', doc);
+        
+        // Parse task reference from documentType or document_type
+        const docType = doc.documentType || doc.document_type;
+        const taskMatch = docType?.match(/Task: (.+)/);
         if (taskMatch) {
           const taskId = taskMatch[1];
-          const docId = doc.fileName;
+          // Backend returns 'name' not 'fileName'
+          const docId = doc.name || doc.fileName || doc.file_name;
           
-          if (!loadedDocs[taskId]) {
-            loadedDocs[taskId] = {};
+          console.log('Matched task:', taskId, 'doc:', docId);
+          
+          if (docId) {
+            if (!loadedDocs[taskId]) {
+              loadedDocs[taskId] = {};
+            }
+            
+            loadedDocs[taskId][docId] = {
+              // Backend returns 'url' not 'fileUrl'
+              url: doc.url || doc.fileUrl || doc.file_url,
+              source: doc.sourceType || doc.source_type
+            };
           }
-          
-          loadedDocs[taskId][docId] = {
-            url: doc.fileUrl,
-            source: doc.sourceType
-          };
         }
       });
-      
-      setTaskDocuments(loadedDocs);
     }
+    
+    console.log('📁 Setting taskDocuments:', loadedDocs);
+    setTaskDocuments(loadedDocs);
   }, [documents]);
+
+  // Calculate task completion based on saved documents (persists across reloads)
+  const isTaskCompleted = (taskId: string, task: { documents: Array<{ id: string; required: boolean }> }) => {
+    const taskDocs = taskDocuments[taskId] || {};
+    const requiredDocs = task.documents.filter((d) => d.required);
+    return requiredDocs.length > 0 && requiredDocs.every((d) => taskDocs[d.id]);
+  };
 
   // Handle URL parameters for direct navigation from navbar
   useEffect(() => {
@@ -224,16 +243,21 @@ export default function HakemuksetPage() {
 
   const handleAddDocument = async (taskId: string, docId: string, url: string, source: string) => {
     try {
+      // For checkbox tasks, use a placeholder URL since backend might validate URL format
+      const fileUrl = source === 'checkbox' ? 'https://attendance-confirmed.local' : url;
+      
       // Save to database via API
       const newDoc = await addDocumentLink({
         phase: activePhase,
         documentType: `Task: ${taskId}`, // Store task reference in documentType
-        fileName: docId, // Use docId as the document name/identifier
-        fileUrl: url,
+        fileName: docId, // Backend expects fileName but returns name
+        fileUrl: fileUrl,
         sourceType: source,
       });
       
-      // Update local state after successful save
+      console.log('✅ Document added, returned:', newDoc);
+      
+      // Update local state after successful save 
       setTaskDocuments(prev => ({
         ...prev,
         [taskId]: {
@@ -283,7 +307,7 @@ export default function HakemuksetPage() {
       return;
     }
 
-    setTaskCompletion(prev => ({ ...prev, [taskId]: true }));
+    // Show reminder (completion is auto-calculated from documents)
     setShowReminder(taskId);
     
     setTimeout(() => {
@@ -293,7 +317,7 @@ export default function HakemuksetPage() {
 
   const getPhaseProgress = (phase: ApplicationPhase) => {
     const tasks = PHASE_TASKS[phase];
-    const completedTasks = tasks.filter(t => taskCompletion[t.id]);
+    const completedTasks = tasks.filter(t => isTaskCompleted(t.id, t));
     return tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0;
   };
 
@@ -407,7 +431,7 @@ export default function HakemuksetPage() {
                     onAddDocument={handleAddDocument}
                     onDeleteDocument={handleDeleteDocument}
                     onComplete={handleCompleteTask}
-                    isCompleted={taskCompletion[task.id] || false}
+                    isCompleted={isTaskCompleted(task.id, task)}
                     showReminder={showReminder === task.id}
                     onCloseReminder={() => setShowReminder(null)}
                   />
@@ -534,7 +558,7 @@ export default function HakemuksetPage() {
                 onAddDocument={handleAddDocument}
                 onDeleteDocument={handleDeleteDocument}
                 onComplete={handleCompleteTask}
-                isCompleted={taskCompletion[task.id] || false}
+                isCompleted={isTaskCompleted(task.id, task)}
                 showReminder={showReminder === task.id}
                 onCloseReminder={() => setShowReminder(null)}
               />
@@ -548,7 +572,7 @@ export default function HakemuksetPage() {
             {(["esihaku", "nomination", "apurahat", "vaihdon_jalkeen"] as ApplicationPhase[]).map((phase) => {
               const progress = getPhaseProgress(phase);
               const tasks = PHASE_TASKS[phase];
-              const completedTasks = tasks.filter(t => taskCompletion[t.id]);
+              const completedTasks = tasks.filter(t => isTaskCompleted(t.id, t));
               
               return (
                 <button
