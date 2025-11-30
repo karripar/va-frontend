@@ -119,9 +119,9 @@ export default function TipsPage() {
                   <h3 className="text-xl font-bold text-gray-900">{t.featured}</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {featured.slice(0, 3).map((story) => (
+                  {featured.slice(0, 3).map((story, index) => (
                     <button
-                      key={story.id}
+                      key={story.id || `featured-${index}`}
                       onClick={() => setSelectedStory(story)}
                       className="bg-white rounded-lg shadow hover:shadow-lg transition-all p-4 text-left"
                     >
@@ -133,9 +133,9 @@ export default function TipsPage() {
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {stories.map((story) => (
+              {stories.map((story, index) => (
                 <button
-                  key={story.id}
+                  key={story.id || `story-${index}`}
                   onClick={() => setSelectedStory(story)}
                   className="bg-white rounded-lg shadow hover:shadow-lg transition-all p-4 text-left"
                 >

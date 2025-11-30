@@ -47,7 +47,8 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
   // Fetch budget data on mount
   useEffect(() => {
     fetchBudget();
-  }, [fetchBudget]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Load budget data when available
   useEffect(() => {
