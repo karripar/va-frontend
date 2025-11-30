@@ -1,6 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlus, FaMinus, FaTimes, FaDivide, FaEquals, FaHistory } from "react-icons/fa";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/applications";
+import { useCalculatorHistory } from "@/hooks/calculatorHooks";
 
 interface GrantCalculatorProps {
   onCalculate?: (result: number) => void;
@@ -9,10 +12,20 @@ interface GrantCalculatorProps {
 type Operation = "add" | "subtract" | "multiply" | "divide" | null;
 
 export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
+  const { language } = useLanguage();
+  const t = translations[language];
+  const { history: savedHistory, saveHistoryEntry, clearHistory: clearSavedHistory } = useCalculatorHistory();
   const [currentValue, setCurrentValue] = useState<string>("0");
   const [previousValue, setPreviousValue] = useState<string>("");
   const [operation, setOperation] = useState<Operation>(null);
   const [history, setHistory] = useState<string[]>([]);
+
+  // Load saved history when available
+  useEffect(() => {
+    if (savedHistory && savedHistory.length > 0) {
+      setHistory(savedHistory.map(entry => entry.calculation));
+    }
+  }, [savedHistory]);
 
   const handleNumberClick = (num: string) => {
     if (currentValue === "0" && num !== ".") {
@@ -64,6 +77,13 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
 
     const calculation = `${prev} ${operationSymbol} ${current} = ${result.toFixed(2)}`;
     setHistory([calculation, ...history.slice(0, 4)]);
+    
+    // Save to backend
+    saveHistoryEntry({
+      calculation,
+      result,
+    });
+    
     setCurrentValue(result.toFixed(2));
     setPreviousValue("");
     setOperation(null);
@@ -76,8 +96,9 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
     setOperation(null);
   };
 
-  const clearHistory = () => {
+  const clearHistory = async () => {
     setHistory([]);
+    await clearSavedHistory();
   };
 
   const backspace = () => {
@@ -104,10 +125,10 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
       {/* Info Header */}
       <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg border border-orange-200">
         <h3 className="font-semibold text-[var(--typography)] mb-1 flex items-center gap-2">
-          💰 Budjetti Laskin
+          💰 {t.budgetCalculatorTitle}
         </h3>
         <p className="text-sm text-[var(--typography)]">
-          Laske apurahaa, kustannuksia ja budjettiasi kätevästi!
+          {t.budgetCalculatorDesc}
         </p>
       </div>
 
@@ -137,7 +158,7 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
             onClick={clear}
             className="col-span-2 py-4 bg-red-100 text-red-600 rounded-lg font-semibold hover:bg-red-200 transition-colors"
           >
-            TYHJENNÄ
+            {t.calculatorClear}
           </button>
           <button
             onClick={backspace}
@@ -226,13 +247,13 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
           <div className="flex items-center justify-between mb-3">
             <h4 className="font-semibold text-[var(--typography)] flex items-center gap-2">
               <FaHistory className="text-orange-500" />
-              Historia
+              {language === 'fi' ? 'Historia' : 'History'}
             </h4>
             <button
               onClick={clearHistory}
               className="text-sm text-red-500 hover:text-red-700 transition-colors"
             >
-              Tyhjennä
+              {language === 'fi' ? 'Tyhjennä' : 'Clear'}
             </button>
           </div>
           <div className="space-y-2">
@@ -250,11 +271,11 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
 
       {/* Quick Tips */}
       <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-        <h4 className="font-semibold text-blue-900 mb-2">💡 Vinkkejä</h4>
+        <h4 className="font-semibold text-blue-900 mb-2">{t.calculatorTips}</h4>
         <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-          <li>Käytä laskinta budjettisi suunnitteluun</li>
-          <li>Laske kuukausittaisia kuluja ja vertaa apurahaan</li>
-          <li>Tallenna tärkeät laskelmat muistiinpanoihin</li>
+          <li>{t.calculatorTip1}</li>
+          <li>{t.calculatorTip2}</li>
+          <li>{t.calculatorTip3}</li>
         </ul>
       </div>
     </div>

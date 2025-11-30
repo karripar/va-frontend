@@ -5,10 +5,14 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import LoadingSpinner from "@/components/profile/LoadingSpinner";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/editProfile";
 
 export default function EditProfilePage() {
   const { profileData: profile, loading } = useProfileData();
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = translations[language];
   const [userName, setUserName] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>("");
@@ -75,11 +79,11 @@ export default function EditProfilePage() {
       if (response.ok) {
         router.push("/profile");
       } else {
-        alert("Virhe profiilin päivityksessä");
+        alert(t.errorUpdating);
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Virhe profiilin päivityksessä");
+      alert(t.errorUpdating);
     } finally {
       setSaving(false);
     }
@@ -91,7 +95,7 @@ export default function EditProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ProfileHeader title="Muokkaa profiilia" />
+      <ProfileHeader title={t.title} />
 
       {/* Content */}
       <div className="p-6 max-w-md mx-auto">
@@ -108,7 +112,7 @@ export default function EditProfilePage() {
               />
             )}
             <label className="cursor-pointer bg-[#FFB299] hover:bg-[#FFA07A] text-[var(--typography)] px-4 py-2 rounded-lg">
-              Vaihda kuva
+              {t.changeImage}
               <input
                 type="file"
                 accept="image/*"
@@ -121,7 +125,7 @@ export default function EditProfilePage() {
           {/* Username */}
           <div>
             <label className="block text-sm font-medium text-[var(--typography)] mb-2">
-              Käyttäjänimi
+              {t.username}
             </label>
             <input
               type="text"
@@ -139,14 +143,14 @@ export default function EditProfilePage() {
             onClick={() => router.back()}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
-            Peruuta
+            {t.cancel}
           </button>
           <button
             type="submit"
             disabled={saving}
             className="flex-1 px-4 py-2 bg-[#FFB299] hover:bg-[#FFA07A] text-gray-800 rounded-lg disabled:opacity-50"
           >
-            {saving ? "Tallennetaan..." : "Tallenna"}
+            {saving ? t.saving : t.save}
           </button>
         </div>
       </form>

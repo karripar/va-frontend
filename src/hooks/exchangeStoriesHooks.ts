@@ -1,54 +1,84 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useCallback, useEffect, useState } from "react";
-//import {ExchangeStory, StoriesResponse, StoryFilters } from "va-hybrid-types/contentTypes";
-import { ExchangeStoriesResponse, StoryFilters, ExchangeStory } from 'va-hybrid-types/contentTypes';
-
+import {ExchangeStoriesResponse, StoryFilters, ExchangeStory} from "va-hybrid-types/contentTypes";
 
 export type { StoryFilters, ExchangeStory };
+
+const CONTENT_API = process.env.NEXT_PUBLIC_CONTENT_API;
+
+// --> TOKEN 
+
+const getAuthToken = () => {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("authToken");
+};
+
+// --> FETCH ALL STORIEs, ADMIN
 
 export const useExchangeStories = (filters?: StoryFilters) => {
   const [stories, setStories] = useState<ExchangeStory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(false);
 
-  // Use the correct API URL for content
-  const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
-  const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+  const apiRequest = useCallback(async (url: string, options: RequestInit = {}) => {
+    const token = getAuthToken();
 
-  // API request helper
-  const apiRequest = useCallback(
-    async (url: string, options: RequestInit = {}) => {
+    try {
       const res = await fetch(url, {
         ...options,
-        headers: { Authorization: `Bearer ${token}`, ...options.headers },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+          ...options.headers,
+        },
       });
-      return res.ok ? res.json().catch(() => null) : null;
-    },
-    [token]
-  );
 
-  // Provided fetchStories logic
+      if (!res.ok) {
+        console.error("API error:", res.status, res.statusText);
+        return null;
+      }
+
+      return res.json().catch(() => null);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      return null;
+    }
+  }, []);
+
   const fetchStories = useCallback(async () => {
-    setLoading(true);
-    const data = await apiRequest(`${apiUrl}/exchange-stories/stories/all`);
-    if (data?.stories) setStories(data.stories);
-    setLoading(false);
-  }, [apiUrl, apiRequest]);
-
-  useEffect(() => {
-    if (!apiUrl) {
-      setError("API URL not configured");
+    if (!CONTENT_API) {
+      setError("Content API URL not configured");
       setLoading(false);
       return;
     }
+
+    setLoading(true);
+
+    // ADMIN endpoint
+    const url = `${CONTENT_API}/exchange-stories/all`;
+    console.log('🔍 Fetching stories from:', url);
+    console.log('🔍 CONTENT_API value:', CONTENT_API);
+
+    const data: ExchangeStoriesResponse | null = await apiRequest(url);
+
+    if (data?.stories) {
+      setStories(data.stories);
+    } else {
+      setError("Failed to load stories");
+    }
+
+    setLoading(false);
+  }, [apiRequest]);
+
+  useEffect(() => {
     fetchStories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchStories]);
 
-  return { stories, loading, error, hasMore };
+  return { stories, loading, error };
 };
+
+//--> FETCH APPROVED STORIES 
 
 export const useFeaturedStories = () => {
   const [stories, setStories] = useState<ExchangeStory[]>([]);
@@ -56,9 +86,8 @@ export const useFeaturedStories = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
-    if (!apiUrl) {
-      setError("API URL not configured");
+    if (!CONTENT_API) {
+      setError("Content API URL not configured");
       setLoading(false);
       return;
     }
@@ -68,10 +97,14 @@ export const useFeaturedStories = () => {
     const fetchFeatured = async () => {
       try {
         setLoading(true);
-        const data = await fetchData<{ stories: ExchangeStory[] }>(
-          `${apiUrl}/tips/featured`,
-          { signal: controller.signal }
-        );
+
+
+        const url = `${CONTENT_API}/exchange-stories`;
+
+        const data = await fetchData<{ stories: ExchangeStory[] }>(url, {
+          signal: controller.signal,
+        });
+
         setStories(data.stories);
       } catch (err: unknown) {
         if ((err as Error).name !== "AbortError") {

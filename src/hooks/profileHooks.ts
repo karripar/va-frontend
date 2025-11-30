@@ -31,7 +31,7 @@ const useProfileData = () => {
         setLoading(true);
         setError(null);
 
-        // Use the actual backend API
+        //  backend API
         const endpoint = `${apiUrl}/users/profile`;
 
         /*const data = await fetchData<ProfileResponse>(endpoint, {

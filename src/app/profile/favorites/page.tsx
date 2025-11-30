@@ -6,9 +6,12 @@ import LoadingSpinner from "@/components/profile/LoadingSpinner";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/favorites";
 
 export default function FavoritesPage() {
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = translations[language];
   const {
     favorites,
     removeFavorite,
@@ -18,29 +21,12 @@ export default function FavoritesPage() {
 
   const isLoading = favoritesLoading;
 
-  const { language } = useLanguage();
-
-  const translations: Record<string, Record<string, string>> = {
-    fi: {
-      header: "Suosikkikohteet",
-      noFavorites: "Ei vielä suosikkikohteita",
-      removeAria: "Poista {item} suosikeista",
-      browse: "Selaa kohteita",
-    },
-    en: {
-      header: "Favorites",
-      noFavorites: "No favorites yet",
-      removeAria: "Remove {item} from favorites",
-      browse: "Browse destinations",
-    },
-  };
-  const t = translations[language];
 
   const handleRemoveFavorite = async (destination: string) => {
     setRemoving(destination);
     const success = await removeFavorite(destination);
     if (!success) {
-      alert("Virhe poistossa");
+      alert(t.errorRemoving);
     }
     setRemoving(null);
   };
@@ -54,7 +40,7 @@ export default function FavoritesPage() {
       className="min-h-screen"
       style={{ backgroundColor: "var(--background)" }}
     >
-      <ProfileHeader title={t.header} />
+      <ProfileHeader title={t.title} />
       <div
         className="min-h-screen"
         style={{ backgroundColor: "var(--background)" }}
@@ -120,7 +106,7 @@ export default function FavoritesPage() {
               fontFamily: "var(--font-machina-bold)",
             }}
           >
-            {t.browse}
+            {t.browseMore}
           </button>
         </div>
       </div>

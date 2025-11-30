@@ -103,7 +103,7 @@ export default function DocumentUpload({
   const [sourceType, setSourceType] = useState("google_drive");
   const [notes, setNotes] = useState("");
 
-  const AUTH_API = process.env.NEXT_PUBLIC_AUTH_API;
+  const AUTH_API = process.env.NEXT_PUBLIC_UPLOAD_API;
 
   const getPlatformIcon = (sourceType: string) => {
     const icons: Record<string, string> = {
@@ -116,15 +116,18 @@ export default function DocumentUpload({
     return icons[sourceType] || '📄';
   };
 
-  const validateLink = (url: string, source: string): boolean => {
-    const patterns: Record<string, RegExp> = {
-      google_drive: /drive.google.com\/(file\/d\/|open\?id=)/,
-      onedrive: /1drv.ms\/|onedrive.live.com/,
-      dropbox: /dropbox.com\//,
-      icloud: /icloud.com/,
-      other_url: /^https?:\/\/.+/
-    };
-    return patterns[source]?.test(url) ?? false;
+  const validateLink = (url: string): boolean => {
+    // Basic URL validation - more flexible
+    if (!url || typeof url !== 'string') return false;
+    
+    // Check if it's a valid URL format
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      // If not a full URL, check if it starts with http/https
+      return /^https?:\/\/.+/.test(url);
+    }
   };
 
   const handleSubmitLink = async () => {
@@ -133,13 +136,13 @@ export default function DocumentUpload({
       return;
     }
 
-    if (!validateLink(documentUrl, sourceType)) {
-      alert('Virheellinen linkki valitulle alustalle. Tarkista linkki ja yritä uudelleen.');
+    if (!validateLink(documentUrl)) {
+      alert('Virheellinen URL-muoto. Anna kelvollinen URL.');
       return;
     }
 
     if (!AUTH_API) {
-      alert('API configuration missing. Set NEXT_PUBLIC_AUTH_API.');
+      alert('API configuration missing. Set NEXT_PUBLIC_UPLOAD_API.');
       return;
     }
 
@@ -148,9 +151,17 @@ export default function DocumentUpload({
 
       const phase = applicationId;
 
-      const response = await fetch(`${AUTH_API}/applications/documents`, {
+      const token = localStorage.getItem('authToken');
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${AUTH_API}/linkUploads/documents`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           phase,
           documentType,
@@ -187,7 +198,16 @@ export default function DocumentUpload({
     }
 
     try {
-      const response = await fetch(`${AUTH_API}/applications/documents/${documentId}`, { method: 'DELETE' });
+      const token = localStorage.getItem('authToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${AUTH_API}/linkUploads/documents/${documentId}`, { 
+        method: 'DELETE',
+        headers,
+      });
       if (!response.ok) throw new Error('Failed to delete document');
       if (onDocumentDeleted) onDocumentDeleted(documentId);
     } catch (error) {

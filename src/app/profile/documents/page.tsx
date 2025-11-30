@@ -9,6 +9,8 @@ import { getPlatformIcon } from "@/lib/platformUtils";
 import { useState, useEffect } from "react";
 import { FaFileAlt, FaTrash, FaExternalLinkAlt, FaLink, FaSpinner } from "react-icons/fa";
 import { Document } from "va-hybrid-types/contentTypes";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/documents";
 
 const PLATFORM_OPTIONS = [
   { value: "google_drive", label: "Google Drive" },
@@ -19,8 +21,10 @@ const PLATFORM_OPTIONS = [
 ];
 
 export default function DocumentsPage() {
-  const { profileData: profile, loading } = useProfileData();
-  const { addDocumentLink, deleteDocument } = useProfileDocuments();
+  const { loading: profileLoading } = useProfileData();
+  const { documents: fetchedDocuments, addDocumentLink, deleteDocument, fetchDocuments, loading: docsLoading } = useProfileDocuments();
+  const { language } = useLanguage();
+  const t = translations[language];
   const [documents, setDocuments] = useState<Document[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -34,11 +38,18 @@ export default function DocumentsPage() {
     notes: ""
   });
 
+  // Fetch documents on mount
   useEffect(() => {
-    if (profile?.documents) {
-      setDocuments(profile.documents as unknown as Document[]);
+    fetchDocuments();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update local state when documents are fetched
+  useEffect(() => {
+    if (fetchedDocuments && fetchedDocuments.length > 0) {
+      setDocuments(fetchedDocuments as unknown as Document[]);
     }
-  }, [profile]);
+  }, [fetchedDocuments]);
 
   const resetForm = () => {
     setFormData({ name: "", url: "", sourceType: "google_drive", notes: "" });
@@ -48,7 +59,7 @@ export default function DocumentsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.url.trim()) {
-      alert('Täytä kaikki pakolliset kentät');
+      alert(t.fillRequired);
       return;
     }
 
@@ -62,17 +73,17 @@ export default function DocumentsPage() {
       });
       setDocuments([...documents, newDoc]);
       resetForm();
-      alert('Dokumentti lisätty onnistuneesti!');
+      alert(t.addedSuccessfully);
     } catch (error) {
       console.error("Error adding document:", error);
-      alert("Virhe dokumentin lisäämisessä");
+      alert(t.errorAdding);
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleRemove = async (docId: string) => {
-    if (!confirm('Haluatko varmasti poistaa tämän dokumentin?')) return;
+    if (!confirm(t.confirmRemove)) return;
 
     setRemoving(docId);
     try {
@@ -80,17 +91,17 @@ export default function DocumentsPage() {
       setDocuments(documents.filter((doc) => doc.id !== docId));
     } catch (error) {
       console.error("Error removing document:", error);
-      alert("Virhe poistossa");
+      alert(t.errorRemoving);
     } finally {
       setRemoving(null);
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (profileLoading || docsLoading) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen">
-      <ProfileHeader title="Dokumentit" />
+      <ProfileHeader title={t.title} />
 
       {/* Content - White background */}
       <div className="bg-white min-h-screen">
@@ -98,13 +109,13 @@ export default function DocumentsPage() {
           {documents.length === 0 && !showForm ? (
             <div className="text-center py-12">
               <FaFileAlt className="text-6xl text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-800 text-base mb-6">Ei dokumentteja vielä</p>
+              <p className="text-gray-800 text-base mb-6">{t.noDocuments}</p>
               <button
                 onClick={() => setShowForm(true)}
                 className="bg-[#FFB299] hover:bg-[#FFA07A] text-gray-800 px-6 py-3 rounded-lg inline-flex items-center gap-2 font-medium"
               >
                 <FaLink />
-                Lisää dokumenttilinkki
+                {t.addDocumentLink}
               </button>
             </div>
           ) : (
@@ -117,7 +128,7 @@ export default function DocumentsPage() {
                     className="bg-[#FFB299] hover:bg-[#FFA07A] text-gray-800 px-4 py-2 rounded-lg flex items-center gap-2 font-medium"
                   >
                     <FaLink />
-                    Lisää dokumenttilinkki
+                    {t.addDocumentLink}
                   </button>
                 </div>
               )}
@@ -125,10 +136,10 @@ export default function DocumentsPage() {
               {/* Document Link Form */}
               {showForm && (
                 <form onSubmit={handleSubmit} className="mb-6 border-2 border-blue-300 rounded-lg p-4 bg-blue-50">
-                  <h4 className="font-medium text-gray-900 mb-4">Lisää dokumenttilinkki</h4>
+                  <h4 className="font-medium text-gray-900 mb-4">{t.addDocumentLink}</h4>
                   
                   <div className="space-y-3">
-                    <FormField label="Pilvipalvelu" required>
+                    <FormField label={t.platform} required>
                       <select
                         value={formData.sourceType}
                         onChange={(e) => setFormData({...formData, sourceType: e.target.value})}
@@ -140,7 +151,7 @@ export default function DocumentsPage() {
                       </select>
                     </FormField>
 
-                    <FormField label="Dokumentin nimi" required>
+                    <FormField label={t.name} required>
                       <input
                         type="text"
                         placeholder="esim. Passi.pdf"
@@ -150,19 +161,19 @@ export default function DocumentsPage() {
                       />
                     </FormField>
 
-                    <FormField label="Jaettava linkki" required>
+                    <FormField label={t.url} required>
                       <input
                         type="url"
-                        placeholder="Liitä jaettava linkki tähän"
+                        placeholder={language === "en" ? "Paste shareable link here" : "Liitä jaettava linkki tähän"}
                         value={formData.url}
                         onChange={(e) => setFormData({...formData, url: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </FormField>
 
-                    <FormField label="Lisätiedot (valinnainen)">
+                    <FormField label={t.notes}>
                       <textarea
-                        placeholder="Lisää huomioita tai selityksiä..."
+                        placeholder={language === "en" ? "Add notes or explanations..." : "Lisää huomioita tai selityksiä..."}
                         value={formData.notes}
                         onChange={(e) => setFormData({...formData, notes: e.target.value})}
                         rows={2}
@@ -174,7 +185,7 @@ export default function DocumentsPage() {
 
                     <div className="flex gap-2 mt-4">
                       <SubmitButton loading={submitting}>
-                        Lisää dokumentti
+                        {t.submit}
                       </SubmitButton>
                       <button
                         type="button"
@@ -182,7 +193,7 @@ export default function DocumentsPage() {
                         disabled={submitting}
                         className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors"
                       >
-                        Peruuta
+                        {t.cancel}
                       </button>
                     </div>
                   </div>
@@ -235,4 +246,3 @@ export default function DocumentsPage() {
     </div>
   );
 }
-

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { ADMIN_LEVEL_ID } from "@/config/roles";
@@ -13,43 +12,64 @@ export default function StoryAdminPanel() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
 
-  const isAdmin = isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID);
-  const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
-  const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+  const isAdmin =
+    isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID);
 
+  const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+
+  // Unified Fetch Wrapper
   const apiRequest = useCallback(
     async (url: string, options: RequestInit = {}) => {
       const res = await fetch(url, {
         ...options,
-        headers: { Authorization: `Bearer ${token}`, ...options.headers },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...options.headers,
+        },
       });
+
       return res.ok ? res.json().catch(() => null) : null;
     },
     [token]
   );
 
+  // Fetch ALL stories (admin)
   const fetchStories = useCallback(async () => {
     setLoading(true);
-    const data = await apiRequest(`${apiUrl}/exchange-stories/stories/all`);
+
+    const url = `${apiUrl}/exchange-stories/all`;
+    console.log('🔍 Admin fetching from:', url);
+    console.log('🔍 apiUrl value:', apiUrl);
+
+    const data = await apiRequest(url);
+
     if (data?.stories) setStories(data.stories);
     setLoading(false);
   }, [apiUrl, apiRequest]);
 
+  // Approve Story
   const approveStory = (id: string) =>
-    apiRequest(`${apiUrl}/exchange-stories/stories/${id}/approve`, { method: "PUT" })
-      .then(fetchStories);
+    apiRequest(`${apiUrl}/exchange-stories/${id}/approve`, {
+      method: "PUT",
+    }).then(fetchStories);
 
+  // Delete Story
   const deleteStory = (id: string) =>
     confirm("Delete this story?") &&
-    apiRequest(`${apiUrl}/exchange-stories/stories/${id}`, { method: "DELETE" })
-      .then(fetchStories);
+    apiRequest(`${apiUrl}/exchange-stories/${id}`, {
+      method: "DELETE",
+    }).then(fetchStories);
 
-  useEffect(() => { if (isAdmin) fetchStories(); }, [isAdmin, fetchStories]);
+  useEffect(() => {
+    if (isAdmin) fetchStories();
+  }, [isAdmin, fetchStories]);
+
   if (!isAdmin) return null;
 
   return (
     <div className="bg-gray-50 border rounded-xl p-6 mb-8">
-      {/* Header */}
       <header className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Manage Exchange Stories</h2>
         <button
@@ -60,7 +80,6 @@ export default function StoryAdminPanel() {
         </button>
       </header>
 
-      {/* Table */}
       {loading ? (
         <p className="text-gray-600">Loading...</p>
       ) : (
@@ -68,9 +87,13 @@ export default function StoryAdminPanel() {
           <table className="w-full bg-white rounded-lg">
             <thead className="bg-gray-100">
               <tr>
-                {["Country", "City", "Title", "Student", "Status", "Actions"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left">{h}</th>
-                ))}
+                {["Country", "City", "Title", "Student", "Status", "Actions"].map(
+                  (h) => (
+                    <th key={h} className="px-4 py-3 text-left">
+                      {h}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
 
@@ -96,10 +119,24 @@ export default function StoryAdminPanel() {
 
                   <td className="px-4 py-3 flex gap-2">
                     {!story.isApproved && (
-                      <IconBtn onClick={() => approveStory(story.id)} color="green" icon={<FaCheck />} />
+                      <IconBtn
+                        onClick={() => approveStory(story.id)}
+                        color="green"
+                        icon={<FaCheck />}
+                      />
                     )}
-                    <IconBtn onClick={() => {}} color="blue" icon={<FaEdit />} />
-                    <IconBtn onClick={() => deleteStory(story.id)} color="red" icon={<FaTrash />} />
+
+                    <IconBtn
+                      onClick={() => {}}
+                      color="blue"
+                      icon={<FaEdit />}
+                    />
+
+                    <IconBtn
+                      onClick={() => deleteStory(story.id)}
+                      color="red"
+                      icon={<FaTrash />}
+                    />
                   </td>
                 </tr>
               ))}
@@ -108,12 +145,14 @@ export default function StoryAdminPanel() {
         </div>
       )}
 
-      {/* Modal */}
       {showForm && (
         <Modal onClose={() => setShowForm(false)}>
           <h3 className="text-xl font-bold mb-4">Add New Story</h3>
           <StoryUploadForm
-            onSuccess={() => { setShowForm(false); fetchStories(); }}
+            onSuccess={() => {
+              setShowForm(false);
+              fetchStories();
+            }}
             onCancel={() => setShowForm(false)}
           />
         </Modal>
@@ -122,7 +161,11 @@ export default function StoryAdminPanel() {
   );
 }
 
-type IconBtnProps = {onClick: () => void; icon: React.ReactNode; color: string;};
+type IconBtnProps = {
+  onClick: () => void;
+  icon: React.ReactNode;
+  color: string;
+};
 
 const IconBtn = ({ onClick, icon, color }: IconBtnProps) => (
   <button
@@ -140,7 +183,7 @@ type ModalProps = {
 
 const Modal = ({ children, onClose }: ModalProps) => (
   <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-    <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+    <div className="bg-white rounded-xl w-full max-w-2xl max-height-[90vh] overflow-y-auto p-6 relative">
       <button
         onClick={onClose}
         className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"

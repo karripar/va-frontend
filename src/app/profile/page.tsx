@@ -5,15 +5,19 @@ import Link from "next/link";
 import { FiEdit } from "react-icons/fi";
 import LogoutButton from "@/components/ui/LogoutButton";
 import { FaArrowLeft } from "react-icons/fa6";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/profile";
 
 export default function ProfilePage() {
   const { user: profile, loading } = useAuth();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   // Handling loading state
   if (loading) {
     return (
       <div className="flex flex-col items-center p-4 mt-8">
-        <p>Ladataan profiilia...</p>
+        <p>{t.loading}</p>
       </div>
     );
   }
@@ -22,12 +26,12 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="flex flex-col items-center p-4 mt-8">
-        <p>Profiilia ei löytynyt</p>
+        <p>{t.notFound}</p>
         <Link
           href="/login"
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
-          Kirjaudu uudelleen
+          {t.loginAgain}
         </Link>
       </div>
     );
@@ -41,7 +45,7 @@ export default function ProfilePage() {
         <Link
           href="/"
           className="absolute left-6 text-white hover:scale-110"
-          aria-label="Takaisin etusivulle"
+          aria-label={t.backToHome}
         >
           <FaArrowLeft size={20} />
         </Link>
@@ -49,7 +53,7 @@ export default function ProfilePage() {
           className="tracking-widest sm:text-2xl text-xl"
           style={{ fontFamily: "var(--font-machina-bold)" }}
         >
-          Profiili
+          {t.title}
         </h1>
         <Link
           href="/profile/edit"
@@ -76,9 +80,8 @@ export default function ProfilePage() {
             )}
 
             {/* Welcome text */}
-            <p className="text-[var(--typography)] text-center text-base mb-2 font-normal mt-4">
-              Tervetuloa profiiliisi, täällä voit selata tallentamiasi
-              vaihtokohteitä ja seurata hakemustesi etenemistä vaiheittain.
+            <p className="text-gray-800 text-center text-base mb-2 font-normal mt-4">
+              {t.welcome}
             </p>
           </div>
 
@@ -90,7 +93,7 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
-                  Suosikkikohteet ({profile.favorites?.length || 0})
+                  {t.favorites} ({profile.favorites?.length || 0})
                 </span>
                 <span>›</span>
               </div>
@@ -102,7 +105,7 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
-                  Omat dokumentit ({profile.documents?.length || 0})
+                  {t.documents} ({profile.documents?.length || 0})
                 </span>
                 <span>›</span>
               </div>
@@ -114,7 +117,7 @@ export default function ProfilePage() {
             >
               <div className="flex justify-between items-center text-[var(--typography)]">
                 <span className="font-medium">
-                  Hakemukset ja kustannusarviointi (
+                  {t.applications} (
                   {profile.applications
                     ? Object.keys(profile.applications).length
                     : 0}
@@ -128,10 +131,10 @@ export default function ProfilePage() {
           {/* Member since */}
           <div className="mt-8 text-center text-sm text-[var(--typography)]">
             <p>
-              Jäsen alkaen:{" "}
+              {t.memberSince}{" "}
               {profile.registeredAt
-                ? new Date(profile.registeredAt).toLocaleDateString("fi-FI")
-                : "Ei saatavilla"}
+                ? new Date(profile.registeredAt).toLocaleDateString(language === "en" ? "en-US" : "fi-FI")
+                : t.notAvailable}
             </p>
           </div>
         </div>

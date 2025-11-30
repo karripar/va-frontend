@@ -8,9 +8,13 @@ import StoryAdminPanel from "@/components/exchange-stories/StoryAdminPanel";
 import { FaSpinner, FaStar, FaMap, FaList } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
 import { ADMIN_LEVEL_ID } from "@/config/roles";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/tips";
 
 export default function TipsPage() {
   const { user, isAuthenticated } = useAuth();
+  const { language } = useLanguage();
+  const t = translations[language];
   const [filters, setFilters] = useState<StoryFilters>({});
   const [viewMode, setViewMode] = useState<"mindmap" | "list">("mindmap");
   const [selectedStory, setSelectedStory] = useState<ExchangeStory | null>(null);
@@ -28,9 +32,9 @@ export default function TipsPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-[#FF5722] to-[#FF7043] text-white py-12">
         <div className="max-w-7xl mx-auto px-6">
-          <h1 className="text-4xl font-bold mb-3">Vaihtokokemuksia</h1>
+          <h1 className="text-4xl font-bold mb-3">{t.title}</h1>
           <p className="text-lg text-white/90">
-            Löydä inspiraatiota ja vinkkejä aiempien vaihto-opiskelijoiden tarinoista
+            {t.subtitle}
           </p>
         </div>
       </div>
@@ -51,7 +55,7 @@ export default function TipsPage() {
               }`}
             >
               <FaMap />
-              Mind Map
+              {t.mindMap}
             </button>
             <button
               onClick={() => setViewMode("list")}
@@ -62,7 +66,7 @@ export default function TipsPage() {
               }`}
             >
               <FaList />
-              List View
+              {t.listView}
             </button>
           </div>
         </div>
@@ -84,25 +88,25 @@ export default function TipsPage() {
               onClick={() => window.location.reload()}
               className="px-6 py-2 bg-[#FF5722] text-white rounded-lg hover:bg-[#E64A19]"
             >
-              Yritä uudelleen
+              {t.tryAgain}
             </button>
           </div>
         ) : stories.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-gray-600 text-lg mb-4">Ei tarinoita</p>
+            <p className="text-gray-600 text-lg mb-4">{t.noStories}</p>
             {viewMode === "list" && (
               <button
                 onClick={() => setFilters({})}
                 className="text-[#FF5722] font-semibold hover:underline"
               >
-                Tyhjennä suodattimet
+                {t.clearFilters}
               </button>
             )}
           </div>
         ) : viewMode === "mindmap" ? (
           <div className="bg-white rounded-xl shadow-lg p-8">
             <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
-              Explore stories by country and city
+              {t.exploreByCountry}
             </h3>
             <StoryMindMap stories={stories} onStorySelect={setSelectedStory} />
           </div>
@@ -112,7 +116,7 @@ export default function TipsPage() {
               <div className="mb-8">
                 <div className="flex items-center gap-2 mb-4">
                   <FaStar className="text-yellow-500 text-xl" />
-                  <h3 className="text-xl font-bold text-gray-900">Featured</h3>
+                  <h3 className="text-xl font-bold text-gray-900">{t.featured}</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {featured.slice(0, 3).map((story) => (

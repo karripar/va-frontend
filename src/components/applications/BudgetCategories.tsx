@@ -1,7 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPlane, FaShieldAlt, FaHome, FaShoppingCart, FaPencilAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/applications";
+import { useBudgetEstimate } from "@/hooks/budgetArviointiHooks";
 
 export type BudgetCategory = 
   | "matkakulut"
@@ -29,6 +32,9 @@ interface BudgetCategoriesProps {
 }
 
 export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesProps) {
+  const { language } = useLanguage();
+  const t = translations[language];
+  const { budget, saveBudget, fetchBudget } = useBudgetEstimate();
   const [expandedCategory, setExpandedCategory] = useState<BudgetCategory | null>(null);
   const [expenses, setExpenses] = useState<Record<BudgetCategory, CategoryExpense>>({
     matkakulut: { amount: 0, notes: "" },
@@ -38,43 +44,73 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     opintovalineet: { amount: 0, notes: "" },
   });
 
+  // Fetch budget data on mount
+  useEffect(() => {
+    fetchBudget();
+  }, [fetchBudget]);
+
+  // Load budget data when available
+  useEffect(() => {
+    if (budget?.categories) {
+      const loadedExpenses: Record<BudgetCategory, CategoryExpense> = {
+        matkakulut: { amount: 0, notes: "" },
+        vakuutukset: { amount: 0, notes: "" },
+        asuminen: { amount: 0, notes: "" },
+        ruoka_ja_arki: { amount: 0, notes: "" },
+        opintovalineet: { amount: 0, notes: "" },
+      };
+      
+      // Map budget categories to expenses if available
+      Object.entries(budget.categories || {}).forEach(([key, value]) => {
+        if (key in loadedExpenses && typeof value === 'object' && value !== null) {
+          loadedExpenses[key as BudgetCategory] = { 
+            amount: value.estimatedCost || 0, 
+            notes: value.notes || "" 
+          };
+        }
+      });
+      
+      setExpenses(loadedExpenses);
+    }
+  }, [budget]);
+
   const categories: BudgetCategoryData[] = [
     {
       category: "matkakulut",
-      title: "Matkakulut",
-      description: "Lennot, junat, bussit, kimppakyytit, viisumi",
+      title: t.budgetCategoryTravel,
+      description: t.budgetCategoryTravelDesc,
       icon: <FaPlane size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
     },
     {
       category: "vakuutukset",
-      title: "Vakuutukset",
-      description: "Matka- ja opiskelija­vakuutukset",
+      title: t.budgetCategoryInsurance,
+      description: t.budgetCategoryInsuranceDesc,
       icon: <FaShieldAlt size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
     },
     {
       category: "asuminen",
-      title: "Asuminen",
-      description: "Vuokra ja -vakuus, muut asuntoon liittyvät laskut",
+      title: t.budgetCategoryHousing,
+      description: t.budgetCategoryHousingDesc,
       icon: <FaHome size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
     },
     {
       category: "ruoka_ja_arki",
-      title: "Ruoka ja arki",
-      description: "Kaupat ja ravintolat, hygieniä",
+      title: t.budgetCategoryFood,
+      description: t.budgetCategoryFoodDesc,
       icon: <FaShoppingCart size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
     },
     {
       category: "opintovalineet",
-      title: "Opintovalineet",
-      description: "Kirjat, materiaalit, tietokone",
+      title: t.budgetCategoryStudy,
+      description: t.budgetCategoryStudyDesc,
       icon: <FaPencilAlt size={24} />,
       iconColor: "text-orange-500",
       bgColor: "bg-orange-50"
@@ -92,6 +128,9 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     };
     setExpenses(updatedExpenses);
     onBudgetChange?.(updatedExpenses);
+    
+    // Save to backend
+    saveBudgetToBackend(updatedExpenses);
   };
 
   const updateNotes = (category: BudgetCategory, notes: string) => {
@@ -101,6 +140,30 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     };
     setExpenses(updatedExpenses);
     onBudgetChange?.(updatedExpenses);
+    
+    // Save to backend
+    saveBudgetToBackend(updatedExpenses);
+  };
+
+  const saveBudgetToBackend = async (budgetExpenses: Record<BudgetCategory, CategoryExpense>) => {
+    try {
+      const categories: Record<string, { estimatedCost: number; notes?: string }> = {};
+      Object.entries(budgetExpenses).forEach(([key, value]) => {
+        categories[key] = {
+          estimatedCost: value.amount,
+          notes: value.notes || undefined,
+        };
+      });
+      
+      await saveBudget({
+        categories,
+        totalEstimate: Object.values(budgetExpenses).reduce((sum, exp) => sum + exp.amount, 0),
+        destination: budget?.destination || "",
+        currency: budget?.currency || "EUR",
+      });
+    } catch (error) {
+      console.error("Error saving budget:", error);
+    }
   };
 
   const adjustAmount = (category: BudgetCategory, delta: number) => {
@@ -115,9 +178,9 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-[var(--typography)]">Budjetti</h2>
+        <h2 className="text-xl font-semibold text-[var(--typography)]">{t.budgetTitle}</h2>
         <div className="text-right">
-          <p className="text-sm text-[var(--typography)]">Kokonaissumma</p>
+          <p className="text-sm text-[var(--typography)]">{t.budgetTotalLabel}</p>
           <p className="text-2xl font-bold text-[#FF5722]">{getTotalAmount()}€</p>
         </div>
       </div>
@@ -152,7 +215,7 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
                 <div className="p-4 border-t border-[var(--va-border)] bg-gray-50 space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-[var(--typography)] mb-2">
-                      Arvioitu summa (€)
+                      {t.budgetEstimatedAmount}
                     </label>
                     <div className="flex items-center space-x-2">
                       <button
@@ -179,12 +242,12 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
 
                   <div>
                     <label className="block text-sm font-medium text-[var(--typography)] mb-2">
-                      Muistiinpanot
+                      {t.budgetNotesLabel}
                     </label>
                     <textarea
                       value={expense.notes}
                       onChange={(e) => updateNotes(cat.category, e.target.value)}
-                      placeholder="Lisää tarkempia tietoja kustannuksista..."
+                      placeholder={t.budgetNotesPlaceholder}
                       className="w-full px-4 py-2 border border-[var(--va-border)] rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent resize-none"
                       rows={3}
                     />

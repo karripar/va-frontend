@@ -11,145 +11,49 @@ import {
   FiDownload,
 } from 'react-icons/fi';
 import { FaPlane, FaFileAlt, FaMoneyBillWave } from 'react-icons/fa';
+import { IconType } from 'react-icons';
 import {
   sendChatMessage,
   ChatMessage as APIChatMessage,
 } from '@/lib/aiChatApi';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { useLanguage } from '@/context/LanguageContext';
+import { faqTranslations } from '@/lib/translations/aiChatFAQ';
 
 type Role = 'bot' | 'user';
 type ChatMessage = { id: string; role: Role; text: string };
 
 interface FAQItem {
   id: string;
-  category:
-    | 'Yleistä'
-    | 'Hakeminen'
-    | 'Apurahat'
-    | 'Dokumentit'
-    | 'Matkustaminen';
+  category: string;
   question: string;
   answer: string;
-  links?: { title: string; url: string }[];
+  links?: Array<{ title: string; url: string }>;
 }
 
-const faqData: FAQItem[] = [
-  {
-    id: '1',
-    category: 'Yleistä',
-    question: 'Mikä on opiskelijavaihto?',
-    answer:
-      'Opiskelijavaihto on mahdollisuus opiskella lukukausi tai -vuosi ulkomaisessa partneriyliopistossa osana tutkinto-opintojasi. \n\n Voit suorittaa pää- tai sivuainettasi tai suorittaa paikallisia kielikursseja. \n\n Tärkeintä on, että kurssivalinnat tukevat tutkintoasi ja ne voidaan hyväksilukea.',
-  },
-  {
-    id: '2',
-    category: 'Hakeminen',
-    question: 'Milloin kannattaa aloittaa suunnittelu?',
-    answer:
-      'Aloita suunnittelu hyvissä ajoin miettimällä miksi, minne ja milloin haluat lähteä. \n\n Hakuprosessit voivat kestää useita kuukausia. \n\n Valitse kohdekoulu ja kurssit niin, että ne tukevat Suomessa suoritettuja opintojasi.',
-  },
-  {
-    id: '3',
-    category: 'Hakeminen',
-    question: 'Mitä hakeminen edellyttää?',
-    answer:
-      'Hakuprosessiin kuuluu yleensä hakulomakkeen täyttäminen ja mahdollinen haastattelu. \n\n Motivaatiosi, opintomenestys ja terveydentilasi vaikuttavat valintaan. \n\n Opintojesi tulee liittyä tutkintoosi ja niitä tulee voida hyväksilukea. Yliopistoissa vaaditaan usein tietty määrä suoritettuja opintopisteitä.',
-  },
-  {
-    id: '4',
-    category: 'Hakeminen',
-    question: 'Mitä dokumentteja tarvitsen?',
-    answer:
-      'Tyypillisesti tarvitset:\n• Vapaamuotoinen hakemus\n• Motivaatiokirje\n• Opintosuoritusote (Transcript of Records)\n• Kielitaitotodistus\n• CV (jos vaaditaan)\n\nTarkat vaatimukset riippuvat kohdeyliopistosta.',
-  },
-  {
-    id: '5',
-    category: 'Apurahat',
-    question: 'Mitä apurahoja voin saada?',
-    answer:
-      'Yleisimmät apurahat:\n• Erasmus+ -apuraha (EU-maat)\n• Kela opintotuki ulkomaille\n• Korkeakoulusi omat apurahat\n• Ulkopuoliset säätiöapurahat\n\nVoit hakea useita apurahoja yhtä aikaa! \n\nVoit saada opintotukea, jos vaihto-opintosi hyväksytään osaksi Suomessa suoritettavia opintojasi.',
-    links: [
-      { title: 'Erasmus+ apuraha', url: 'https://erasmus-plus.ec.europa.eu' },
-      {
-        title: 'Kelan opintotuki',
-        url: 'https://www.kela.fi/opintotuki-ulkomailla',
-      },
-    ],
-  },
-  {
-    id: '6',
-    category: 'Apurahat',
-    question: 'Mitä vaihto-opiskelu maksaa?',
-    answer:
-      'Kustannukset vaihtelevat vaihdon pituuden ja kohdemaan mukaan. Budjetti suunnittelu kannattaa aloittaa hyvissä ajoin. \n\n Osa vaihto-ohjelmista on ilmaisia, osassa on ohjelmamaksuja.\n\nLisäkustannuksia:\n• Lentoliput\n• Vakuutukset\n• Taskuraha ja elinkustannukset\n\nErasmus+ -apurahan määrä:\n• Korkeat elinkustannukset: ~540-600€/kk\n• Keskihintaiset: ~490€/kk\n• Edulliset: ~450€/kk',
-  },
-  {
-    id: '7',
-    category: 'Dokumentit',
-    question: 'Mikä on Learning Agreement?',
-    answer:
-      'Learning Agreement on sopimus sinun, kotikorkeakoulusi ja kohdeyliopiston välillä. Siinä sovitaan, mitä opintojaksoja suoritat vaihdossa ja miten ne hyväksiluetaan.\n\n Dokumentti täytetään ennen vaihtoa ja päivitetään tarvittaessa vaihdon aikana.',
-  },
-  {
-    id: '8',
-    category: 'Dokumentit',
-    question: 'Tarvitsenko viisumia?',
-    answer:
-      'Riippuu kohdemaasta:\n\n• EU/ETA-maat: Ei viisumia, henkilöllisyystodistus/passi riittää\n• Muut maat: Todennäköisesti opiskeluviisumi\n\nTarkista kohdemaan vaatimukset hyvissä ajoin, viisumiprosessi voi kestää kuukausia!',
-  },
-  {
-    id: '9',
-    category: 'Matkustaminen',
-    question: 'Tarvitsenko matkavakuutuksen?',
-    answer:
-      'Kyllä! Tarvitset vaihdon ajaksi asianmukaisen vakuutuksen. \n\nVakuutuksen tulee kattaa:\n• Sairauskulut\n• Tapaturmat\n• Vastuuvakuutus\n• Matkatavaravakuutus (suositus)\n\nMonet korkeakoulut tarjoavat opiskelijoille ryhmävakuutuksen.',
-  },
-  {
-    id: '10',
-    category: 'Matkustaminen',
-    question: 'Milloin kannattaa varata lennot?',
-    answer:
-      'Suositus:\n• Varaa lennot vasta kun olet saanut virallisen hyväksynnän kohdeyliopistosta\n• 2-3 kuukautta etukäteen yleensä hyvä aika\n• Tarkista lentoyhtiön peruutusehdot\n• Muista matkavakuutus!',
-  },
-  {
-    id: '11',
-    category: 'Yleistä',
-    question: 'Voiko vaihtoon lähteä kaverin kanssa?',
-    answer:
-      'Kyllä voi! Voit lähteä vaihtoon kaverin kanssa, mutta todennäköisesti päädytte eri majoituksiin. \n\nVaihto on henkilökohtainen kokemus, joka tarjoaa mahdollisuuden tutustua uusiin ihmisiin ja kulttuureihin.',
-  },
-  {
-    id: '12',
-    category: 'Yleistä',
-    question: 'Mikä on kielitaitovaatimus?',
-    answer:
-      'Vaadittu kielitaito riippuu vaihto-ohjelmasta ja kohdemaasta.\n\n Opintosi voi suorittaa eri kielillä (englanti, saksa, ranska jne.), mutta kielitaito voi vaikuttaa valintoihisi. \n\nMonissa kohteissa vaaditaan kielitaitotodistus (esim. TOEFL, IELTS).',
-  },
-  {
-    id: '13',
-    category: 'Yleistä',
-    question: 'Mitä teen jos tarvitsen tukea vaihdon aikana?',
-    answer:
-      'Vaihdon aikana:\n• Ota yhteyttä vaihto-ohjelman vastuuhenkilöön ongelmatilanteissa\n• Kotikorkeakoulusi kv-palvelut auttavat etänä\n• Kohdeyliopiston tukipalvelut ovat käytettävissäsi\n\nPalatessa takaisin:\n• Keskustele opintoneuvojasi kanssa, miten paluu sujuu\n• Vaihto-opintojen hyväksiluku hoidetaan kotikorkeakoulussa',
-  },
-];
-
-const categoryIcons = {
+const categoryIcons: Record<string, IconType> = {
   Yleistä: FiBook,
+  General: FiBook,
   Hakeminen: FaFileAlt,
+  Applying: FaFileAlt,
   Apurahat: FaMoneyBillWave,
+  Grants: FaMoneyBillWave,
   Dokumentit: FaFileAlt,
+  Documents: FaFileAlt,
   Matkustaminen: FaPlane,
+  Traveling: FaPlane,
 };
 
 export default function AIChatPage() {
   const [msg, setMsg] = useState('');
+  const { language } = useLanguage();
+  const faqData: FAQItem[] = faqTranslations[language] || faqTranslations['fi'];
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'm1',
       role: 'bot',
-      text: 'Hei! Minulta voit kysyä opiskelijavaihtoon liittyviä kysymyksiä.',
+      text: 'Hi! You can ask me questions about student exchange.',
     },
   ]);
   const listRef = useRef<HTMLDivElement | null>(null);
@@ -219,7 +123,7 @@ export default function AIChatPage() {
               ];
             });
           } else if (chunk.type === 'error') {
-            setError(chunk.error || 'Tapahtui virhe');
+            setError(chunk.error || 'Virhe tapahtui. Yritä uudelleen.');
           }
         },
         () => {
@@ -227,13 +131,13 @@ export default function AIChatPage() {
         },
         (err) => {
           console.error('Chat error:', err);
-          setError(err.message || 'Yhteysvirhe. Yritä uudelleen.');
+          setError(err.message || 'Virhe tapahtui. Yritä uudelleen.');
           setTyping(false);
         }
       );
     } catch (err) {
       console.error('Unexpected error:', err);
-      setError('Tapahtui odottamaton virhe. Yritä uudelleen.');
+      setError('Virhe tapahtui. Yritä uudelleen.');
       setTyping(false);
     }
   }
@@ -284,13 +188,13 @@ export default function AIChatPage() {
               value={msg}
               onChange={(e) => setMsg(e.target.value)}
               className="flex-1 bg-transparent outline-none text-sm text-[var(--typography)]"
-              placeholder="Kysy kysymys..."
+              placeholder="Kirjoita kysymyksesi tähän..."
               aria-label="Kirjoita viesti"
               disabled={typing}
             />
             <button
               type="submit"
-              aria-label="Lähetä"
+              aria-label="Lähetä viesti"
               className="disabled:opacity-40"
               style={{ color: 'var(--typography)' }}
               disabled={!msg.trim() || typing}
@@ -309,7 +213,7 @@ export default function AIChatPage() {
               color: 'var(--va-orange)',
             }}
           >
-            Usein kysytyt kysymykset
+            {language === 'fi' ? 'Usein kysytyt kysymykset' : 'Frequently Asked Questions'}
           </h2>
 
           {/* Category Filters */}
@@ -370,8 +274,7 @@ export default function AIChatPage() {
                       {item.links && item.links.length > 0 && (
                         <div className="mt-3">
                           <p className="text-sm font-semibold text-[var(--typography)] mb-2">
-                            {' '}
-                            Hyödyllisiä linkkejä:
+                            {language === 'fi' ? 'Hyödyllisiä linkkejä:' : 'Useful links:'}
                           </p>
                           <div className="space-y-1">
                             {item.links.map((link, idx) => (
@@ -399,17 +302,18 @@ export default function AIChatPage() {
         {/* Contact Card */}
         <div className="mt-8 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
           <h3 className="font-bold text-[var(--typography)] mb-2">
-            Etkö löytänyt vastausta?
+            {language === 'fi' ? 'Etkö löytänyt vastausta?' : 'Didn\'t find an answer?'}
           </h3>
           <p className="text-[var(--typography)] mb-4">
-            Kysy kysymyksesi AI-chatilta ylhäällä tai ota yhteyttä
-            kansainvälisiin palveluihin.
+            {language === 'fi' 
+              ? 'Kysy kysymyksesi AI-chatilta ylhäällä tai ota yhteyttä kansainvälisiin palveluihin.' 
+              : 'Ask your question to the AI chat above or contact international services.'}
           </p>
           <a
             href="/contact"
             className="inline-block px-4 py-2 bg-white text-[var(--typography)] rounded-lg border hover:bg-gray-50"
           >
-            Ota yhteyttä
+            {language === 'fi' ? 'Ota yhteyttä' : 'Contact us'}
           </a>
         </div>
       </main>
