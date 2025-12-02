@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ExchangeStory } from "@/hooks/exchangeStoriesHooks";
 import Image from "next/image";
-import { FaStar, FaClock, FaMapMarkerAlt } from "react-icons/fa";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 interface StoryMindMapProps {
   stories: ExchangeStory[];
@@ -135,15 +135,9 @@ export default function StoryMindMap({ stories, onStorySelect }: StoryMindMapPro
                   {story.summary}
                 </p>
 
-                <div className="flex items-center justify-between text-xs text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <FaStar className="text-yellow-500" />
-                    <span className="font-semibold">{story.ratings.overall.toFixed(1)}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <FaClock />
-                    <span>{story.duration}m</span>
-                  </div>
+                <div className="flex items-center text-xs text-gray-600">
+                  <FaMapMarkerAlt className="text-[#FF5722] mr-1" />
+                  <span>{story.university}</span>
                 </div>
               </button>
             ))}

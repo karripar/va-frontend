@@ -15,8 +15,6 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
     content: "",
   });
 
-  const [image, setImage] = useState<File | null>(null);
-
   const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
   const token =
     typeof window !== "undefined" ? localStorage.getItem("authToken") : "";
@@ -24,9 +22,6 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setImage(e.target.files?.[0] || null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +39,6 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
         university: form.university,
         title: form.title,
         content: form.content,
-        // Note: Image upload would need separate endpoint or multipart handling
       };
 
       const res = await fetch(`${apiUrl}/exchange-stories`, {
@@ -87,11 +81,6 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
           onChange={handleChange}
           className="w-full border rounded-lg px-3 py-2 min-h-[120px]"
         />
-      </div>
-
-      <div>
-        <label className="block mb-1 font-medium">Upload Image</label>
-        <input type="file" accept="image/*" onChange={handleFile} />
       </div>
 
       <div className="flex justify-end gap-3 pt-4">

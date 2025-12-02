@@ -42,10 +42,12 @@ const useBudgetEstimate = () => {
         throw new Error("API URL not configured");
       }
 
+      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : "";
       const response = await fetch(`${apiUrl}/budgets/estimate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(budgetData),
       });

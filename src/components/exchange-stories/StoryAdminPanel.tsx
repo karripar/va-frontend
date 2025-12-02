@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -62,6 +63,11 @@ export default function StoryAdminPanel() {
 
     if (data?.stories) {
       setStories(data.stories);
+      // Debug: Check what ID field is available
+      if (data.stories.length > 0) {
+        console.log("Story object keys:", Object.keys(data.stories[0]));
+        console.log("First story:", data.stories[0]);
+      }
     } else {
       setStories([]);
       console.warn("No stories data received from backend");
@@ -72,6 +78,14 @@ export default function StoryAdminPanel() {
 
   // Approve Story
   const approveStory = async (id: string) => {
+    if (!id) {
+      console.error("Story ID is undefined");
+      alert("Cannot approve story: ID is missing");
+      return;
+    }
+
+    console.log("Approving story with ID:", id);
+    
     const result = await apiRequest(`${apiUrl}/exchange-stories/${id}/approve`, {
       method: "PUT",
     });
@@ -86,9 +100,17 @@ export default function StoryAdminPanel() {
 
   // Delete Story
   const deleteStory = async (id: string) => {
+    if (!id) {
+      console.error("Story ID is undefined");
+      alert("Cannot delete story: ID is missing");
+      return;
+    }
+
     if (!confirm("Delete this story? This action cannot be undone.")) {
       return;
     }
+
+    console.log("Deleting story with ID:", id);
 
     const result = await apiRequest(`${apiUrl}/exchange-stories/${id}`, {
       method: "DELETE",
@@ -106,6 +128,16 @@ export default function StoryAdminPanel() {
     if (isAdmin) fetchStories();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
+
+  // Helper function to get story ID (handles different ID field names)
+  const getStoryId = (story: ExchangeStory): string => {
+    // Try different possible ID field names
+    const id = (story as any).id || (story as any)._id || (story as any).story_id || (story as any).storyId;
+    if (!id) {
+      console.error("Story missing ID field:", story);
+    }
+    return id;
+  };
 
   if (!isAdmin) return null;
 
@@ -141,48 +173,51 @@ export default function StoryAdminPanel() {
             </thead>
 
             <tbody className="divide-y">
-              {stories.map((story, index) => (
-                <tr key={story.id || `story-${index}`} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">{story.country}</td>
-                  <td className="px-4 py-3">{story.city}</td>
-                  <td className="px-4 py-3">{story.title}</td>
-                  <td className="px-4 py-3">{story.userName}</td>
+              {stories.map((story, index) => {
+                const storyId = getStoryId(story);
+                return (
+                  <tr key={storyId || `story-${index}`} className="hover:bg-gray-50">
+                    <td className="px-4 py-3">{story.country}</td>
+                    <td className="px-4 py-3">{story.city}</td>
+                    <td className="px-4 py-3">{story.title}</td>
+                    <td className="px-4 py-3">{story.userName}</td>
 
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        story.isApproved
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
-                      }`}
-                    >
-                      {story.isApproved ? "Approved" : "Pending"}
-                    </span>
-                  </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`px-2 py-1 text-xs rounded-full ${
+                          story.isApproved
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {story.isApproved ? "Approved" : "Pending"}
+                      </span>
+                    </td>
 
-                  <td className="px-4 py-3 flex gap-2">
-                    {!story.isApproved && (
+                    <td className="px-4 py-3 flex gap-2">
+                      {!story.isApproved && (
+                        <IconBtn
+                          onClick={() => approveStory(storyId)}
+                          color="green"
+                          icon={<FaCheck />}
+                        />
+                      )}
+
                       <IconBtn
-                        onClick={() => approveStory(story.id)}
-                        color="green"
-                        icon={<FaCheck />}
+                        onClick={() => {}}
+                        color="blue"
+                        icon={<FaEdit />}
                       />
-                    )}
 
-                    <IconBtn
-                      onClick={() => {}}
-                      color="blue"
-                      icon={<FaEdit />}
-                    />
-
-                    <IconBtn
-                      onClick={() => deleteStory(story.id)}
-                      color="red"
-                      icon={<FaTrash />}
-                    />
-                  </td>
-                </tr>
-              ))}
+                      <IconBtn
+                        onClick={() => deleteStory(storyId)}
+                        color="red"
+                        icon={<FaTrash />}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -207,17 +242,25 @@ export default function StoryAdminPanel() {
 type IconBtnProps = {
   onClick: () => void;
   icon: React.ReactNode;
-  color: string;
+  color: "green" | "blue" | "red";
 };
 
-const IconBtn = ({ onClick, icon, color }: IconBtnProps) => (
-  <button
-    onClick={onClick}
-    className={`p-1 text-${color}-600 hover:bg-${color}-50 rounded`}
-  >
-    {icon}
-  </button>
-);
+const IconBtn = ({ onClick, icon, color }: IconBtnProps) => {
+  const colorClasses = {
+    green: "text-green-600 hover:bg-green-50",
+    blue: "text-blue-600 hover:bg-blue-50",
+    red: "text-red-600 hover:bg-red-50",
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className={`p-1 rounded ${colorClasses[color]}`}
+    >
+      {icon}
+    </button>
+  );
+};
 
 type ModalProps = {
   children: React.ReactNode;

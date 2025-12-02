@@ -1,50 +1,37 @@
 "use client";
 import fetchData from "@/lib/fetchData";
 import { useCallback, useEffect, useState } from "react";
-import {ExchangeStoriesResponse, StoryFilters, ExchangeStory} from "va-hybrid-types/contentTypes";
+import {ExchangeStoriesResponse, StoryFilters, ExchangeStory as BaseExchangeStory} from "va-hybrid-types/contentTypes";
 
-export type { StoryFilters, ExchangeStory };
+// Extended ExchangeStory type to match current backend schema
+export interface ExchangeStory extends Partial<BaseExchangeStory> {
+  id: string;
+  title: string;
+  city: string;
+  university: string;
+  country: string;
+  content: string;
+  highlights: string[];
+  challenges?: string[];
+  tips?: string[];
+  isApproved: boolean;
+  featured?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type { StoryFilters };
 
 const CONTENT_API = process.env.NEXT_PUBLIC_CONTENT_API;
 
 // --> TOKEN 
 
-const getAuthToken = () => {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("authToken");
-};
+// --> FETCH APPROVED STORIES (PUBLIC)
 
-// --> FETCH ALL STORIEs, ADMIN
-
-export const useExchangeStories = (filters?: StoryFilters) => {
+export const useExchangeStories = () => {
   const [stories, setStories] = useState<ExchangeStory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const apiRequest = useCallback(async (url: string, options: RequestInit = {}) => {
-    const token = getAuthToken();
-
-    try {
-      const res = await fetch(url, {
-        ...options,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token ? `Bearer ${token}` : "",
-          ...options.headers,
-        },
-      });
-
-      if (!res.ok) {
-        console.error("API error:", res.status, res.statusText);
-        return null;
-      }
-
-      return res.json().catch(() => null);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      return null;
-    }
-  }, []);
 
   const fetchStories = useCallback(async () => {
     if (!CONTENT_API) {
@@ -55,13 +42,21 @@ export const useExchangeStories = (filters?: StoryFilters) => {
 
     setLoading(true);
 
-    const url = `${CONTENT_API}/exchange-stories/all`;
+    // Use public endpoint that returns only approved stories
+    const url = `${CONTENT_API}/exchange-stories`;
 
     try {
-      const data: ExchangeStoriesResponse | null = await apiRequest(url);
+      const data = await fetchData<ExchangeStoriesResponse>(url);
 
       if (data?.stories) {
-        setStories(data.stories);
+        setStories(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data.stories.map((story: any) => ({
+            ...story,
+            id: story.id || story._id || '',
+            content: story.content || undefined,
+          }))
+        );
         setError(null);
       } else {
         setStories([]);
@@ -74,7 +69,7 @@ export const useExchangeStories = (filters?: StoryFilters) => {
     }
 
     setLoading(false);
-  }, [apiRequest]);
+  }, []);
 
   useEffect(() => {
     fetchStories();

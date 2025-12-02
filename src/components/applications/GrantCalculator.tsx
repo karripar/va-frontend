@@ -247,13 +247,13 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
           <div className="flex items-center justify-between mb-3">
             <h4 className="font-semibold text-[var(--typography)] flex items-center gap-2">
               <FaHistory className="text-orange-500" />
-              {language === 'fi' ? 'Historia' : 'History'}
+              {t.calculatorHistory}
             </h4>
             <button
               onClick={clearHistory}
               className="text-sm text-red-500 hover:text-red-700 transition-colors"
             >
-              {language === 'fi' ? 'Tyhjennä' : 'Clear'}
+              {t.calculatorHistoryClear}
             </button>
           </div>
           <div className="space-y-2">

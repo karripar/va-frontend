@@ -170,13 +170,10 @@ export default function HakemuksetPage() {
 
   // Load saved documents from database on mount
   useEffect(() => {
-    console.log('📄 Documents changed:', documents);
-    
     const loadedDocs: Record<string, Record<string, { url: string; source: string }>> = {};
     
     if (documents && documents.length > 0) {
       documents.forEach((doc: any) => {
-        console.log('Processing document:', doc);
         
         // Parse task reference from documentType or document_type
         const docType = doc.documentType || doc.document_type;
@@ -185,8 +182,6 @@ export default function HakemuksetPage() {
           const taskId = taskMatch[1];
           // Backend returns 'name' not 'fileName'
           const docId = doc.name || doc.fileName || doc.file_name;
-          
-          console.log('Matched task:', taskId, 'doc:', docId);
           
           if (docId) {
             if (!loadedDocs[taskId]) {
@@ -203,7 +198,6 @@ export default function HakemuksetPage() {
       });
     }
     
-    console.log('📁 Setting taskDocuments:', loadedDocs);
     setTaskDocuments(loadedDocs);
   }, [documents]);
 
@@ -228,12 +222,10 @@ export default function HakemuksetPage() {
 
   const handleBudgetChange = (expenses: Record<BudgetCategory, CategoryExpense>) => {
     setBudgetExpenses(expenses);
-    // TODO: Save to backend API
-    console.log("Budget updated:", expenses);
   };
 
   const handleCalculate = (amount: number) => {
-    console.log("Calculated amount:", amount);
+    // Calculation complete
   };
 
   const getTotalBudget = () => {
@@ -243,21 +235,18 @@ export default function HakemuksetPage() {
 
   const handleAddDocument = async (taskId: string, docId: string, url: string, source: string) => {
     try {
-      // For checkbox tasks, use a placeholder URL since backend might validate URL format
       const fileUrl = source === 'checkbox' ? 'https://attendance-confirmed.local' : url;
       
       // Save to database via API
       const newDoc = await addDocumentLink({
         phase: activePhase,
-        documentType: `Task: ${taskId}`, // Store task reference in documentType
-        fileName: docId, // Backend expects fileName but returns name
+        documentType: `Task: ${taskId}`, // Storing task reference in documentType
+        fileName: docId, 
         fileUrl: fileUrl,
         sourceType: source,
       });
       
-      console.log('✅ Document added, returned:', newDoc);
-      
-      // Update local state after successful save 
+      // Updating local state after successful save 
       setTaskDocuments(prev => ({
         ...prev,
         [taskId]: {
@@ -273,7 +262,7 @@ export default function HakemuksetPage() {
 
   const handleDeleteDocument = async (taskId: string, docId: string) => {
     try {
-      // Find the document in the current documents list
+      // Finding the document in the current documents list
       const docToDelete = documents.find(doc => 
         doc.fileName === docId && doc.documentType?.includes(`Task: ${taskId}`)
       );
@@ -307,12 +296,12 @@ export default function HakemuksetPage() {
       return;
     }
 
-    // Show reminder (completion is auto-calculated from documents)
+    // Show reminder (completion is auto calculated from documents)
     setShowReminder(taskId);
     
     setTimeout(() => {
       setExpandedTask(null);
-    }, 500);
+    }, 3000);
   };
 
   const getPhaseProgress = (phase: ApplicationPhase) => {

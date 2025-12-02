@@ -11,6 +11,8 @@ export const translations: Record<string, Record<string, string>> = {
     clearFilters: "Clear filters",
     exploreByCountry: "Explore stories by country and city",
     featured: "Featured",
+    storiesTab: "Exchange Stories",
+    managementTab: "Story Management",
   },
   fi: {
     title: "Vaihtokokemuksia",
@@ -24,5 +26,7 @@ export const translations: Record<string, Record<string, string>> = {
     clearFilters: "Tyhjennä suodattimet",
     exploreByCountry: "Explore stories by country and city",
     featured: "Featured",
+    storiesTab: "Vaihtokokemukset",
+    managementTab: "Hallinnoi tarinoita",
   },
 };

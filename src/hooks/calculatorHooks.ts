@@ -8,17 +8,50 @@ export interface CalculatorHistoryEntry {
   timestamp?: string;
 }
 
+// Helper function to get userId from token or profile
+const getUserId = async (apiUrl: string, token: string): Promise<string | null> => {
+  try {
+    const response = await fetch(`${apiUrl}/users/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    if (response.ok) {
+      const userData = await response.json();
+      return userData.user_id || userData.id || null;
+    }
+  } catch (err) {
+    console.error("Error fetching user ID:", err);
+  }
+  return null;
+};
+
 export const useCalculatorHistory = () => {
   const [history, setHistory] = useState<CalculatorHistoryEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const apiUrl = process.env.NEXT_PUBLIC_AUTH_API;
 
+  // Fetch userId on mount
+  useEffect(() => {
+    const fetchUserId = async () => {
+      if (!apiUrl) return;
+      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : "";
+      if (token) {
+        const id = await getUserId(apiUrl, token);
+        setUserId(id);
+      }
+    };
+    fetchUserId();
+  }, [apiUrl]);
+
   // Fetch history from backend
   const fetchHistory = async () => {
-    if (!apiUrl) {
-      console.error("API URL not configured");
+    if (!apiUrl || !userId) {
+      console.error("API URL or userId not configured");
       return;
     }
 
@@ -27,7 +60,7 @@ export const useCalculatorHistory = () => {
       setError(null);
 
       const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : "";
-      const response = await fetch(`${apiUrl}/calculator/history`, {
+      const response = await fetch(`${apiUrl}/budgets/calculator/history/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -54,7 +87,7 @@ export const useCalculatorHistory = () => {
 
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : "";
-      const response = await fetch(`${apiUrl}/calculator/history`, {
+      const response = await fetch(`${apiUrl}/budgets/calculator/history`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +114,7 @@ export const useCalculatorHistory = () => {
 
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : "";
-      const response = await fetch(`${apiUrl}/calculator/history`, {
+      const response = await fetch(`${apiUrl}/budgets/calculator/history`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -96,11 +129,13 @@ export const useCalculatorHistory = () => {
     }
   };
 
-  // Fetch history on mount
+  // Fetch history on mount (only when userId is available)
   useEffect(() => {
-    fetchHistory();
+    if (userId) {
+      fetchHistory();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userId]);
 
   return {
     history,

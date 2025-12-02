@@ -89,6 +89,8 @@ export const translations: Record<string, Record<string, string>> = {
     // Calculator labels
     calculatorTitle: "Calculator",
     calculatorClear: "CLEAR",
+    calculatorHistory: "History",
+    calculatorHistoryClear: "Clear",
     calculatorTips: "💡 Tips",
     calculatorTip1: "Use the calculator for budget planning",
     calculatorTip2: "Calculate monthly expenses and compare to grant",
@@ -189,6 +191,8 @@ export const translations: Record<string, Record<string, string>> = {
     // Calculator labels
     calculatorTitle: "Laskin",
     calculatorClear: "TYHJENNÄ",
+    calculatorHistory: "Historia",
+    calculatorHistoryClear: "Tyhjennä",
     calculatorTips: "💡 Vinkkejä",
     calculatorTip1: "Käytä laskinta budjettisi suunnitteluun",
     calculatorTip2: "Laske kuukausittaisia kuluja ja vertaa apurahaan",

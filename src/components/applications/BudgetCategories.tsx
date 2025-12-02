@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { FaPlane, FaShieldAlt, FaHome, FaShoppingCart, FaPencilAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import React from "react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -43,6 +43,9 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     ruoka_ja_arki: { amount: 0, notes: "" },
     opintovalineet: { amount: 0, notes: "" },
   });
+  
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isSavingRef = useRef(false);
 
   // Fetch budget data on mount
   useEffect(() => {
@@ -50,9 +53,12 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Load budget data when available
+  // Load budget data when available (skip if we just saved to avoid overwriting user input)
   useEffect(() => {
-    if (budget?.categories) {
+    console.log('Budget changed:', budget);
+    console.log('isSaving:', isSavingRef.current);
+    
+    if (budget?.categories && !isSavingRef.current) {
       const loadedExpenses: Record<BudgetCategory, CategoryExpense> = {
         matkakulut: { amount: 0, notes: "" },
         vakuutukset: { amount: 0, notes: "" },
@@ -71,9 +77,28 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
         }
       });
       
+      console.log(' Loaded expenses:', loadedExpenses);
       setExpenses(loadedExpenses);
     }
   }, [budget]);
+
+  // Reset the saving flag after budget updates
+  useEffect(() => {
+    if (isSavingRef.current && budget) {
+      const timer = setTimeout(() => {
+        isSavingRef.current = false;
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [budget]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const categories: BudgetCategoryData[] = [
     {
@@ -130,8 +155,13 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     setExpenses(updatedExpenses);
     onBudgetChange?.(updatedExpenses);
     
-    // Save to backend
-    saveBudgetToBackend(updatedExpenses);
+    // Debounce save to backend ---> same as notes
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      saveBudgetToBackend(updatedExpenses);
+    }, 1000);
   };
 
   const updateNotes = (category: BudgetCategory, notes: string) => {
@@ -142,12 +172,19 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
     setExpenses(updatedExpenses);
     onBudgetChange?.(updatedExpenses);
     
-    // Save to backend
-    saveBudgetToBackend(updatedExpenses);
+    // Debounce save to backend --> wait 1 second after user stops typing
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      saveBudgetToBackend(updatedExpenses);
+    }, 1000);
   };
 
-  const saveBudgetToBackend = async (budgetExpenses: Record<BudgetCategory, CategoryExpense>) => {
+  const saveBudgetToBackend = useCallback(async (budgetExpenses: Record<BudgetCategory, CategoryExpense>) => {
     try {
+      isSavingRef.current = true;
+      
       const categories: Record<string, { estimatedCost: number; notes?: string }> = {};
       Object.entries(budgetExpenses).forEach(([key, value]) => {
         categories[key] = {
@@ -156,16 +193,21 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
         };
       });
       
-      await saveBudget({
+      const dataToSave = {
         categories,
         totalEstimate: Object.values(budgetExpenses).reduce((sum, exp) => sum + exp.amount, 0),
         destination: budget?.destination || "",
         currency: budget?.currency || "EUR",
-      });
+      };
+      
+      console.log(' Saving budget:', dataToSave);
+      const result = await saveBudget(dataToSave);
+      console.log(' Save result:', result);
     } catch (error) {
-      console.error("Error saving budget:", error);
+      console.error("❌ Error saving budget:", error);
+      isSavingRef.current = false;
     }
-  };
+  }, [saveBudget, budget]);
 
   const adjustAmount = (category: BudgetCategory, delta: number) => {
     const currentAmount = expenses[category].amount;

@@ -9,6 +9,7 @@ import DocumentUpload from "@/components/applications/DocumentUpload";
 import { useApplicationsData } from "@/hooks/applicationsHooks";
 import{ApplicationPhase, ApplicationStatus}from "va-hybrid-types/contentTypes";
 import LanguageToggle from "@/components/LanguageToggle";
+import { url } from "inspector";
 
 //type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
 //type ApplicationStatus = "not_started" | "in_progress" | "completed" | "pending_review";
@@ -77,7 +78,8 @@ export default function HakemuksetOverviewPage() {
       externalLinks: [
         {
           title: "Erasmus+ Portal",
-          url: "https://erasmusplus.fi",
+          //url: "https://erasmusplus.fi",
+          url:"https://erasmus-plus.ec.europa.eu/opportunities/opportunities-for-individuals/students/studying-abroad?pk_source=website&pk_medium=link&pk_campaign=self&pk_content=self-student-exchange",
           description: "Virallinen Erasmus+ hakuportaali"
         },
         {
