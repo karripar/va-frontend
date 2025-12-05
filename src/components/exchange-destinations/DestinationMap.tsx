@@ -90,7 +90,11 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
     <div className="relative w-full rounded-lg overflow-hidden shadow-lg p-2">
       {/* Program filter dropdown */}
       <div className="mb-4">
+        <label htmlFor="program-filter" className="sr-only">
+          {language === "fi" ? "Suodata ohjelman mukaan" : "Filter by Program"}
+        </label>
         <select
+          id="program-filter"
           value={programFilter || "all"}
           onChange={(e) => setProgramFilter(e.target.value || null)}
           className="p-2 border rounded"
