@@ -13,7 +13,12 @@ interface DestinationMapProps {
 
 interface SelectedCountry {
   country: string;
-  universities: { title: string; program: string; link: string }[];
+  universities: {
+    title: string;
+    program: string;
+    link: string;
+    studyField: string;
+  }[];
 }
 
 const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
@@ -47,7 +52,12 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
     string,
     {
       coordinates: { lat: number; lng: number };
-      universities: { title: string; program: string; link: string }[];
+      universities: {
+        title: string;
+        program: string;
+        link: string;
+        studyField: string;
+      }[];
     }
   > = {};
 
@@ -71,6 +81,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
           title: uni.title,
           program,
           link: uni.link,
+          studyField: uni.studyField || "Unknown", // Provide a default value if studyField is missing
         });
       });
   });
@@ -153,6 +164,14 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
                       destinationName={uni.title}
                       className="my-3"
                     />
+                    {uni.studyField &&
+                      uni.studyField !== uni.title &&
+                      uni.studyField !== uni.program &&
+                      uni.studyField !== selectedCountry.country && (
+                        <span className="text-sm text-gray-600">
+                          {uni.studyField}
+                        </span>
+                      )}
                   </section>
                   {uni.link && (
                     <a

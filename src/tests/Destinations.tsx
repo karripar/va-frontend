@@ -59,7 +59,7 @@ vi.mock("@/components/exchange-destinations/DestinationList", () => ({
   ),
 }));
 
-import DestinationsPage from "@/app/destinations/page-old";
+import DestinationsPage from "@/app/destinations/page";
 import DestinationAdminPanel from "@/components/exchange-destinations/destinationAdminPanel";
 
 describe("DestinationsPage", () => {
