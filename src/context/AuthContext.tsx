@@ -71,38 +71,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Check if user is authenticated by fetchlog profile
   const handleAutoLogin = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-
       // get token from localStorage
       const token = authService.getToken();
       if (!token) {
         setUser(null);
-        setLoading(false);
         return;
       }
 
-      try {
-        const response = await fetch(authAPI + "/users/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+      const response = await fetch(authAPI + "/users/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        } else if (response.status === 401) {
-          authService.removeToken();
-          setUser(null);
-        }
-      } catch (fetchError) {
-        console.error("Failed to fetch user profile:", fetchError);
+      // if token is invalid, remove it
+      if (!response.ok) {
+        authService.removeToken();
         setUser(null);
+        return;
       }
+
+      // auto login successful
+      const userData = await response.json();
+      setUser(userData);
     } catch (error) {
       console.error("Error during auto-login:", error);
+      authService.removeToken();
       setUser(null);
     } finally {
       setLoading(false);

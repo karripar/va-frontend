@@ -146,7 +146,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
         </div>
 
         {selectedCountry && (
-          <div className="fixed top-1/6 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-6">
+          <div className="fixed top-1/6 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-4">
             <button
               onClick={() => setSelectedCountry(null)}
               className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-600"
@@ -164,10 +164,6 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
                   <section className="my-2 px-1">
                     <h3 className="font-semibold">{uni.title}</h3>
                     <p className="">{uni.program}</p>
-                    <FavoriteButton
-                      destinationName={uni.title}
-                      className="my-3"
-                    />
                     {uni.studyField &&
                       uni.studyField !== uni.title &&
                       uni.studyField !== uni.program &&
@@ -177,16 +173,19 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
                         </span>
                       )}
                   </section>
-                  {uni.link && (
-                    <a
-                      href={uni.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-2 px-4 py-2 bg-[#FF5000] text-white rounded-lg shadow hover:bg-[#e04e00]"
-                    >
-                      Vieraile verkkosivulla
-                    </a>
-                  )}
+                  <section className="flex flex-row gap-2 items-start justify-between mt-6 ">
+                    {uni.link && (
+                      <a
+                        href={uni.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block px-4 py-2 bg-[#FF5000] text-white rounded-lg shadow hover:bg-[#e04e00]"
+                      >
+                        Vieraile verkkosivulla
+                      </a>
+                    )}
+                    <FavoriteButton destinationName={uni.title} />
+                  </section>
                 </li>
               ))}
             </ul>
