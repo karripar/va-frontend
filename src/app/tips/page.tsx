@@ -6,7 +6,7 @@ import StoryModal from "@/components/exchange-stories/StoryModal";
 import StoryAdminPanel from "@/components/exchange-stories/StoryAdminPanel";
 import { FaSpinner } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
-import { ADMIN_LEVEL_ID } from "@/config/roles";
+import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID} from "@/config/roles";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/lib/translations/tips";
 
@@ -18,7 +18,8 @@ export default function TipsPage() {
   const [activeTab, setActiveTab] = useState<"stories" | "management">("stories");
   const { stories, loading, error } = useExchangeStories();
 
-  const isAdmin = isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID);
+  const adminLevels = [ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID];
+  const isAdmin = isAuthenticated && user?.user_level_id && adminLevels.includes(user.user_level_id);
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -2,7 +2,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { ADMIN_LEVEL_ID } from "@/config/roles";
+import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID} from "@/config/roles";
 import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
 import { ExchangeStory } from "va-hybrid-types/contentTypes";
 import StoryUploadForm from "@/app/tips/StoryUploadForm";
@@ -12,9 +12,10 @@ export default function StoryAdminPanel() {
   const [stories, setStories] = useState<ExchangeStory[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const adminLevels = [ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID];
 
   const isAdmin =
-    isAuthenticated && user?.user_level_id === Number(ADMIN_LEVEL_ID);
+    isAuthenticated && user?.user_level_id && adminLevels.includes(user.user_level_id);
 
   const apiUrl = process.env.NEXT_PUBLIC_CONTENT_API;
   const token =
