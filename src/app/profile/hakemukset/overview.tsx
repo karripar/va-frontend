@@ -3,7 +3,6 @@ import { useProfileData } from "@/hooks/profileHooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  FaArrowLeft,
   FaCheckCircle,
   FaExclamationTriangle,
   FaInfoCircle,
