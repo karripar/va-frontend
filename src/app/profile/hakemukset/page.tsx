@@ -469,11 +469,11 @@ export default function HakemuksetPage() {
                         <p className="text-sm text-gray-700">
                           {getTotalBudget() > (budget.totalEstimate || 0) ? (
                             <span className="text-red-600 font-medium">
-                              ⚠️ Budjettisi ylittää arvioidun apurahan {getTotalBudget() - (budget.totalEstimate || 0)}€:lla
+                              Budjettisi ylittää arvioidun apurahan {getTotalBudget() - (budget.totalEstimate || 0)}€:lla
                             </span>
                           ) : (
                             <span className="text-green-600 font-medium">
-                              ✅ Apuraha kattaa budjetit ({(budget.totalEstimate || 0) - getTotalBudget()}€ jäljellä)
+                              Apuraha kattaa budjetit ({(budget.totalEstimate || 0) - getTotalBudget()}€ jäljellä)
                             </span>
                           )}
                         </p>
