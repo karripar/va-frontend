@@ -154,7 +154,7 @@ export default function StoryAdminPanel() {
         <h2 className="text-2xl font-bold">{t.manageStories}</h2>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#FF5722] text-white rounded-lg hover:bg-[#E64A19]"
+          className="flex items-center gap-1 px-4 py-2 bg-[#FF5722] text-white rounded-lg hover:bg-[#E64A19]"
         >
           <FaPlus /> {t.addStory}
         </button>

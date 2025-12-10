@@ -36,7 +36,7 @@ const AdminControlPanel = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="bg-[var(--va-orange)] text-white px-4 py-6 flex items-center justify-center relative">
+      <div className="bg-[var(--va-orange)] text-white px-4 py-6 flex items-center justify-center relative h-15 sm:h-20">
         <Link
           href="/"
           className="absolute left-6 text-white hover:scale-110"
