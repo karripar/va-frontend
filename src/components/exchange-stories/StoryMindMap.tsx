@@ -67,15 +67,12 @@ export default function StoryMindMap({
               <div className="text-sm opacity-80">
                 {cities.size} {cities.size === 1 ? "city" : "cities"}
               </div>
-<<<<<<< HEAD
               {selectedCountry === country && (
                 <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20">
                   <div className="w-1 h-10 bg-white"></div>
                   <div className="w-4 h-4 border-l-[3px] border-b-[3px] border-white rotate-[-45deg] translate-y-[-6px]"></div>
                 </div>
               )}
-=======
->>>>>>> dev-test
             </div>
           </button>
         ))}
@@ -86,7 +83,6 @@ export default function StoryMindMap({
         <div className="flex flex-wrap justify-center gap-4 mb-8 mt-12 animate-fadeIn">
           {Array.from(countryMap.get(selectedCountry)!.cities.entries()).map(
             ([city, cityStories]) => (
-<<<<<<< HEAD
               <div key={`${selectedCountry}-${city}`} className="relative">
                 <button
                   onClick={() => {
@@ -115,28 +111,6 @@ export default function StoryMindMap({
                   )}
                 </button>
               </div>
-=======
-              <button
-                role="button"
-                key={`${selectedCountry}-${city}`}
-                onClick={() =>
-                  setSelectedCity(selectedCity === city ? null : city)
-                }
-                className={`px-4 py-3 rounded-lg shadow transition-all cursor-pointer ${
-                  selectedCity === city
-                    ? "bg-[#FF7043] text-white scale-105"
-                    : "bg-white text-[var(--typography)] hover:bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <FaMapMarkerAlt className="text-sm" />
-                  <span className="font-semibold">{city}</span>
-                  <span className="text-xs opacity-75">
-                    ({cityStories.length})
-                  </span>
-                </div>
-              </button>
->>>>>>> dev-test
             )
           )}
         </div>
@@ -152,7 +126,6 @@ export default function StoryMindMap({
               <button
                 key={story.id}
                 onClick={() => onStorySelect(story)}
-<<<<<<< HEAD
                 className="relative bg-gradient-to-br from-white to-gray-50 shadow-xl hover:shadow-2xl transition-all p-8 text-center group border-3 border-gray-300 hover:border-[#FF5722]"
                 style={{
                   borderRadius: '60% 40% 60% 40% / 70% 50% 50% 30%',
@@ -167,22 +140,6 @@ export default function StoryMindMap({
                   <p className="text-sm text-gray-600 font-medium">
                     {story.title}
                   </p>
-=======
-                className="bg-white rounded-lg shadow hover:shadow-lg transition-all p-4 text-left group cursor-pointer"
-              >
-                <div className="flex gap-3 mb-3">
-            
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-[var(--typography)] group-hover:text-[#FF5722] transition-colors line-clamp-1">
-                      {story.title}
-                    </h4>
-                  </div>
-                </div>
-
-                <div className="flex items-center text-xs text-[var(--typography)]">
-                  <FaMapMarkerAlt className="text-[#FF5722] mr-1" />
-                  <span>{story.university}</span>
->>>>>>> dev-test
                 </div>
               </button>
             ))}
