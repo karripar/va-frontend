@@ -2,7 +2,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 import Link from "next/link";
-import { FiEdit } from "react-icons/fi";
 import LogoutButton from "@/components/ui/LogoutButton";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useLanguage } from "@/context/LanguageContext";
@@ -40,7 +39,7 @@ export default function ProfilePage() {
   // Rendering profile data
   return (
     <div className="min-h-screen relative">
-      {/* Orange Header with Title, Back Arrow and Edit Icon, Logout */}
+      {/* Orange Header with Title, Back Arrow, Logout */}
       <div className="bg-[var(--va-orange)] text-white px-8 py-2 md:h-20 h-15 flex items-center justify-center relative">
         <Link
           href="/"
@@ -55,17 +54,11 @@ export default function ProfilePage() {
         >
           {t.title}
         </h1>
-        <Link
-          href="/profile/edit"
-          className="absolute right-14 text-white hover:scale-110"
-        >
-          <FiEdit size={22} />
-        </Link>
-        <LogoutButton className="absolute right-6 text-white hover:scale-110 !text-base" />
+          <LogoutButton className="absolute right-6 text-white hover:scale-110 !text-base" />
       </div>
 
       {/* Profile Content - White background */}
-      <div className="bg-white min-h-screen">
+      <div className="bg-white min-h-screen my-4">
         <div className="p-6 max-w-2xl mx-auto">
           <div className="flex flex-col items-center mb-8">
             {/* Avatar */}
@@ -133,7 +126,9 @@ export default function ProfilePage() {
             <p>
               {t.memberSince}{" "}
               {profile.registeredAt
-                ? new Date(profile.registeredAt).toLocaleDateString(language === "en" ? "en-US" : "fi-FI")
+                ? new Date(profile.registeredAt).toLocaleDateString(
+                    language === "en" ? "en-US" : "fi-FI"
+                  )
                 : t.notAvailable}
             </p>
           </div>

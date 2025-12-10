@@ -145,10 +145,10 @@ export default function StoryAdminPanel() {
   return (
     <div className="bg-gray-50 border rounded-xl p-6 mb-8">
       <header className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Manage Exchange Stories</h2>
+        <h2 className="text-xl font-bold">Manage Exchange Stories</h2>
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#FF5722] text-white rounded-lg hover:bg-[#E64A19]"
+          className="flex items-center gap-1 px-4 py-2 bg-[#FF5722] text-white rounded-lg hover:bg-[#E64A19]"
         >
           <FaPlus /> Add Story
         </button>
