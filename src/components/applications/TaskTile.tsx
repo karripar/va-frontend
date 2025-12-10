@@ -18,7 +18,7 @@ export interface TaskTile {
   icon: string;
   color: string;
   documents: TaskDocument[];
-  isCheckboxOnly?: boolean; // If true, shows checkbox instead of document upload
+  isCheckboxOnly?: boolean; 
   reminderTitle?: string;
   reminderText?: string;
   reminderLink?: string;
@@ -54,8 +54,6 @@ export function TaskCard({
   const [showSavedNotification, setShowSavedNotification] = useState<string | null>(null);
   const { language } = useLanguage();
   const t = translations[language];
-
-  // Force all tiles to use orange color
   const colors = {
     border: "border-orange-200",
     bg: "bg-[#FF5722]",
@@ -102,7 +100,7 @@ export function TaskCard({
         <div className={`bg-gray-50 border-2 ${colors.border} rounded-lg p-6`}>
           <p className="text-sm text-gray-700 mb-4">{task.description}</p>
 
-          {/* Mobility Online Link if available */}
+          {/* Mobility Online Link */}
           {task.reminderLink && (
             <div className="mb-4">
               <a
@@ -135,7 +133,7 @@ export function TaskCard({
             {task.documents.map((doc) => (
               <div key={doc.id} className="bg-white border border-gray-200 rounded-lg p-4">
                 {task.isCheckboxOnly ? (
-                  /* Checkbox-only mode for attendance confirmation */
+                  /* Checkbox mode for attendance confirmation */
                   <label className="flex items-center gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
@@ -159,7 +157,6 @@ export function TaskCard({
                     )}
                   </label>
                 ) : (
-                  /* Original document upload mode */
                   <>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -246,8 +243,6 @@ export function TaskCard({
           )}
         </div>
       )}
-
-      {/* Removed Reminder Modal - No longer needed */}
     </div>
   );
 }

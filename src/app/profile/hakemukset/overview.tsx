@@ -9,7 +9,6 @@ import DocumentUpload from "@/components/applications/DocumentUpload";
 import { useApplicationsData } from "@/hooks/applicationsHooks";
 import{ApplicationPhase, ApplicationStatus}from "va-hybrid-types/contentTypes";
 import LanguageToggle from "@/components/LanguageToggle";
-import { url } from "inspector";
 
 //type ApplicationPhase = "esihaku" | "nomination" | "apurahat" | "vaihdon_jalkeen";
 //type ApplicationStatus = "not_started" | "in_progress" | "completed" | "pending_review";
