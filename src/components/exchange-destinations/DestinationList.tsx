@@ -115,27 +115,34 @@ const DestinationList: React.FC<DestinationListProps> = ({ data }) => {
                             key={`${uni.title}-${uni.country}-${index}`}
                             className="p-3 border-b last:border-b-0 hover:bg-white hover:shadow transition"
                           >
-                            <div className="flex items-start justify-between gap-3">
+                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                               <div className="flex-1">
-                                <h3 className="text-[var(--typography)] font-medium">
+                                <h3 className="text-[var(--typography)] font-medium text-base sm:text-lg">
                                   {uni.title}
                                 </h3>
+                                {uni.studyField &&
+                                  uni.studyField !== uni.title &&
+                                  uni.studyField !== uni.country && (
+                                    <span className="text-sm text-gray-600 block mt-1 sm:mt-0.5">
+                                      {uni.studyField}
+                                    </span>
+                                  )}
                                 {uni.link && (
                                   <a
                                     href={uni.link}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm hover:underline"
-                                    style={{ color: 'var(--va-orange)' }}
+                                    className="text-sm hover:underline block mt-1 sm:mt-0.5"
+                                    style={{ color: "var(--va-orange)" }}
                                   >
-                                    {translations[language]?.visitWebsite || "Visit Website"}
+                                    {translations[language]?.visitWebsite ||
+                                      "Visit Website"}
                                   </a>
                                 )}
                               </div>
-                              <FavoriteButton 
-                                destinationName={uni.title}
-                                className="p-3 mt-1"
-                              />
+                              <div className="mt-2 sm:mt-0 sm:ml-3 flex-shrink-0">
+                                <FavoriteButton destinationName={uni.title} />
+                              </div>
                             </div>
                           </li>
                         ))}

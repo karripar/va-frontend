@@ -17,12 +17,17 @@ const ContactForm: React.FC<ContactFormProps> = ({
   loading,
   t,
 }) => (
-  <form onSubmit={onSubmit} className="border border-gray-300 rounded-xl p-4 flex flex-col gap-3">
+  <form
+    onSubmit={onSubmit}
+    className="border border-gray-300 rounded-xl p-4 flex flex-col gap-3"
+  >
     <h3 className="text-lg font-semibold">{t.addTitle}</h3>
     <input
       type="text"
       placeholder={t.name}
       value={newContact.name}
+      minLength={2}
+      maxLength={100}
       onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
       className="border border-gray-300 rounded-lg p-2"
     />
@@ -30,12 +35,16 @@ const ContactForm: React.FC<ContactFormProps> = ({
       type="text"
       placeholder={t.titleLabel}
       value={newContact.title}
+      minLength={5}
+      maxLength={100}
       onChange={(e) => setNewContact({ ...newContact, title: e.target.value })}
       className="border border-gray-300 rounded-lg p-2"
     />
     <input
       type="email"
       placeholder={t.email}
+      minLength={5}
+      maxLength={100}
       value={newContact.email}
       onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
       className="border border-gray-300 rounded-lg p-2"

@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 interface FavoriteButtonProps {
   destinationName: string;
   className?: string;
-  showLabel?: boolean;
 }
 
 /**
@@ -17,7 +16,6 @@ interface FavoriteButtonProps {
 export default function FavoriteButton({
   destinationName,
   className = "",
-  showLabel = false,
 }: FavoriteButtonProps) {
   const { isAuthenticated } = useAuth();
   const { isFavorite, toggleFavorite, loading } = useFavorites();
@@ -46,11 +44,9 @@ export default function FavoriteButton({
       onClick={handleClick}
       disabled={loading}
       className={`
-        flex items-center gap-2 
         transition-all duration-200
-        disabled:opacity-50 disabled:cursor-not-allowed
         hover:scale-110 active:scale-95
-        focus-ring
+        focus-ring shadow-sm p-2.5 bg-[var(--va-grey-50)] rounded-lg cursor-pointer
         ${isAnimating ? "scale-125" : ""}
         ${className}
       `}
@@ -70,17 +66,11 @@ export default function FavoriteButton({
       ) : (
         <FaRegHeart
           className="transition-colors duration-200"
-          style={{ color: "var(--va-grey)" }}
+          style={{
+            color: "var(--va-typography)",
+          }}
           size={20}
         />
-      )}
-      {showLabel && (
-        <span
-          className="text-sm font-medium"
-          style={{ color: "var(--typography)" }}
-        >
-          {favorite ? "Suosikki" : "Lisää suosikkeihin"}
-        </span>
       )}
     </button>
   );

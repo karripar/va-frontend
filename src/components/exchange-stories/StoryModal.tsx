@@ -57,7 +57,7 @@ export default function StoryModal({ story, onClose }: StoryModalProps) {
           {/* Challenges */}
           {story.challenges && story.challenges.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">⚠️ Challenges</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Challenges</h3>
               <div className="flex flex-wrap gap-2">
                 {story.challenges.map((challenge, idx) => (
                   <span

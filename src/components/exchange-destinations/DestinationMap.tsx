@@ -13,7 +13,12 @@ interface DestinationMapProps {
 
 interface SelectedCountry {
   country: string;
-  universities: { title: string; program: string; link: string }[];
+  universities: {
+    title: string;
+    program: string;
+    link: string;
+    studyField: string;
+  }[];
 }
 
 const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
@@ -47,7 +52,12 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
     string,
     {
       coordinates: { lat: number; lng: number };
-      universities: { title: string; program: string; link: string }[];
+      universities: {
+        title: string;
+        program: string;
+        link: string;
+        studyField: string;
+      }[];
     }
   > = {};
 
@@ -71,6 +81,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
           title: uni.title,
           program,
           link: uni.link,
+          studyField: uni.studyField || "Unknown", // Provide a default value if studyField is missing
         });
       });
   });
@@ -79,7 +90,11 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
     <div className="relative w-full rounded-lg overflow-hidden shadow-lg p-2">
       {/* Program filter dropdown */}
       <div className="mb-4">
+        <label htmlFor="program-filter" className="sr-only">
+          {language === "fi" ? "Suodata ohjelman mukaan" : "Filter by Program"}
+        </label>
         <select
+          id="program-filter"
           value={programFilter || "all"}
           onChange={(e) => setProgramFilter(e.target.value || null)}
           className="p-2 border rounded"
@@ -131,7 +146,7 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
         </div>
 
         {selectedCountry && (
-          <div className="fixed top-1/6 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-6">
+          <div className="fixed top-1/6 left-1/2 -translate-x-1/2 z-50 bg-white rounded-xl shadow-2xl w-[90%] max-w-3xl max-h-[80%] overflow-y-auto p-4">
             <button
               onClick={() => setSelectedCountry(null)}
               className="absolute top-4 right-4 px-3 py-1 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-600"
@@ -149,21 +164,28 @@ const DestinationMap: React.FC<DestinationMapProps> = ({ data }) => {
                   <section className="my-2 px-1">
                     <h3 className="font-semibold">{uni.title}</h3>
                     <p className="">{uni.program}</p>
-                    <FavoriteButton
-                      destinationName={uni.title}
-                      className="my-3"
-                    />
+                    {uni.studyField &&
+                      uni.studyField !== uni.title &&
+                      uni.studyField !== uni.program &&
+                      uni.studyField !== selectedCountry.country && (
+                        <span className="text-sm text-gray-600">
+                          {uni.studyField}
+                        </span>
+                      )}
                   </section>
-                  {uni.link && (
-                    <a
-                      href={uni.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-2 px-4 py-2 bg-[#FF5000] text-white rounded-lg shadow hover:bg-[#e04e00]"
-                    >
-                      Vieraile verkkosivulla
-                    </a>
-                  )}
+                  <section className="flex flex-row gap-2 items-start justify-between mt-6 ">
+                    {uni.link && (
+                      <a
+                        href={uni.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block px-4 py-2 bg-[#FF5000] text-white rounded-lg shadow hover:bg-[#e04e00]"
+                      >
+                        Vieraile verkkosivulla
+                      </a>
+                    )}
+                    <FavoriteButton destinationName={uni.title} />
+                  </section>
                 </li>
               ))}
             </ul>

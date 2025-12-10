@@ -89,7 +89,6 @@ export default function FavoritesPage() {
                     style={{
                       color: "var(--va-dark-grey)",
                     }}
-                    aria-label={t.removeAria.replace("{item}", destination)}
                   >
                     <FaTrash />
                   </button>
@@ -99,7 +98,7 @@ export default function FavoritesPage() {
           )}
           <button
             onClick={() => router.push("/destinations")}
-            className="px-6 py-2 my-6 rounded-full text-md transition-all duration-200 hover:scale-105 focus-ring mx-auto block tracking-wider cursor-pointer"
+            className="px-6 py-2 my-8 rounded-full text-md transition-all duration-200 hover:scale-105 focus-ring mx-auto block tracking-wider cursor-pointer"
             style={{
               backgroundColor: "var(--va-dark-grey)",
               color: "var(--background)",

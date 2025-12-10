@@ -19,6 +19,7 @@ User interface for exploring and managing international exchange opportunities.
 **Backend Repository**<br>
 - Backend repository is available [here](https://github.com/karripar/va-backend)
 
+
 **Hybrid Types Repository**<br>
 - The va-hybrid-types repository and installable module used for TypeScript typing is found [here](https://github.com/karripar/va-hybrid-types)
 
@@ -56,6 +57,7 @@ User interface for exploring and managing international exchange opportunities.
 - Users can sign in with their Google account, making signing in easy and efficient. Limited to Metropolia organization and students/staff.
 - Users can save links to their important documents and favorite destinations, plan their exchange itinerary and financial frames.
 - Get up-to-date information about the current exchange application process and information about important dates.
+- Admins are able to modify and update content, where as elevated admins have access to deleting, blocking users and modifying admin rights.
 - Actual applications are not handled on this platform.
 - Information about financial support and help before and during the exchange - such as student housing, living costs, student allowance and financial aid.
 - Tips for students heading towards their international student exchange.

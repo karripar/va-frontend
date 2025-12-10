@@ -119,7 +119,7 @@ export function TaskCard({
               {/* Only show warning for Mobility Online application */}
               {task.id === 'sisainen-hakemus' && (
                 <p className="mt-2 text-xs text-orange-700 bg-orange-50 p-2 rounded border border-orange-200">
-                  ⚠️ {language === 'fi' ? 'Huomioithan, että linkki on aktiivinen vain hakuaikoina!' : 'Please note that the link will be active only during the application periods!'}
+                  {language === 'fi' ? 'Huomioithan, että linkki on aktiivinen vain hakuaikoina!' : 'Please note that the link will be active only during the application periods!'}
                 </p>
               )}
             </div>
