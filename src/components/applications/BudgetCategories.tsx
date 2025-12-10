@@ -204,7 +204,7 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
       const result = await saveBudget(dataToSave);
       console.log(' Save result:', result);
     } catch (error) {
-      console.error("❌ Error saving budget:", error);
+      console.error("ERROR: Error saving budget:", error);
       isSavingRef.current = false;
     }
   }, [saveBudget, budget]);

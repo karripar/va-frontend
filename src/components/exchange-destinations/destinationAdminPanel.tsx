@@ -139,7 +139,11 @@ const DestinationAdminPanel: React.FC<DestinationAdminPanelProps> = ({
 
       {/* FORM SECTION — responsive */}
       <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mb-4">
+        <label htmlFor="field-selector" className="sr-only">
+          {translations[language].chooseField}
+        </label>
         <select
+          id="field-selector"
           data-testid="destination-field-select"
           value={field}
           onChange={(e) => setField(e.target.value)}
@@ -151,7 +155,11 @@ const DestinationAdminPanel: React.FC<DestinationAdminPanelProps> = ({
           <option value="business">{translations[language].business}</option>
         </select>
 
+        <label htmlFor="lang-select" className="sr-only">
+          {translations[language].chooseLanguage}
+        </label>
         <select
+          id="lang-select"
           value={lang}
           onChange={(e) => setLang(e.target.value)}
           className="border rounded px-2 py-1 w-full sm:w-auto"
