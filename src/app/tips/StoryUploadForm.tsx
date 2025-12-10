@@ -32,7 +32,6 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
     }
 
     try {
-      // Send as JSON - backend expects req.body with fields
       const payload = {
         country: form.country,
         city: form.city,
@@ -51,8 +50,7 @@ export default function StoryUploadForm({ onSuccess, onCancel }: Props) {
       });
 
       if (res.ok) {
-        const result = await res.json();
-        console.log("Story created:", result);
+        await res.json();
         onSuccess();
       } else {
         const error = await res.json().catch(() => ({ error: "Failed to upload story" }));

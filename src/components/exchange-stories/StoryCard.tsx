@@ -34,7 +34,7 @@ export default function StoryCard({ story, onClick }: StoryCardProps) {
           <div className="flex flex-wrap gap-2">
             {story.highlights.slice(0, 2).map((highlight, idx) => (
               <span key={idx} className="text-xs bg-yellow-50 text-yellow-800 px-2 py-1 rounded-full">
-                ✨ {highlight}
+                {highlight}
               </span>
             ))}
           </div>

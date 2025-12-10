@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { ExchangeStory } from "@/hooks/exchangeStoriesHooks";
-import Image from "next/image";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 interface StoryMindMapProps {
@@ -40,7 +39,7 @@ export default function StoryMindMap({ stories, onStorySelect }: StoryMindMapPro
   const countries = Array.from(countryMap.values());
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-[70vh] flex flex-col">
       {/* Countries Level */}
       <div className="flex flex-wrap justify-center gap-6 mb-8">
         {countries.map(({ country, cities }) => (
@@ -67,7 +66,12 @@ export default function StoryMindMap({ stories, onStorySelect }: StoryMindMapPro
               <div className="text-sm opacity-80">
                 {cities.size} {cities.size === 1 ? "city" : "cities"}
               </div>
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-[#FF5722]/30"></div>
+              {selectedCountry === country && (
+                <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20">
+                  <div className="w-1 h-10 bg-white"></div>
+                  <div className="w-4 h-4 border-l-[3px] border-b-[3px] border-white rotate-[-45deg] translate-y-[-6px]"></div>
+                </div>
+              )}
             </div>
           </button>
         ))}
@@ -75,24 +79,37 @@ export default function StoryMindMap({ stories, onStorySelect }: StoryMindMapPro
 
       {/* Cities Level */}
       {selectedCountry && (
-        <div className="flex flex-wrap justify-center gap-4 mb-8 animate-fadeIn">
+        <div className="flex flex-wrap justify-center gap-4 mb-8 mt-12 animate-fadeIn">
           {Array.from(countryMap.get(selectedCountry)!.cities.entries()).map(
             ([city, cityStories]) => (
-              <button
-                key={`${selectedCountry}-${city}`}
-                onClick={() => setSelectedCity(selectedCity === city ? null : city)}
-                className={`px-4 py-3 rounded-lg shadow transition-all ${
-                  selectedCity === city
-                    ? "bg-[#FF7043] text-white scale-105"
-                    : "bg-white text-gray-800 hover:bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <FaMapMarkerAlt className="text-sm" />
-                  <span className="font-semibold">{city}</span>
-                  <span className="text-xs opacity-75">({cityStories.length})</span>
-                </div>
-              </button>
+              <div key={`${selectedCountry}-${city}`} className="relative">
+                <button
+                  onClick={() => {
+                    if (cityStories.length === 1) {
+                      onStorySelect(cityStories[0]);
+                    } else {
+                      setSelectedCity(selectedCity === city ? null : city);
+                    }
+                  }}
+                  className={`px-4 py-3 rounded-2xl shadow transition-all relative ${
+                    selectedCity === city
+                      ? "bg-[#FF7043] text-white scale-105"
+                      : "bg-white text-gray-800 hover:bg-gray-50"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <FaMapMarkerAlt className="text-sm" />
+                    <span className="font-semibold">{city}</span>
+                    <span className="text-xs opacity-75">({cityStories.length})</span>
+                  </div>
+                  {selectedCity === city && cityStories.length > 1 && (
+                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                      <div className="w-0.5 h-6 bg-[#FF7043]"></div>
+                      <div className="w-3 h-3 border-l-2 border-b-2 border-[#FF7043] rotate-[-45deg] translate-y-[-4px]"></div>
+                    </div>
+                  )}
+                </button>
+              </div>
             )
           )}
         </div>
@@ -100,7 +117,7 @@ export default function StoryMindMap({ stories, onStorySelect }: StoryMindMapPro
 
       {/* Stories Level */}
       {selectedCountry && selectedCity && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fadeIn">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn mt-12">
           {countryMap
             .get(selectedCountry)!
             .cities.get(selectedCity)!
@@ -108,36 +125,20 @@ export default function StoryMindMap({ stories, onStorySelect }: StoryMindMapPro
               <button
                 key={story.id}
                 onClick={() => onStorySelect(story)}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition-all p-4 text-left group"
+                className="relative bg-gradient-to-br from-white to-gray-50 shadow-xl hover:shadow-2xl transition-all p-8 text-center group border-3 border-gray-300 hover:border-[#FF5722]"
+                style={{
+                  borderRadius: '60% 40% 60% 40% / 70% 50% 50% 30%',
+                  minHeight: '200px',
+                  minWidth: '220px'
+                }}
               >
-                <div className="flex gap-3 mb-3">
-                  {story.coverPhoto ? (
-                    <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
-                        src={story.coverPhoto}
-                        alt={story.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[#FF5722] to-[#FF7043] flex-shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-gray-900 group-hover:text-[#FF5722] transition-colors line-clamp-1">
-                      {story.title}
-                    </h4>
-                    <p className="text-xs text-gray-600 mt-1">{story.university}</p>
-                  </div>
-                </div>
-
-                <p className="text-sm text-gray-700 line-clamp-2 mb-3">
-                  {story.summary}
-                </p>
-
-                <div className="flex items-center text-xs text-gray-600">
-                  <FaMapMarkerAlt className="text-[#FF5722] mr-1" />
-                  <span>{story.university}</span>
+                <div className="flex flex-col items-center justify-center h-full">
+                  <h4 className="font-bold text-gray-900 group-hover:text-[#FF5722] transition-colors text-lg mb-2">
+                    Student&apos;s story
+                  </h4>
+                  <p className="text-sm text-gray-600 font-medium">
+                    {story.title}
+                  </p>
                 </div>
               </button>
             ))}

@@ -11,9 +11,9 @@ export default function StoryModal({ story, onClose }: StoryModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-[#FF5722] to-[#FF7043] p-6">
+        <div className="relative bg-gradient-to-r from-[#FF5722] to-[#FF7043] p-6 rounded-t-3xl">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors"
@@ -32,7 +32,7 @@ export default function StoryModal({ story, onClose }: StoryModalProps) {
           {/* Highlights */}
           {story.highlights && story.highlights.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">✨ Highlights</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Highlights</h3>
               <div className="flex flex-wrap gap-2">
                 {story.highlights.map((highlight, idx) => (
                   <span
@@ -49,7 +49,7 @@ export default function StoryModal({ story, onClose }: StoryModalProps) {
           {/* Story Content */}
           <div className="mb-6">
             <h3 className="text-lg font-bold text-gray-900 mb-3">Story</h3>
-            <div className="prose max-w-none text-gray-700 whitespace-pre-line">
+            <div className="prose max-w-none text-gray-700 whitespace-pre-wrap break-words">
               {story.content}
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function StoryModal({ story, onClose }: StoryModalProps) {
           {/* Tips */}
           {story.tips && story.tips.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">💡 Tips</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Tips</h3>
               <div className="flex flex-wrap gap-2">
                 {story.tips.map((tip, idx) => (
                   <span

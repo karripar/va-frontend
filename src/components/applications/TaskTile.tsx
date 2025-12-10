@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useState } from "react";
 import { FaCheck, FaExternalLinkAlt, FaTrash } from "react-icons/fa";
@@ -8,6 +9,7 @@ export interface TaskDocument {
   id: string;
   label: string;
   required: boolean;
+  _id?: string; // MongoDB document ID
 }
 
 export interface TaskTile {
@@ -130,8 +132,8 @@ export function TaskCard({
             <h4 className="font-semibold text-gray-900">
               {task.isCheckboxOnly ? (language === 'fi' ? 'Vahvista osallistuminen' : 'Confirm participation') : t.uploadDocument}
             </h4>
-            {task.documents.map((doc) => (
-              <div key={doc.id} className="bg-white border border-gray-200 rounded-lg p-4">
+            {task.documents.map((doc, index) => (
+              <div key={doc.id || doc._id || `doc-${index}`} className="bg-white border border-gray-200 rounded-lg p-4">
                 {task.isCheckboxOnly ? (
                   /* Checkbox mode for attendance confirmation */
                   <label className="flex items-center gap-3 cursor-pointer group">

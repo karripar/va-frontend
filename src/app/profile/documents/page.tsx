@@ -11,6 +11,11 @@ import { FaFileAlt, FaTrash, FaExternalLinkAlt, FaLink, FaSpinner } from "react-
 import { Document } from "va-hybrid-types/contentTypes";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/lib/translations/documents";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+
+// MongoDB documents include _id field
+type DocumentWithId = Document & { _id?: string };
 
 const PLATFORM_OPTIONS = [
   { value: "google_drive", label: "Google Drive" },
@@ -21,11 +26,13 @@ const PLATFORM_OPTIONS = [
 ];
 
 export default function DocumentsPage() {
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const router = useRouter();
   const { loading: profileLoading } = useProfileData();
   const { documents: fetchedDocuments, addDocumentLink, deleteDocument, fetchDocuments, loading: docsLoading } = useProfileDocuments();
   const { language } = useLanguage();
   const t = translations[language];
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<DocumentWithId[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [removing, setRemoving] = useState<string | null>(null);
@@ -44,12 +51,29 @@ export default function DocumentsPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [authLoading, isAuthenticated, router]);
+
   // Update local state when documents are fetched
   useEffect(() => {
     if (fetchedDocuments && fetchedDocuments.length > 0) {
-      setDocuments(fetchedDocuments as unknown as Document[]);
+      setDocuments(fetchedDocuments as unknown as DocumentWithId[]);
     }
   }, [fetchedDocuments]);
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return <LoadingSpinner />;
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const resetForm = () => {
     setFormData({ name: "", url: "", sourceType: "google_drive", notes: "" });
@@ -82,16 +106,26 @@ export default function DocumentsPage() {
     }
   };
 
-  const handleRemove = async (docId: string) => {
+  const handleRemove = async (docId: string | undefined) => {
+    if (!docId) {
+      alert('Document ID is missing');
+      return;
+    }
     if (!confirm(t.confirmRemove)) return;
 
     setRemoving(docId);
     try {
       await deleteDocument(docId);
-      setDocuments(documents.filter((doc) => doc.id !== docId));
+      // Filter by both id and _id for MongoDB compatibility
+      setDocuments(documents.filter((doc) => {
+        const currentDocId = doc._id || doc.id;
+        return currentDocId !== docId;
+      }));
+      alert('Document removed successfully');
     } catch (error) {
       console.error("Error removing document:", error);
-      alert(t.errorRemoving);
+      const errorMsg = error instanceof Error ? error.message : t.errorRemoving;
+      alert(errorMsg);
     } finally {
       setRemoving(null);
     }
@@ -154,7 +188,7 @@ export default function DocumentsPage() {
                     <FormField label={t.name} required>
                       <input
                         type="text"
-                        placeholder="esim. Passi.pdf"
+                        placeholder=""
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -203,9 +237,9 @@ export default function DocumentsPage() {
               {/* Documents List */}
               {documents.length > 0 && (
                 <div className="space-y-3">
-                  {documents.map((doc) => (
+                  {documents.map((doc, index) => (
                     <div
-                      key={doc.id}
+                      key={doc.id || doc._id || `doc-${index}`}
                       className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center gap-3 flex-1">
@@ -228,11 +262,11 @@ export default function DocumentsPage() {
                           <FaExternalLinkAlt />
                         </a>
                         <button
-                          onClick={() => handleRemove(doc.id)}
-                          disabled={removing === doc.id}
+                          onClick={() => handleRemove(doc.id || doc._id)}
+                          disabled={removing === (doc.id || doc._id)}
                           className="text-red-500 hover:text-red-700 disabled:opacity-50 p-2"
                         >
-                          {removing === doc.id ? <FaSpinner className="animate-spin" /> : <FaTrash />}
+                          {removing === (doc.id || doc._id) ? <FaSpinner className="animate-spin" /> : <FaTrash />}
                         </button>
                       </div>
                     </div>

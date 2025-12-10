@@ -74,7 +74,7 @@ const QuickDocumentLinkForm = ({
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      const response = await fetch(`${apiUrl}/linkUploads/documents`, {
+      const response = await fetch(`${apiUrl}/linkUploads/documents/application`, {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -536,7 +536,7 @@ export default function HakemuksetPage() {
                 {budgetExpenses && getTotalBudget() > 0 && (
                   <div className="mb-6 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow border border-orange-200">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      📈 {t.budgetSummaryTitle}
+                      {t.budgetSummaryTitle}
                     </h3>
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
@@ -583,7 +583,7 @@ export default function HakemuksetPage() {
                 {/* Grant Calculator Component */}
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    🧮 Laskin
+                    Laskin
                   </h3>
                   <GrantCalculator onCalculate={handleCalculate} />
                 </div>

@@ -72,9 +72,7 @@ const useApplicationDocuments = (phase?: string) => {
     fetchAllDocuments();
   }, [phase]);
 
-  /**
-   * Add a document link (replaces old file upload)
-   */
+
   const addDocumentLink = async (data: {
     phase: string;
     documentType: string;
@@ -98,21 +96,27 @@ const useApplicationDocuments = (phase?: string) => {
       }
 
       const token = localStorage.getItem('authToken');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      if (!token) {
+        throw new Error('You must be logged in to add documents. Please log in and try again.');
       }
 
-      const response = await fetch(`${apiUrl}/linkUploads/documents`, {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+
+      const response = await fetch(`${apiUrl}/linkUploads/documents/application`, {
         method: 'POST',
         headers,
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add document');
+        if (response.status === 401) {
+          throw new Error('Authentication failed. Please log in again.');
+        }
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to add document (${response.status})`);
       }
 
       const addedDocument = await response.json();
@@ -154,7 +158,10 @@ const useApplicationDocuments = (phase?: string) => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete document');
+        if (response.status === 401) {
+          throw new Error('Authentication failed. Please log in again.');
+        }
+        throw new Error(`Failed to delete document (${response.status})`);
       }
 
       setDocuments(prev => prev.filter(doc => doc.id !== documentId));
@@ -235,22 +242,30 @@ const useProfileDocuments = () => {
       }
 
       const token = localStorage.getItem('authToken');
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      if (!token) {
+        throw new Error('You must be logged in to add documents. Please log in and try again.');
       }
 
-      const response = await fetch(`${apiUrl}/linkUploads/documents`, {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+
+      console.log('Adding document link to:', `${apiUrl}/linkUploads/documents/link`);
+      console.log('Token present:', !!token);
+
+      const response = await fetch(`${apiUrl}/linkUploads/documents/link`, {
         method: 'POST',
         headers,
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to add document');
+        if (response.status === 401) {
+          throw new Error('Authentication failed. Please log in again.');
+        }
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to add document (${response.status})`);
       }
 
       const addedDocument = await response.json();
@@ -281,10 +296,13 @@ const useProfileDocuments = () => {
       }
 
       const token = localStorage.getItem('authToken');
-      const headers: Record<string, string> = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      if (!token) {
+        throw new Error('No authentication token found. Please log in again.');
       }
+
+      const headers: Record<string, string> = {
+        'Authorization': `Bearer ${token}`
+      };
 
       const response = await fetch(`${apiUrl}/linkUploads/documents/${documentId}`, {
         method: 'DELETE',
@@ -292,14 +310,22 @@ const useProfileDocuments = () => {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to remove document');
+        if (response.status === 401) {
+          throw new Error('Authentication failed. Please log in again.');
+        }
+        const error = await response.json().catch(() => ({ error: 'Failed to remove document' }));
+        throw new Error(error.error || `Failed to remove document (${response.status})`);
       }
 
-      setDocuments(prev => prev.filter(doc => doc.id !== documentId));
+      // Filter by both id and _id for MongoDB compatibility
+      setDocuments(prev => prev.filter(doc => {
+        const docId = (doc as { _id?: string; id: string })._id || doc.id;
+        return docId !== documentId;
+      }));
     } catch (err: unknown) {
       console.error("Error deleting document:", err);
-      setError("Failed to delete document");
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete document";
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);

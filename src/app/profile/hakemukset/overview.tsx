@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useProfileData } from "@/hooks/profileHooks";
 import { useRouter } from "next/navigation";
@@ -16,7 +17,6 @@ import {ApplicationPhase, ApplicationStatus} from "va-hybrid-types/contentTypes"
 
 
 export default function HakemuksetOverviewPage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const {
     profileData: profile,
     loading: profileLoading,

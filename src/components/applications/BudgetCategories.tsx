@@ -200,9 +200,7 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
         currency: budget?.currency || "EUR",
       };
       
-      console.log(' Saving budget:', dataToSave);
-      const result = await saveBudget(dataToSave);
-      console.log(' Save result:', result);
+      await saveBudget(dataToSave);
     } catch (error) {
       console.error("ERROR: Error saving budget:", error);
       isSavingRef.current = false;
@@ -260,26 +258,28 @@ export default function BudgetCategories({ onBudgetChange }: BudgetCategoriesPro
                     <label className="block text-sm font-medium text-[var(--typography)] mb-2">
                       {t.budgetEstimatedAmount}
                     </label>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => adjustAmount(cat.category, -50)}
-                        className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium text-[var(--typography)] transition-colors"
-                      >
-                        -50
-                      </button>
-                      <input
-                        type="number"
-                        value={expense.amount}
-                        onChange={(e) => updateAmount(cat.category, parseInt(e.target.value) || 0)}
-                        className="flex-1 px-4 py-2 border border-[var(--va-border)] rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent text-center text-lg font-semibold"
-                        min="0"
-                      />
-                      <button
-                        onClick={() => adjustAmount(cat.category, 50)}
-                        className="px-3 py-2 bg-[#FF5722] hover:bg-[#F4511E] text-white rounded-lg font-medium transition-colors"
-                      >
-                        +50
-                      </button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      <div className="flex items-center gap-2 flex-1">
+                        <button
+                          onClick={() => adjustAmount(cat.category, -50)}
+                          className="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium text-[var(--typography)] transition-colors min-w-[60px]"
+                        >
+                          -50
+                        </button>
+                        <input
+                          type="number"
+                          value={expense.amount}
+                          onChange={(e) => updateAmount(cat.category, parseInt(e.target.value) || 0)}
+                          className="flex-1 px-4 py-2 border border-[var(--va-border)] rounded-lg focus:ring-2 focus:ring-[#FF5722] focus:border-transparent text-center text-lg font-semibold min-w-0"
+                          min="0"
+                        />
+                        <button
+                          onClick={() => adjustAmount(cat.category, 50)}
+                          className="px-3 py-2 bg-[#FF5722] hover:bg-[#F4511E] text-white rounded-lg font-medium transition-colors min-w-[60px]"
+                        >
+                          +50
+                        </button>
+                      </div>
                     </div>
                   </div>
 

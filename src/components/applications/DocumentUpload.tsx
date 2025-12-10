@@ -3,13 +3,24 @@
 import { useState } from "react";
 import { FaLink, FaTrash, FaExternalLinkAlt, FaSpinner, FaInfoCircle } from "react-icons/fa";
 
+// Type for documents with MongoDB _id field
+interface DocumentWithId {
+  id?: string;
+  _id?: string;
+  fileName?: string;
+  fileUrl?: string;
+  sourceType?: string;
+  uploadedAt?: string;
+  addedAt?: string;
+  notes?: string;
+}
 
 interface DocumentUploadProps {
   applicationId: string;
   documentType: string;
   onDocumentUploaded?: (document: any) => void;
   onDocumentDeleted?: (documentId: string) => void;
-  existingDocuments?: any[];
+  existingDocuments?: DocumentWithId[];
   required?: boolean;
 }
 
@@ -159,7 +170,7 @@ export default function DocumentUpload({
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const response = await fetch(`${AUTH_API}/linkUploads/documents`, {
+      const response = await fetch(`${AUTH_API}/linkUploads/documents/application`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -191,6 +202,10 @@ export default function DocumentUpload({
   };
 
   const handleDeleteDocument = async (documentId: string) => {
+    if (!documentId) {
+      alert('Document ID is missing');
+      return;
+    }
     if (!confirm('Haluatko varmasti poistaa tämän dokumentin?')) return;
     if (!AUTH_API) {
       alert('API configuration missing.');
@@ -199,20 +214,33 @@ export default function DocumentUpload({
 
     try {
       const token = localStorage.getItem('authToken');
-      const headers: Record<string, string> = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      if (!token) {
+        alert('Authentication required. Please log in again.');
+        return;
       }
+
+      const headers: Record<string, string> = {
+        'Authorization': `Bearer ${token}`
+      };
 
       const response = await fetch(`${AUTH_API}/linkUploads/documents/${documentId}`, { 
         method: 'DELETE',
         headers,
       });
-      if (!response.ok) throw new Error('Failed to delete document');
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication failed. Please log in again.');
+        }
+        const error = await response.json().catch(() => ({ error: 'Failed to delete document' }));
+        throw new Error(error.error || `Failed to delete document (${response.status})`);
+      }
+      
       if (onDocumentDeleted) onDocumentDeleted(documentId);
-    } catch (error) {
+      alert('Dokumentti poistettu onnistuneesti!');
+    } catch (error: any) {
       console.error("Delete failed:", error);
-      alert("Dokumentin poistaminen epäonnistui.");
+      alert(error?.message || "Dokumentin poistaminen epäonnistui.");
     }
   };
 
@@ -251,7 +279,7 @@ export default function DocumentUpload({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Dokumentin nimi *</label>
-              <input type="text" placeholder="esim. Opintosuoritusote_2024.pdf" value={documentName} onChange={(e) => setDocumentName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+              <input type="text" placeholder="" value={documentName} onChange={(e) => setDocumentName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md" />
             </div>
 
             <div>
@@ -279,13 +307,13 @@ export default function DocumentUpload({
       {existingDocuments.length > 0 && (
         <div className="space-y-2">
           <h5 className="text-sm font-medium text-gray-700">Lisätyt dokumentit:</h5>
-          {existingDocuments.map((doc) => (
-            <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+          {existingDocuments.map((doc, index) => (
+            <div key={doc.id || doc._id || `doc-${index}`} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
               <div className="flex items-center space-x-3 flex-1">
-                <span className="text-2xl">{getPlatformIcon(doc.sourceType)}</span>
+                <span className="text-2xl">{getPlatformIcon(doc.sourceType || 'other_url')}</span>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-900">{doc.fileName}</p>
-                  <p className="text-xs text-gray-500">{doc.sourceType?.replace('_', ' ')} • {new Date(doc.uploadedAt || doc.addedAt).toLocaleDateString("fi-FI")}</p>
+                  <p className="text-xs text-gray-500">{doc.sourceType?.replace('_', ' ')} • {new Date(doc.uploadedAt || doc.addedAt || new Date()).toLocaleDateString("fi-FI")}</p>
                   {doc.notes && <p className="text-xs text-gray-600 mt-1 italic">{doc.notes}</p>}
                 </div>
               </div>
@@ -293,7 +321,7 @@ export default function DocumentUpload({
                 <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-blue-600 hover:bg-blue-100 rounded-md">
                   <FaExternalLinkAlt size={14} />
                 </a>
-                <button onClick={() => handleDeleteDocument(doc.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-md">
+                <button onClick={() => handleDeleteDocument(doc.id || doc._id || '')} className="p-2 text-red-600 hover:bg-red-100 rounded-md">
                   <FaTrash size={14} />
                 </button>
               </div>

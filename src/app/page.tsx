@@ -31,7 +31,7 @@ const translations: Record<"fi" | "en", Locale> = {
       {
         title: "APURAHAT",
         description: "Katso apurahat ja mahdolliset kustannukset.",
-        href: "/profile/hakemukset?tab=apurahat",
+        href: "/profile/hakemukset?tab=budget",
       },
       {
         title: "KOHDEMAAT",
@@ -83,7 +83,7 @@ const translations: Record<"fi" | "en", Locale> = {
       {
         title: "GRANTS & COSTS",
         description: "Check out grants and potential costs.",
-        href: "/profile/hakemukset?tab=apurahat",
+        href: "/profile/hakemukset?tab=budget",
       },
       {
         title: "DESTINATIONS",

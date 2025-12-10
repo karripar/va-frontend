@@ -125,7 +125,7 @@ export default function GrantCalculator({ onCalculate }: GrantCalculatorProps) {
       {/* Info Header */}
       <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg border border-orange-200">
         <h3 className="font-semibold text-[var(--typography)] mb-1 flex items-center gap-2">
-          💰 {t.budgetCalculatorTitle}
+          {t.budgetCalculatorTitle}
         </h3>
         <p className="text-sm text-[var(--typography)]">
           {t.budgetCalculatorDesc}

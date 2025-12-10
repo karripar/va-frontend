@@ -4,14 +4,25 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID} from "@/config/roles";
 import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes } from "react-icons/fa";
-import { ExchangeStory } from "va-hybrid-types/contentTypes";
+import { ExchangeStory as BaseExchangeStory } from "va-hybrid-types/contentTypes";
 import StoryUploadForm from "@/app/tips/StoryUploadForm";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/lib/translations/tips";
+
+// Extended type to include content field
+interface ExchangeStory extends BaseExchangeStory {
+  content?: string;
+}
 
 export default function StoryAdminPanel() {
   const { user, isAuthenticated } = useAuth();
+  const { language } = useLanguage();
+  const t = translations[language];
   const [stories, setStories] = useState<ExchangeStory[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingStory, setEditingStory] = useState<ExchangeStory | null>(null);
+  const [editForm, setEditForm] = useState({ country: "", city: "", university: "", title: "", content: "" });
   const adminLevels = [ADMIN_LEVEL_ID, ELEVATED_LEVEL_ID];
 
   const isAdmin =
@@ -64,11 +75,6 @@ export default function StoryAdminPanel() {
 
     if (data?.stories) {
       setStories(data.stories);
-      // Debug: Check what ID field is available
-      if (data.stories.length > 0) {
-        console.log("Story object keys:", Object.keys(data.stories[0]));
-        console.log("First story:", data.stories[0]);
-      }
     } else {
       setStories([]);
       console.warn("No stories data received from backend");
@@ -145,27 +151,27 @@ export default function StoryAdminPanel() {
   return (
     <div className="bg-gray-50 border rounded-xl p-6 mb-8">
       <header className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Manage Exchange Stories</h2>
+        <h2 className="text-2xl font-bold">{t.manageStories}</h2>
         <button
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-4 py-2 bg-[#FF5722] text-white rounded-lg hover:bg-[#E64A19]"
         >
-          <FaPlus /> Add Story
+          <FaPlus /> {t.addStory}
         </button>
       </header>
 
       {loading ? (
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-gray-600">{t.loading}</p>
       ) : stories.length === 0 ? (
-        <p className="text-gray-600">No stories yet. Click &quot;Add Story&quot; to create one.</p>
+        <p className="text-gray-600">{t.noStories}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full bg-white rounded-lg">
             <thead className="bg-gray-100">
               <tr>
-                {["Country", "City", "Title", "Student", "Status", "Actions"].map(
-                  (h) => (
-                    <th key={h} className="px-4 py-3 text-left">
+                {[t.country, t.city, t.storyTitle, t.student, t.status, t.actions].map(
+                  (h, idx) => (
+                    <th key={idx} className="px-4 py-3 text-left">
                       {h}
                     </th>
                   )
@@ -205,7 +211,16 @@ export default function StoryAdminPanel() {
                       )}
 
                       <IconBtn
-                        onClick={() => {}}
+                        onClick={() => {
+                          setEditingStory(story);
+                          setEditForm({
+                            country: story.country || "",
+                            city: story.city || "",
+                            university: story.university || "",
+                            title: story.title || "",
+                            content: story.content || ""
+                          });
+                        }}
                         color="blue"
                         icon={<FaEdit />}
                       />
@@ -234,6 +249,85 @@ export default function StoryAdminPanel() {
             }}
             onCancel={() => setShowForm(false)}
           />
+        </Modal>
+      )}
+
+      {editingStory && (
+        <Modal onClose={() => setEditingStory(null)}>
+          <h3 className="text-xl font-bold mb-4">Edit Story</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block mb-1 font-medium">Country</label>
+              <input
+                type="text"
+                value={editForm.country}
+                onChange={(e) => setEditForm({...editForm, country: e.target.value})}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium">City</label>
+              <input
+                type="text"
+                value={editForm.city}
+                onChange={(e) => setEditForm({...editForm, city: e.target.value})}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium">University</label>
+              <input
+                type="text"
+                value={editForm.university}
+                onChange={(e) => setEditForm({...editForm, university: e.target.value})}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium">Title</label>
+              <input
+                type="text"
+                value={editForm.title}
+                onChange={(e) => setEditForm({...editForm, title: e.target.value})}
+                className="w-full border rounded-lg px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium">Content</label>
+              <textarea
+                value={editForm.content}
+                onChange={(e) => setEditForm({...editForm, content: e.target.value})}
+                className="w-full border rounded-lg px-3 py-2 min-h-[150px]"
+              />
+            </div>
+            <div className="flex justify-end gap-3 pt-4">
+              <button
+                onClick={() => setEditingStory(null)}
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  const storyId = getStoryId(editingStory);
+                  const result = await apiRequest(`${apiUrl}/exchange-stories/${storyId}`, {
+                    method: "PUT",
+                    body: JSON.stringify(editForm)
+                  });
+                  if (result) {
+                    alert("Story updated successfully");
+                    setEditingStory(null);
+                    await fetchStories();
+                  } else {
+                    alert("Failed to update story");
+                  }
+                }}
+                className="px-4 py-2 rounded-lg bg-[#FF5722] text-white hover:bg-[#E64A19]"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
         </Modal>
       )}
     </div>

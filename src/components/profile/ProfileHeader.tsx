@@ -1,17 +1,14 @@
 import { useRouter } from "next/navigation";
-import { FaArrowLeft, FaEdit } from "react-icons/fa";
-import Link from "next/link";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface ProfileHeaderProps {
   title: string;
-  showEdit?: boolean;
   showBack?: boolean;
   backPath?: string;
 }
 
 export default function ProfileHeader({
   title,
-  showEdit = false,
   showBack = true,
   backPath,
 }: ProfileHeaderProps) {
@@ -35,16 +32,6 @@ export default function ProfileHeader({
       >
         {title}
       </h1>
-
-      {showEdit && (
-        <Link
-          href="/profile/edit"
-          className="absolute right-4 text-white hover:text-gray-200 transition-colors"
-          aria-label="Muokkaa profiilia"
-        >
-          <FaEdit size={24} />
-        </Link>
-      )}
     </div>
   );
 }

@@ -2,7 +2,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 import Link from "next/link";
-import { FiEdit } from "react-icons/fi";
 import LogoutButton from "@/components/ui/LogoutButton";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useLanguage } from "@/context/LanguageContext";
@@ -55,12 +54,6 @@ export default function ProfilePage() {
         >
           {t.title}
         </h1>
-        <Link
-          href="/profile/edit"
-          className="absolute right-14 text-white hover:scale-110"
-        >
-          <FiEdit size={22} />
-        </Link>
         <LogoutButton className="absolute right-6 text-white hover:scale-110 !text-base" />
       </div>
 
