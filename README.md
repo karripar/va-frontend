@@ -45,7 +45,7 @@ User interface for exploring and managing international exchange opportunities.
 - To get access to the Google OAuth 2.0 flow and authentication, you need to create a Client ID. Follow the instructions found [here](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid) and place the acquired Client ID in the environment variables. Same Cliend ID is required in the backend as well. 
 
 **Vector Store ID**<br>
-- TODO: Update this with info about vector store id
+- You will need to acquire a *`vector store id`* through the OpenAI API service. 
 
 
 ## Features
